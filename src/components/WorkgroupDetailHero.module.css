@@ -1,0 +1,74 @@
+.hero {
+  padding: 24px;
+  border-radius: 22px;
+  background:
+    radial-gradient(circle at right top, rgba(93, 160, 255, 0.16), transparent 24%),
+    linear-gradient(135deg, rgba(250, 252, 255, 0.98), rgba(237, 245, 255, 0.96));
+  border: 1px solid rgba(67, 109, 211, 0.08);
+  box-shadow: 0 14px 32px rgba(37, 84, 188, 0.08);
+}
+
+.titleRow {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.iconWrap {
+  width: 60px;
+  height: 60px;
+  border-radius: 20px;
+  display: grid;
+  place-items: center;
+  color: #ffffff;
+  font-size: 28px;
+  flex: 0 0 auto;
+}
+
+.titleRow h1 {
+  margin: 0;
+  color: #132d59;
+  font-size: 36px;
+  line-height: 1.14;
+}
+
+.titleRow p {
+  max-width: 860px;
+  margin: 12px 0 0;
+  color: #62779d;
+  font-size: 16px;
+  line-height: 1.8;
+}
+
+.metaGrid {
+  margin-top: 18px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.metaGrid div {
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.metaGrid span {
+  display: block;
+  color: #8090ac;
+  font-size: 12px;
+  margin-bottom: 8px;
+}
+
+.metaGrid strong {
+  color: #20365e;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.actions {
+  margin-top: 18px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}

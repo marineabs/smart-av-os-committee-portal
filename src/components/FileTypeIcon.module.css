@@ -1,0 +1,37 @@
+.badge {
+  min-width: 62px;
+  height: 30px;
+  padding: 0 9px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.pdf {
+  color: #ff4d4f;
+  background: rgba(255, 77, 79, 0.1);
+}
+
+.word {
+  color: #2f6fff;
+  background: rgba(47, 111, 255, 0.1);
+}
+
+.excel {
+  color: #18ad68;
+  background: rgba(24, 173, 104, 0.1);
+}
+
+.minutes {
+  color: #7a5dff;
+  background: rgba(122, 93, 255, 0.1);
+}
+
+.ppt {
+  color: #ff942e;
+  background: rgba(255, 148, 46, 0.12);
+}

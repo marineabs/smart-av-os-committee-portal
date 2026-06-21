@@ -1,0 +1,41 @@
+.tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 28px;
+  padding: 0 10px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.draft {
+  color: #7d879b;
+  background: rgba(125, 135, 155, 0.12);
+}
+
+.review {
+  color: #ff932b;
+  background: rgba(255, 147, 43, 0.12);
+}
+
+.meeting {
+  color: #7a5dff;
+  background: rgba(122, 93, 255, 0.12);
+}
+
+.final {
+  color: #18ae69;
+  background: rgba(24, 174, 105, 0.12);
+}
+
+.publish {
+  color: #2d73ff;
+  background: rgba(45, 115, 255, 0.12);
+}
+
+.archive {
+  color: #19b8b8;
+  background: rgba(25, 184, 184, 0.12);
+}

@@ -1,0 +1,49 @@
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.row strong {
+  color: #22385e;
+  font-size: 14px;
+}
+
+.row span {
+  height: 24px;
+  padding: 0 10px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.focus {
+  color: #ff8d3b;
+  background: rgba(255, 141, 59, 0.12);
+}
+
+.normal {
+  color: #2d73ff;
+  background: rgba(45, 115, 255, 0.12);
+}
+
+.item small {
+  color: #7f90af;
+  font-size: 12px;
+  align-self: flex-end;
+}

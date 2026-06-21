@@ -1,0 +1,27 @@
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.item {
+  min-height: 56px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #f8fbff;
+}
+
+.item span {
+  color: #42587f;
+  font-size: 14px;
+}
+
+.note {
+  margin: 4px 0 0;
+  color: #6d7fa2;
+  font-size: 14px;
+  line-height: 1.8;
+}

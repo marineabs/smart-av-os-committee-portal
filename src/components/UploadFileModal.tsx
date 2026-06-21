@@ -1,0 +1,159 @@
+import { InboxOutlined } from '@ant-design/icons'
+import { Form, Input, Modal, Select, Upload } from 'antd'
+import type { UploadFile } from 'antd'
+import { useState } from 'react'
+import type {
+  KnowledgeCategory,
+  KnowledgeFile,
+  KnowledgeFileStatus,
+  KnowledgePermissionLevel,
+} from '../types/portal'
+
+interface UploadFileModalProps {
+  categories: KnowledgeCategory[]
+  open: boolean
+  onCancel: () => void
+  onSubmit: (file: Omit<KnowledgeFile, 'id' | 'isFavorite' | 'canView' | 'hasNewVersion' | 'needsComment' | 'needsReview' | 'updatedThisMonth'>) => void
+  workgroups: string[]
+}
+
+interface UploadFormValues {
+  categoryId: string
+  description: string
+  permission: KnowledgePermissionLevel
+  status: KnowledgeFileStatus
+  title: string
+  uploader: string
+  version: string
+  workgroup: string
+}
+
+function UploadFileModal({ categories, open, onCancel, onSubmit, workgroups }: UploadFileModalProps) {
+  const [form] = Form.useForm<UploadFormValues>()
+  const [fileList, setFileList] = useState<UploadFile[]>([])
+
+  const handleFinish = (values: UploadFormValues) => {
+    const category = categories.find((item) => item.id === values.categoryId)
+    const filename = fileList[0]?.name ?? values.title
+    const extension = filename.split('.').pop()?.toLowerCase()
+    const type =
+      extension === 'xlsx'
+        ? 'xlsx'
+        : extension === 'ppt' || extension === 'pptx'
+          ? 'pptx'
+          : extension === 'pdf'
+            ? 'pdf'
+            : 'docx'
+
+    onSubmit({
+      title: values.title,
+      type,
+      categoryId: values.categoryId,
+      categoryLabel: category?.label ?? '未分类',
+      workgroup: values.workgroup,
+      version: values.version,
+      status: values.status,
+      permission: values.permission,
+      uploader: values.uploader,
+      updatedAt: new Date().toISOString().slice(0, 16).replace('T', ' '),
+      fileCode: `AVOS-UP-${Date.now().toString().slice(-6)}`,
+      topicIds: [],
+    })
+
+    form.resetFields()
+    setFileList([])
+  }
+
+  return (
+    <Modal
+      open={open}
+      title="上传资料"
+      width={760}
+      okText="确认上传"
+      cancelText="取消"
+      onCancel={() => {
+        form.resetFields()
+        setFileList([])
+        onCancel()
+      }}
+      onOk={() => form.submit()}
+      destroyOnClose
+    >
+      <Form form={form} layout="vertical" onFinish={handleFinish}>
+        <Form.Item label="文件名称" name="title" rules={[{ required: true, message: '请输入文件名称' }]}>
+          <Input placeholder="请输入文件名称" />
+        </Form.Item>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+          <Form.Item label="所属分类" name="categoryId" rules={[{ required: true }]}>
+            <Select placeholder="请选择">
+              {categories.filter((item) => item.id !== 'all').map((item) => (
+                <Select.Option key={item.id} value={item.id}>
+                  {item.label}
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+          <Form.Item label="所属工作组" name="workgroup" rules={[{ required: true }]}>
+            <Select placeholder="请选择">
+              {workgroups.filter((item) => item !== '全部').map((item) => (
+                <Select.Option key={item} value={item}>
+                  {item}
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+          <Form.Item label="文件状态" name="status" rules={[{ required: true }]}>
+            <Select placeholder="请选择">
+              <Select.Option value="草稿版">草稿版</Select.Option>
+              <Select.Option value="征求意见版">征求意见版</Select.Option>
+              <Select.Option value="会议讨论版">会议讨论版</Select.Option>
+              <Select.Option value="定稿版">定稿版</Select.Option>
+              <Select.Option value="发布版">发布版</Select.Option>
+              <Select.Option value="归档版">归档版</Select.Option>
+            </Select>
+          </Form.Item>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+          <Form.Item label="权限级别" name="permission" rules={[{ required: true }]}>
+            <Select placeholder="请选择">
+              <Select.Option value="公开资料">公开资料</Select.Option>
+              <Select.Option value="分委会资料">分委会资料</Select.Option>
+              <Select.Option value="工作组资料">工作组资料</Select.Option>
+              <Select.Option value="秘书处资料">秘书处资料</Select.Option>
+              <Select.Option value="敏感资料">敏感资料</Select.Option>
+            </Select>
+          </Form.Item>
+          <Form.Item label="上传单位" name="uploader" rules={[{ required: true }]}>
+            <Input placeholder="请输入上传单位" />
+          </Form.Item>
+          <Form.Item label="版本号" name="version" rules={[{ required: true }]}>
+            <Input placeholder="例如 V1.0" />
+          </Form.Item>
+        </div>
+
+        <Form.Item label="文件说明" name="description">
+          <Input.TextArea rows={3} placeholder="请输入文件说明" />
+        </Form.Item>
+
+        <Form.Item label="文件上传">
+          <Upload.Dragger
+            multiple={false}
+            beforeUpload={() => false}
+            fileList={fileList}
+            onChange={({ fileList: nextFileList }) => setFileList(nextFileList.slice(-1))}
+          >
+            <p className="ant-upload-drag-icon">
+              <InboxOutlined />
+            </p>
+            <p className="ant-upload-text">点击或拖拽文件到此处上传</p>
+            <p className="ant-upload-hint">当前为 mock 上传，提交后会新增到列表中。</p>
+          </Upload.Dragger>
+        </Form.Item>
+      </Form>
+    </Modal>
+  )
+}
+
+export default UploadFileModal

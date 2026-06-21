@@ -1,0 +1,116 @@
+.drawer :global(.ant-drawer-header) {
+  padding: 20px 24px 14px;
+  border-bottom: 1px solid rgba(67, 109, 211, 0.08);
+}
+
+.drawer :global(.ant-drawer-title) {
+  color: #15305c;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.drawer :global(.ant-drawer-body) {
+  padding: 20px 24px 24px;
+  background:
+    radial-gradient(circle at top right, rgba(94, 161, 255, 0.08), transparent 22%),
+    #f7faff;
+}
+
+.subtext {
+  color: #6f81a6;
+  font-size: 13px;
+  line-height: 1.6;
+  max-width: 360px;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form {
+  padding: 18px 20px;
+  border-radius: 18px;
+  background: #ffffff;
+  border: 1px solid rgba(67, 109, 211, 0.08);
+  box-shadow: 0 10px 24px rgba(38, 84, 185, 0.06);
+}
+
+.stepSection {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.gridTwo,
+.gridThree {
+  display: grid;
+  gap: 12px;
+}
+
+.gridTwo {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.gridThree {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.tipCard {
+  min-height: 74px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  background: linear-gradient(135deg, rgba(238, 245, 255, 0.96), rgba(247, 250, 255, 0.98));
+  border: 1px solid rgba(67, 109, 211, 0.08);
+}
+
+.tipCard strong {
+  color: #15305c;
+  font-size: 14px;
+}
+
+.tipCard span {
+  color: #65799d;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.capabilityPanel {
+  margin-bottom: 16px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: #f8fbff;
+}
+
+.capabilityPanel strong {
+  display: block;
+  margin-bottom: 10px;
+  color: #15305c;
+  font-size: 14px;
+}
+
+.switchGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 4px 16px;
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+@media (max-width: 860px) {
+  .gridTwo,
+  .gridThree,
+  .switchGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

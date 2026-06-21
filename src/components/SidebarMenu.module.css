@@ -1,0 +1,246 @@
+.sidebar {
+  width: var(--sidebar-width);
+  padding: clamp(18px, 1.4vw, 24px) clamp(14px, 1vw, 18px) clamp(16px, 1.1vw, 20px);
+  border-right: 1px solid rgba(74, 116, 209, 0.09);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.94) 0%, rgba(244, 248, 255, 0.92) 100%);
+  box-shadow: inset -1px 0 0 rgba(255, 255, 255, 0.7);
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  backdrop-filter: blur(18px);
+}
+
+.collapsed {
+  width: var(--sidebar-collapsed-width);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 54px;
+  margin-bottom: clamp(18px, 1.6vw, 26px);
+}
+
+.logoMark {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: var(--primary);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  border: 2px solid rgba(37, 99, 255, 0.26);
+  background:
+    radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.95), rgba(225, 238, 255, 0.85));
+  position: relative;
+}
+
+.logoMark::before,
+.logoMark::after {
+  content: '';
+  position: absolute;
+  height: 2px;
+  width: 10px;
+  background: rgba(37, 99, 255, 0.7);
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.logoMark::before {
+  left: -7px;
+}
+
+.logoMark::after {
+  right: -7px;
+}
+
+.brandText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.brandText strong {
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--text-strong);
+}
+
+.brandText span {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(6px, 0.55vw, 8px);
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: clamp(44px, 3vw, 48px);
+  padding: 0 clamp(11px, 0.9vw, 14px);
+  border-radius: 14px;
+  color: var(--text-secondary);
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.navItem:hover {
+  transform: translateX(2px);
+  background: rgba(241, 246, 255, 0.95);
+  color: var(--text-main);
+}
+
+.navItemActive {
+  color: var(--primary);
+  background: linear-gradient(90deg, rgba(228, 238, 255, 0.96), rgba(240, 246, 255, 0.9));
+  box-shadow: inset 0 0 0 1px rgba(37, 99, 255, 0.08);
+}
+
+.navIcon {
+  width: 22px;
+  display: grid;
+  place-items: center;
+  font-size: 20px;
+}
+
+.navLabel {
+  font-size: clamp(14px, 0.92vw, 15px);
+  font-weight: 500;
+}
+
+.footerCard {
+  margin-top: auto;
+  padding: clamp(14px, 1vw, 18px) clamp(12px, 0.9vw, 14px) 14px;
+  border-radius: 18px;
+  background:
+    linear-gradient(180deg, rgba(251, 253, 255, 0.96), rgba(240, 246, 255, 0.96));
+  border: 1px solid rgba(48, 96, 214, 0.08);
+  color: var(--text-secondary);
+}
+
+.footerIllustration {
+  height: clamp(82px, 6.2vw, 100px);
+  border-radius: 16px;
+  position: relative;
+  margin-bottom: 14px;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 76%, rgba(62, 121, 255, 0.14), transparent 36%),
+    linear-gradient(180deg, rgba(248, 251, 255, 0.96), rgba(237, 244, 255, 0.95));
+}
+
+.footerIllustration::before,
+.footerIllustration::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid rgba(65, 122, 255, 0.08);
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.footerIllustration::before {
+  width: 90px;
+  height: 90px;
+  bottom: -40px;
+}
+
+.footerIllustration::after {
+  width: 130px;
+  height: 130px;
+  bottom: -62px;
+}
+
+.footerDevice {
+  position: absolute;
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  left: 18px;
+  top: 20px;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 12px;
+  background: linear-gradient(135deg, #4a8aff 0%, #7db8ff 100%);
+  box-shadow: 0 12px 24px rgba(37, 99, 255, 0.2);
+}
+
+.footerPlay {
+  position: absolute;
+  width: 52px;
+  height: 52px;
+  right: 18px;
+  top: 26px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #78a9ff 0%, #4b86ff 100%);
+  box-shadow: 0 12px 24px rgba(37, 99, 255, 0.18);
+}
+
+.footerPlay::before {
+  content: '';
+  position: absolute;
+  left: 21px;
+  top: 16px;
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  border-left: 15px solid #ffffff;
+}
+
+.footerCard strong,
+.footerCard span,
+.footerCard small {
+  display: block;
+}
+
+.footerCard strong {
+  color: var(--text-main);
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.footerCard span {
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.footerCard small {
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+@media (max-width: 1366px) {
+  .footerCard {
+    display: none;
+  }
+}
+
+.collapsed .brand,
+.collapsed .navItem,
+.collapsed .footerCard {
+  justify-content: center;
+}
+
+.collapsed .footerCard {
+  padding: 12px 10px;
+}
+
+.collapsed .footerIllustration {
+  margin-bottom: 0;
+}

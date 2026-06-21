@@ -1,0 +1,161 @@
+.header {
+  height: 84px;
+  padding: 16px var(--layout-gutter) 12px;
+  display: flex;
+  align-items: center;
+  gap: clamp(12px, 1vw, 18px);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  backdrop-filter: blur(18px);
+  background: linear-gradient(180deg, rgba(248, 251, 255, 0.92), rgba(248, 251, 255, 0.72));
+  border-bottom: 1px solid rgba(74, 116, 209, 0.08);
+}
+
+.leftArea {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 0 0 auto;
+}
+
+.toggleButton,
+.iconButton,
+.userButton {
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.toggleButton {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  color: var(--text-secondary);
+  font-size: 20px;
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow: inset 0 0 0 1px rgba(37, 99, 255, 0.06);
+  transition:
+    color 0.2s ease,
+    transform 0.2s ease,
+    background 0.2s ease;
+}
+
+.toggleButton:hover {
+  color: var(--primary);
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.contextLabel {
+  color: var(--text-main);
+  font-size: 15px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.searchWrap {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.searchInput {
+  width: min(40vw, 640px);
+}
+
+.searchInput :global(.ant-input-affix-wrapper) {
+  border-radius: 18px;
+  padding-inline: 18px;
+  height: 46px;
+  border-color: rgba(55, 102, 208, 0.12);
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: var(--shadow-card);
+}
+
+.searchInput :global(.ant-input-affix-wrapper:hover),
+.searchInput :global(.ant-input-affix-wrapper-focused) {
+  border-color: rgba(37, 99, 255, 0.3);
+  box-shadow:
+    0 12px 24px rgba(32, 86, 196, 0.08),
+    0 0 0 3px rgba(37, 99, 255, 0.08);
+}
+
+.searchIcon {
+  color: #91a1c5;
+  font-size: 16px;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: clamp(10px, 0.85vw, 14px);
+}
+
+.iconButton {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  color: var(--text-secondary);
+  font-size: 20px;
+  background: rgba(255, 255, 255, 0.78);
+  box-shadow: inset 0 0 0 1px rgba(37, 99, 255, 0.06);
+}
+
+.iconButton:hover {
+  color: var(--primary);
+}
+
+.userButton {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 10px 8px 8px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: var(--shadow-card);
+}
+
+.avatar {
+  background: linear-gradient(135deg, #4c88ff 0%, #6ab8ff 100%);
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.userMeta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+
+.userMeta strong {
+  font-size: 15px;
+  color: var(--text-strong);
+}
+
+.userMeta small {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.arrow {
+  color: #7f8fb3;
+  font-size: 12px;
+}
+
+@media (max-width: 1366px) {
+  .header {
+    height: 76px;
+  }
+
+  .searchInput {
+    width: min(36vw, 520px);
+  }
+
+  .userMeta small {
+    display: none;
+  }
+}

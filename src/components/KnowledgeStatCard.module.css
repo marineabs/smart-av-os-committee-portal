@@ -1,0 +1,65 @@
+.card {
+  min-height: 108px;
+  padding: 18px 18px 16px;
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: #ffffff;
+  border: 1px solid rgba(62, 102, 205, 0.08);
+  box-shadow: 0 10px 28px rgba(37, 87, 190, 0.08);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+  container-type: inline-size;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 32px rgba(37, 87, 190, 0.12);
+}
+
+.iconWrap {
+  width: 54px;
+  height: 54px;
+  border-radius: 18px;
+  display: grid;
+  place-items: center;
+  color: #ffffff;
+  font-size: 24px;
+  flex: 0 0 auto;
+}
+
+.body {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.title {
+  color: #62779e;
+  font-size: clamp(13px, 7cqi, 15px);
+}
+
+.valueRow {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.valueRow strong {
+  color: #142c59;
+  font-size: clamp(24px, 18cqi, 36px);
+  line-height: 1;
+}
+
+.valueRow span {
+  color: #62779e;
+  font-size: clamp(13px, 8cqi, 16px);
+}
+
+.delta {
+  color: #18ad68;
+  font-size: clamp(12px, 6.8cqi, 13px);
+}

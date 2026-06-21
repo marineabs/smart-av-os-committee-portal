@@ -1,0 +1,61 @@
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.header h3 {
+  margin: 0 0 12px;
+  color: #18325d;
+  font-size: 24px;
+}
+
+.metaRow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.detailGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.detailGrid div {
+  padding: 14px;
+  border-radius: 14px;
+  background: #f7faff;
+}
+
+.detailGrid span {
+  display: block;
+  color: #7b8ca9;
+  font-size: 12px;
+  margin-bottom: 8px;
+}
+
+.detailGrid strong {
+  color: #20365e;
+  font-size: 14px;
+}
+
+.previewBox {
+  min-height: 280px;
+  border-radius: 18px;
+  display: grid;
+  place-items: center;
+  color: #6d7fa2;
+  font-size: 16px;
+  background:
+    radial-gradient(circle at top right, rgba(89, 151, 255, 0.14), transparent 24%),
+    linear-gradient(180deg, #fbfdff, #f4f8ff);
+  border: 1px dashed rgba(64, 112, 222, 0.22);
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}

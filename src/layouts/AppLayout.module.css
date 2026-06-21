@@ -1,0 +1,19 @@
+.shell {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  min-height: 100vh;
+  position: relative;
+  max-width: var(--shell-max-width);
+  margin: 0 auto;
+}
+
+.mainPane {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.content {
+  flex: 1;
+  padding: var(--layout-gutter) var(--layout-gutter) calc(var(--layout-gutter) + 8px);
+}

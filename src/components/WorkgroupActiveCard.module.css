@@ -1,0 +1,49 @@
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.rank {
+  width: 22px;
+  height: 22px;
+  border-radius: 7px;
+  display: grid;
+  place-items: center;
+  color: #ffffff;
+  background: linear-gradient(135deg, #2d74ff, #61a2ff);
+  font-size: 12px;
+  font-weight: 700;
+  flex: 0 0 auto;
+}
+
+.body {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.body strong {
+  color: #22385f;
+  font-size: 14px;
+}
+
+.body small {
+  color: #8796b2;
+  font-size: 12px;
+}
+
+.score {
+  color: #2d73ff;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}

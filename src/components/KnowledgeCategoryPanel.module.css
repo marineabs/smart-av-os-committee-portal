@@ -1,0 +1,136 @@
+.panel {
+  padding: 18px 16px;
+  border-radius: 18px;
+  background: #ffffff;
+  border: 1px solid rgba(67, 109, 211, 0.08);
+  box-shadow: 0 10px 26px rgba(36, 82, 184, 0.08);
+}
+
+.header,
+.topicHeader,
+.sectionTitle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header {
+  margin-bottom: 16px;
+}
+
+.header h2 {
+  margin: 0;
+  color: #142c59;
+  font-size: 18px;
+}
+
+.iconButton {
+  width: 28px;
+  height: 28px;
+  border: 0;
+  border-radius: 10px;
+  background: rgba(240, 245, 255, 0.96);
+  color: #6b7ea3;
+  cursor: pointer;
+}
+
+.sectionTitle {
+  height: 42px;
+  padding: 0 12px;
+  border-radius: 12px;
+  color: #2d6ef4;
+  background: rgba(239, 245, 255, 0.9);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.sectionTitle span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.categoryList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.categoryItem {
+  min-height: 40px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #4c628d;
+  cursor: pointer;
+}
+
+.categoryItem:hover {
+  background: rgba(244, 248, 255, 0.92);
+}
+
+.categoryItemActive {
+  color: #0b4dff;
+  background: rgba(238, 245, 255, 0.96);
+}
+
+.categoryLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.categoryItem small {
+  color: #9aa7c2;
+  font-size: 12px;
+}
+
+.topicBlock {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(74, 118, 214, 0.08);
+}
+
+.topicHeader strong {
+  color: #142c59;
+  font-size: 16px;
+}
+
+.topicList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.topicItem {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: #53698f;
+  cursor: pointer;
+  text-align: left;
+  font-size: 14px;
+}
+
+.topicItemActive {
+  color: #0b4dff;
+}
+
+.topicDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #2d73ff;
+  box-shadow: 0 0 0 3px rgba(45, 115, 255, 0.12);
+}
