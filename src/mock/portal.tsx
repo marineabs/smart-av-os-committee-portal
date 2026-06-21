@@ -10,7 +10,7 @@ import {
   FolderOpenOutlined,
   FormOutlined,
   FundProjectionScreenOutlined,
-  NotificationOutlined,
+  MessageOutlined,
   ReadOutlined,
   SafetyCertificateOutlined,
   ScheduleOutlined,
@@ -18,7 +18,6 @@ import {
 } from '@ant-design/icons'
 import type {
   ActivityItem,
-  DocumentItem,
   HeroAction,
   HeroFloatingTag,
   NavItem,
@@ -27,6 +26,9 @@ import type {
   StatisticItem,
   UserProfile,
 } from '../types/portal'
+import { latestDocuments } from './files'
+import { latestNotices } from './notices'
+export { latestDocuments, latestNotices }
 
 export const platformTitle = '智慧视听操作系统专委会'
 export const platformSubtitle = '协同工作平台'
@@ -121,22 +123,6 @@ export const statistics: StatisticItem[] = [
     icon: <ReadOutlined />,
     accent: 'linear-gradient(135deg, #14b864 0%, #42d58d 100%)',
   },
-]
-
-export const latestNotices = [
-  { title: '关于召开技术标准组第五次工作会议的通知', date: '05-19' },
-  { title: '智慧视听操作系统接口规范草案（V0.5）征求意见通知', date: '05-18' },
-  { title: '关于组织开展2025年测试认证方案评审的通知', date: '05-16' },
-  { title: '专委会2025年上半年工作总结和下半年计划', date: '05-15' },
-  { title: '关于补充征集标准项目建议的通知', date: '05-14' },
-]
-
-export const latestDocuments: DocumentItem[] = [
-  { title: '智慧视听操作系统总体架构方案 V1.0', date: '05-20', type: 'pdf' },
-  { title: '接口规范草案 V0.5', date: '05-19', type: 'word' },
-  { title: '一体化电视终端适配技术方案', date: '05-18', type: 'pdf' },
-  { title: '测试认证报告（2025Q1）', date: '05-16', type: 'excel' },
-  { title: '技术标准组第四次工作会议纪要', date: '05-14', type: 'minutes' },
 ]
 
 export const workgroupActivities: ActivityItem[] = [
@@ -291,7 +277,7 @@ export const placeholderHighlights = [
   { label: '协同治理', icon: <TeamOutlined /> },
   { label: '资料沉淀', icon: <BookOutlined /> },
   { label: '搜索联动', icon: <FileSearchOutlined /> },
-  { label: '通知触达', icon: <NotificationOutlined /> },
+  { label: '通知触达', icon: <MessageOutlined /> },
   { label: '成果展示', icon: <FundProjectionScreenOutlined /> },
   { label: '测试认证', icon: <SafetyCertificateOutlined /> },
 ]

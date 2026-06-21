@@ -2,11 +2,10 @@
   display: grid;
   grid-template-columns: minmax(0, 1.05fr) minmax(380px, 0.95fr);
   gap: 20px;
-  padding: 28px 28px 24px;
+  padding: 30px 30px 28px;
+  min-height: 312px;
   border-radius: 24px;
-  background:
-    radial-gradient(circle at right top, rgba(98, 166, 255, 0.16), transparent 24%),
-    linear-gradient(135deg, rgba(250, 252, 255, 0.98), rgba(237, 245, 255, 0.96));
+  background: url('../assets/workgroup-hero-banner.png') center right / cover no-repeat;
   border: 1px solid rgba(68, 115, 221, 0.08);
   box-shadow: 0 14px 36px rgba(34, 82, 188, 0.08);
 }
@@ -15,6 +14,7 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+  min-height: 252px;
 }
 
 .copy h1 {
@@ -48,7 +48,7 @@
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 18px;
+  justify-content: flex-start;
 }
 
 .actionRow {
@@ -57,158 +57,56 @@
   flex-wrap: wrap;
 }
 
-.illustration {
-  position: relative;
-  width: 100%;
-  min-height: 220px;
-  border-radius: 22px;
-  overflow: hidden;
-  background:
-    radial-gradient(circle at 45% 65%, rgba(79, 145, 255, 0.16), transparent 28%),
-    linear-gradient(180deg, rgba(249, 252, 255, 0.98), rgba(235, 244, 255, 0.94));
-}
-
-.illustration::before,
-.illustration::after {
-  content: '';
-  position: absolute;
-  border-radius: 999px;
-  border: 1px solid rgba(71, 125, 236, 0.12);
-}
-
-.illustration::before {
-  left: 76px;
-  right: 84px;
-  bottom: 18px;
-  height: 68px;
-}
-
-.illustration::after {
-  inset: 16px 22px auto auto;
-  width: 220px;
-  height: 120px;
-}
-
-.coreChip,
-.screenCard,
-.aiCube,
-.sideModule,
-.remote {
-  position: absolute;
-  box-shadow: 0 18px 30px rgba(37, 88, 195, 0.14);
-}
-
-.coreChip {
-  left: 86px;
-  top: 74px;
-  width: 112px;
-  height: 112px;
-  border-radius: 24px;
-  display: grid;
-  place-items: center;
-  color: #ffffff;
-  font-size: 34px;
-  font-weight: 800;
-  background: linear-gradient(135deg, #2d74ff, #68a5ff);
-}
-
-.screenCard {
-  left: 272px;
-  top: 74px;
-  width: 148px;
-  height: 108px;
-  border-radius: 24px;
-  background:
-    linear-gradient(135deg, #2a73ff 0%, #73bbff 100%);
-}
-
-.screenCard::before {
-  content: '';
-  position: absolute;
-  inset: 14px;
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.16);
-}
-
-.playTriangle {
-  position: absolute;
-  left: 63px;
-  top: 42px;
-  width: 0;
-  height: 0;
-  border-top: 14px solid transparent;
-  border-bottom: 14px solid transparent;
-  border-left: 22px solid #ffffff;
-}
-
-.aiCube {
-  right: 54px;
-  top: 86px;
-  width: 86px;
-  height: 86px;
-  border-radius: 22px;
-  display: grid;
-  place-items: center;
-  color: #ffffff;
-  font-size: 30px;
-  font-weight: 800;
-  background: linear-gradient(135deg, #5f7dff, #8dc3ff);
-}
-
-.sideModule {
-  left: 250px;
-  top: 156px;
-  width: 74px;
-  height: 54px;
-  border-radius: 18px;
-  display: grid;
-  place-items: center;
-  color: #ffffff;
-  font-size: 14px;
-  font-weight: 700;
-  background: linear-gradient(135deg, #3c7cff, #68b4ff);
-}
-
-.remote {
-  left: 210px;
-  top: 58px;
-  width: 28px;
-  height: 96px;
+.actionRow :global(.ant-btn) {
+  height: 40px;
+  padding: 0 18px;
   border-radius: 14px;
-  background: linear-gradient(180deg, #356fff, #79b5ff);
+  font-weight: 700;
+  box-shadow: 0 10px 22px rgba(42, 84, 166, 0.12);
 }
 
-.path {
-  position: absolute;
-  left: 108px;
-  right: 68px;
-  bottom: 72px;
-  height: 2px;
-  background: linear-gradient(90deg, rgba(57, 112, 255, 0.06), rgba(57, 112, 255, 0.32), rgba(57, 112, 255, 0.06));
+.createButton:global(.ant-btn.ant-btn-primary) {
+  border-color: #ef8b1e;
+  background: linear-gradient(135deg, #f59a23, #ef7f1a);
 }
 
-.nodeRow {
-  position: absolute;
-  right: 46px;
-  top: 40px;
-  display: flex;
-  gap: 14px;
+.createButton:global(.ant-btn.ant-btn-primary):hover,
+.createButton:global(.ant-btn.ant-btn-primary):focus {
+  border-color: #f7a43c;
+  background: linear-gradient(135deg, #f7a43c, #f08a24);
 }
 
-.nodeRow span {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: #8db5ff;
-  box-shadow: 0 0 0 4px rgba(141, 181, 255, 0.12);
+.manageButton:global(.ant-btn.ant-btn-default) {
+  color: #168a52;
+  border-color: rgba(22, 138, 82, 0.26);
+  background: rgba(237, 250, 243, 0.96);
+}
+
+.manageButton:global(.ant-btn.ant-btn-default):hover,
+.manageButton:global(.ant-btn.ant-btn-default):focus {
+  color: #0f7c49;
+  border-color: rgba(22, 138, 82, 0.42);
+  background: rgba(228, 246, 236, 0.98);
 }
 
 @media (max-width: 1460px) {
   .hero {
     grid-template-columns: minmax(0, 1fr);
+    background-position: center;
   }
 
   .visual {
-    align-items: stretch;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 900px) {
+  .hero {
+    padding: 24px 20px;
+    background: url('../assets/workgroup-hero-banner.png') 68% center / cover no-repeat;
+  }
+
+  .copy {
+    min-height: auto;
   }
 }

@@ -19,7 +19,7 @@ function App() {
       }}
     >
       <AntdApp>
-        <BrowserRouter>
+        <BrowserRouter basename={import.meta.env.BASE_URL}>
           <AppRouter />
         </BrowserRouter>
       </AntdApp>

@@ -1,0 +1,41 @@
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.item {
+  width: 100%;
+  border: 0;
+  border-radius: 14px;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(245, 248, 255, 0.78);
+  color: #5e739b;
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease;
+}
+
+.item:hover {
+  transform: translateX(2px);
+  background: rgba(237, 244, 255, 0.98);
+}
+
+.item span {
+  font-size: 14px;
+}
+
+.item strong {
+  min-width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  color: #ff6f71;
+  font-size: 12px;
+  background: rgba(255, 240, 241, 0.96);
+}

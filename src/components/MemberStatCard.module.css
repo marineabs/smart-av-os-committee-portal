@@ -25,9 +25,9 @@
   border-radius: 14px;
   display: grid;
   place-items: center;
+  flex: 0 0 auto;
   color: #ffffff;
   font-size: 21px;
-  flex: 0 0 auto;
 }
 
 .body {
@@ -50,7 +50,7 @@
 }
 
 .valueRow strong {
-  color: #142c59;
+  color: #162f5f;
   font-size: 28px;
   font-weight: 650;
   line-height: 1;

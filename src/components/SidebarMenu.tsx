@@ -11,8 +11,9 @@ import {
   UsergroupAddOutlined,
 } from '@ant-design/icons'
 import { NavLink } from 'react-router-dom'
-import { navItems, platformSubtitle, platformTitle } from '../mock/portal'
 import type { ReactNode } from 'react'
+import sidebarFooterIllustration from '../assets/sidebar-footer-illustration.png'
+import { navItems, platformSubtitle, platformTitle } from '../mock/portal'
 import type { NavIconKey } from '../types/portal'
 import styles from './SidebarMenu.module.css'
 
@@ -45,9 +46,6 @@ function SidebarMenu({
   return (
     <aside className={`${styles.sidebar} ${collapsed ? styles.collapsed : ''}`}>
       <div className={styles.brand}>
-        <div className={styles.logoMark}>
-          <span>OS</span>
-        </div>
         {!collapsed && (
           <div className={styles.brandText}>
             <strong>{platformTitle}</strong>
@@ -72,14 +70,16 @@ function SidebarMenu({
 
       <div className={styles.footerCard}>
         <div className={styles.footerIllustration}>
-          <div className={styles.footerDevice}>OS</div>
-          <div className={styles.footerPlay} />
+          <img src={sidebarFooterIllustration} alt="" />
         </div>
         {!collapsed && (
           <>
             <strong>{footerCaption}</strong>
             <span>{footerTitle}</span>
             <small>{versionLabel}</small>
+            <NavLink to="/login" className={styles.demoLink}>
+              演示登录入口
+            </NavLink>
           </>
         )}
       </div>

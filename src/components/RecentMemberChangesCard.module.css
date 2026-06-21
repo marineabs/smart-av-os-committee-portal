@@ -1,0 +1,40 @@
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.item {
+  display: grid;
+  grid-template-columns: 10px minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: start;
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  margin-top: 7px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2f79ff 0%, #66abff 100%);
+  box-shadow: 0 0 0 4px rgba(47, 121, 255, 0.12);
+}
+
+.body {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.body strong {
+  color: #20365e;
+  font-size: 14px;
+}
+
+.body span,
+.item small {
+  color: #7588aa;
+  font-size: 12px;
+  line-height: 1.6;
+}

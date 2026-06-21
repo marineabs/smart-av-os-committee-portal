@@ -48,30 +48,18 @@ function WorkgroupHero({
       <div className={styles.visual}>
         <div className={styles.actionRow}>
           {canCreateGroup ? (
-            <Button type="primary" icon={<PlusCircleOutlined />} onClick={onCreateGroup}>
+            <Button
+              type="primary"
+              className={styles.createButton}
+              icon={<PlusCircleOutlined />}
+              onClick={onCreateGroup}
+            >
               {createButtonLabel}
             </Button>
           ) : null}
-          <Button icon={<TeamOutlined />} onClick={onManageMembers}>
+          <Button className={styles.manageButton} icon={<TeamOutlined />} onClick={onManageMembers}>
             工作组管理
           </Button>
-        </div>
-
-        <div className={styles.illustration}>
-          <div className={styles.coreChip}>OS</div>
-          <div className={styles.screenCard}>
-            <div className={styles.playTriangle} />
-          </div>
-          <div className={styles.aiCube}>AI</div>
-          <div className={styles.sideModule}>MEDIA</div>
-          <div className={styles.remote} />
-          <div className={styles.path} />
-          <div className={styles.nodeRow}>
-            <span />
-            <span />
-            <span />
-            <span />
-          </div>
         </div>
       </div>
     </section>

@@ -1,0 +1,50 @@
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-top: 6px;
+}
+
+.uploadBox {
+  min-height: 184px;
+  border: 1px dashed rgba(58, 116, 232, 0.28);
+  border-radius: 18px;
+  display: grid;
+  place-items: center;
+  gap: 8px;
+  text-align: center;
+  color: #6a7d9f;
+  background: linear-gradient(180deg, rgba(249, 252, 255, 0.96), rgba(239, 246, 255, 0.96));
+}
+
+.uploadBox svg {
+  color: #2f79ff;
+  font-size: 34px;
+}
+
+.uploadBox strong {
+  color: #1b325d;
+  font-size: 16px;
+}
+
+.noteCard {
+  padding: 16px 18px;
+  border-radius: 16px;
+  background: rgba(245, 248, 255, 0.82);
+  border: 1px solid rgba(67, 109, 211, 0.08);
+}
+
+.noteCard h4 {
+  margin: 0 0 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #1b325d;
+}
+
+.noteCard ul {
+  margin: 0;
+  padding-left: 18px;
+  color: #6a7d9f;
+  line-height: 1.8;
+}

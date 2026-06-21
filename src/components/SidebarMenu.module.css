@@ -20,44 +20,8 @@
 .brand {
   display: flex;
   align-items: center;
-  gap: 14px;
   min-height: 54px;
   margin-bottom: clamp(18px, 1.6vw, 26px);
-}
-
-.logoMark {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  color: var(--primary);
-  font-size: 13px;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  border: 2px solid rgba(37, 99, 255, 0.26);
-  background:
-    radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.95), rgba(225, 238, 255, 0.85));
-  position: relative;
-}
-
-.logoMark::before,
-.logoMark::after {
-  content: '';
-  position: absolute;
-  height: 2px;
-  width: 10px;
-  background: rgba(37, 99, 255, 0.7);
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-.logoMark::before {
-  left: -7px;
-}
-
-.logoMark::after {
-  right: -7px;
 }
 
 .brandText {
@@ -139,68 +103,14 @@
   position: relative;
   margin-bottom: 14px;
   overflow: hidden;
-  background:
-    radial-gradient(circle at 50% 76%, rgba(62, 121, 255, 0.14), transparent 36%),
-    linear-gradient(180deg, rgba(248, 251, 255, 0.96), rgba(237, 244, 255, 0.95));
+  background: rgba(247, 250, 255, 0.92);
 }
 
-.footerIllustration::before,
-.footerIllustration::after {
-  content: '';
-  position: absolute;
-  border-radius: 50%;
-  border: 1px solid rgba(65, 122, 255, 0.08);
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-.footerIllustration::before {
-  width: 90px;
-  height: 90px;
-  bottom: -40px;
-}
-
-.footerIllustration::after {
-  width: 130px;
-  height: 130px;
-  bottom: -62px;
-}
-
-.footerDevice {
-  position: absolute;
-  width: 36px;
-  height: 36px;
-  border-radius: 12px;
-  display: grid;
-  place-items: center;
-  left: 18px;
-  top: 20px;
-  color: #ffffff;
-  font-weight: 700;
-  font-size: 12px;
-  background: linear-gradient(135deg, #4a8aff 0%, #7db8ff 100%);
-  box-shadow: 0 12px 24px rgba(37, 99, 255, 0.2);
-}
-
-.footerPlay {
-  position: absolute;
-  width: 52px;
-  height: 52px;
-  right: 18px;
-  top: 26px;
-  border-radius: 16px;
-  background: linear-gradient(135deg, #78a9ff 0%, #4b86ff 100%);
-  box-shadow: 0 12px 24px rgba(37, 99, 255, 0.18);
-}
-
-.footerPlay::before {
-  content: '';
-  position: absolute;
-  left: 21px;
-  top: 16px;
-  border-top: 10px solid transparent;
-  border-bottom: 10px solid transparent;
-  border-left: 15px solid #ffffff;
+.footerIllustration img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
 }
 
 .footerCard strong,
@@ -223,6 +133,19 @@
 .footerCard small {
   font-size: 12px;
   color: var(--text-light);
+}
+
+.demoLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  margin-top: 12px;
+  border-radius: 12px;
+  color: var(--primary);
+  background: rgba(37, 99, 255, 0.08);
+  font-size: 13px;
+  font-weight: 600;
 }
 
 @media (max-width: 1366px) {

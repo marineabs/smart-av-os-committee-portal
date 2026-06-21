@@ -258,6 +258,178 @@ export interface WorkgroupActiveItem {
   hint: string
 }
 
+export type MemberUnitStatus = '正常' | '待审核' | '暂停' | '退出' | '信息变更中'
+export type MemberQuickFilter =
+  | 'all'
+  | 'mine'
+  | 'incomplete'
+  | 'new'
+  | 'contact'
+  | 'standard'
+  | 'pending'
+
+export interface MemberStatItem {
+  title: string
+  value: string
+  unit: string
+  delta: string
+  icon: ReactNode
+  accent: string
+}
+
+export interface MemberCategoryDefinition {
+  id: string
+  label: string
+  count: number
+}
+
+export interface MemberCapabilityDefinition {
+  id: string
+  label: string
+  count: number
+}
+
+export interface MemberContact {
+  id: string
+  role: string
+  name: string
+  title: string
+  phone: string
+  email: string
+  accountStatus: '已启用' | '待开通' | '暂停'
+}
+
+export interface MemberWorkgroupParticipation {
+  id: string
+  name: string
+  role: string
+  liaison: string
+  joinedAt: string
+  recentActivity: string
+}
+
+export interface MemberMeetingRecord {
+  id: string
+  title: string
+  workgroup: string
+  attendee: string
+  time: string
+  checkedIn: boolean
+  minutes: string
+}
+
+export interface MemberFileRecord {
+  id: string
+  title: string
+  type: '方案' | '标准草案' | '测试报告' | '纪要' | '说明材料'
+  workgroup: string
+  uploadedAt: string
+  status: string
+}
+
+export interface MemberTaskRecord {
+  id: string
+  title: string
+  owner: string
+  deadline: string
+  status: '进行中' | '待反馈' | '已完成' | '待确认'
+  completion: number
+}
+
+export interface MemberAccountRecord {
+  id: string
+  accountName: string
+  role: string
+  enabled: boolean
+  authorizedGroups: string[]
+  scope: string
+  temporaryAccess?: string
+  lastChanged: string
+}
+
+export interface MemberChangeRecord {
+  id: string
+  type: string
+  summary: string
+  operator: string
+  time: string
+}
+
+export interface MemberUnit {
+  id: string
+  name: string
+  shortName: string
+  logoText: string
+  accent: string
+  organizationType: string
+  memberCategory: string
+  memberCategoryId: string
+  committee: string
+  workgroups: string[]
+  primaryContact: string
+  primaryContactTitle: string
+  status: MemberUnitStatus
+  completeness: number
+  recentParticipation: string
+  capabilityTags: string[]
+  accountEnabled: boolean
+  ownedByCurrentUser: boolean
+  addedThisMonth: boolean
+  hasContactChange: boolean
+  standardProjectParticipant: boolean
+  description: string
+  address: string
+  website: string
+  contacts: MemberContact[]
+  participations: MemberWorkgroupParticipation[]
+  meetings: MemberMeetingRecord[]
+  files: MemberFileRecord[]
+  tasks: MemberTaskRecord[]
+  accounts: MemberAccountRecord[]
+  changes: MemberChangeRecord[]
+}
+
+export interface MemberFilterOptions {
+  memberCategories: string[]
+  organizationTypes: string[]
+  committees: string[]
+  workgroups: string[]
+  statuses: MemberUnitStatus[]
+  capabilities: string[]
+  accountStates: Array<'全部' | '已启用' | '未启用'>
+  completenessLevels: Array<'全部' | '90%以上' | '70% - 89%' | '70%以下'>
+}
+
+export interface MemberPendingActionItem {
+  id: string
+  label: string
+  count: number
+}
+
+export interface MemberRecentChangeItem {
+  id: string
+  title: string
+  summary: string
+  time: string
+}
+
+export interface MemberActiveUnitItem {
+  id: string
+  name: string
+  score: number
+  metrics: string
+}
+
+export interface MemberStatusGuideItem {
+  status: MemberUnitStatus
+  description: string
+}
+
+export interface MemberPermissionGuideItem {
+  category: string
+  description: string
+}
+
 export interface WorkgroupUnitOption {
   capabilities: string[]
   label: string

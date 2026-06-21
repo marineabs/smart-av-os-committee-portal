@@ -428,7 +428,7 @@ function NewWorkgroupDrawer({ creationMode, open, onClose, onCreated }: NewWorkg
                     <Input placeholder="例如：张伟 / 010-6888 1023" />
                   </Form.Item>
                   <Form.Item label="工作组联系人" name="groupContact" rules={[{ required: true, message: '请输入工作组联系人' }]}>
-                    <Input placeholder="例如：王晨 / 广科院" />
+                    <Input placeholder="例如：王晨 / 星河视研院" />
                   </Form.Item>
                 </div>
 

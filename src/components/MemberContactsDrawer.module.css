@@ -1,0 +1,45 @@
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.card {
+  padding: 16px;
+  border-radius: 18px;
+  background: rgba(245, 248, 255, 0.82);
+  border: 1px solid rgba(67, 109, 211, 0.08);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.header strong {
+  color: #1b325d;
+  font-size: 16px;
+}
+
+.header span {
+  padding: 4px 10px;
+  border-radius: 999px;
+  color: #2f6df3;
+  background: rgba(232, 241, 255, 0.96);
+  font-size: 12px;
+}
+
+.meta {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: #6a7d9f;
+  font-size: 13px;
+}
+
+.meta small {
+  color: #8c9ab4;
+}

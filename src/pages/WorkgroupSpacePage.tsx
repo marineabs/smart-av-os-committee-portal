@@ -149,7 +149,7 @@ function WorkgroupSpacePage() {
           onClose={() => setShowCreateDrawer(false)}
           onCreated={(group: WorkgroupCardItem) => {
             setGroupList((current) => [group, ...current])
-            setShowCreateDrawer(true)
+            setShowCreateDrawer(false)
             message.success(
               creationMode === 'application'
                 ? '工作组申请已提交，已加入列表等待审核'

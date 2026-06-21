@@ -1,0 +1,120 @@
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.panel {
+  padding: 16px;
+  border-radius: 18px;
+  background: #ffffff;
+  border: 1px solid rgba(67, 109, 211, 0.08);
+  box-shadow: 0 10px 24px rgba(38, 84, 185, 0.08);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.header h2 {
+  margin: 0;
+  color: #1b325d;
+  font-size: 18px;
+}
+
+.iconButton {
+  width: 30px;
+  height: 30px;
+  border: 0;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  background: rgba(241, 246, 255, 0.86);
+  color: #7687a8;
+  cursor: pointer;
+}
+
+.sectionTitle {
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #5f739b;
+  font-size: 13px;
+}
+
+.sectionTitle span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.list,
+.tagList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.item,
+.tagItem {
+  width: 100%;
+  border: 0;
+  border-radius: 14px;
+  padding: 11px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: #53698f;
+  background: rgba(245, 248, 255, 0.72);
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.item:hover,
+.tagItem:hover {
+  transform: translateX(2px);
+  background: rgba(237, 244, 255, 0.96);
+}
+
+.itemActive,
+.tagItemActive {
+  color: #1f61f5;
+  background: linear-gradient(90deg, rgba(228, 238, 255, 0.96), rgba(240, 246, 255, 0.9));
+  box-shadow: inset 0 0 0 1px rgba(37, 99, 255, 0.08);
+}
+
+.label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.item small,
+.tagItem small {
+  color: #7184a7;
+  font-size: 13px;
+}
+
+.tagItem {
+  justify-content: flex-start;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2f79ff 0%, #6db0ff 100%);
+  box-shadow: 0 0 0 3px rgba(47, 121, 255, 0.12);
+  flex: 0 0 auto;
+}

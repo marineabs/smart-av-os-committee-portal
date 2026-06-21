@@ -1,0 +1,254 @@
+.drawer :global(.ant-drawer-body) {
+  padding-top: 10px;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.heroCard {
+  padding: 18px 20px;
+  border-radius: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  background:
+    radial-gradient(circle at right top, rgba(106, 169, 255, 0.16), transparent 28%),
+    linear-gradient(135deg, rgba(250, 252, 255, 0.98), rgba(239, 246, 255, 0.96));
+  border: 1px solid rgba(67, 112, 218, 0.08);
+}
+
+.heroIdentity {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.logo {
+  width: 52px;
+  height: 52px;
+  border-radius: 18px;
+  display: grid;
+  place-items: center;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 700;
+  box-shadow: 0 12px 24px rgba(42, 95, 207, 0.18);
+}
+
+.heroIdentity h3 {
+  margin: 0;
+  color: #183767;
+  font-size: 24px;
+}
+
+.heroIdentity p {
+  margin: 6px 0 0;
+  color: #6b7ea0;
+}
+
+.heroMeta {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.completeness {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-end;
+}
+
+.completeness span {
+  color: #7084a7;
+  font-size: 12px;
+}
+
+.completeness strong {
+  color: #183767;
+  font-size: 22px;
+}
+
+.sectionStack,
+.listCards,
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.infoGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.infoGrid div,
+.cardSection,
+.contactCard,
+.taskCard,
+.accountCard {
+  padding: 16px;
+  border-radius: 18px;
+  background: rgba(245, 248, 255, 0.82);
+  border: 1px solid rgba(67, 109, 211, 0.08);
+}
+
+.infoGrid span,
+.cardSection h4,
+.contactMeta,
+.taskMeta,
+.accountMeta {
+  color: #6b7ea0;
+}
+
+.infoGrid span {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 12px;
+}
+
+.infoGrid strong {
+  color: #1d355f;
+  font-size: 14px;
+}
+
+.cardSection h4 {
+  margin: 0 0 10px;
+  color: #1d355f;
+  font-size: 16px;
+}
+
+.cardSection p {
+  margin: 0;
+  color: #677b9d;
+  line-height: 1.8;
+}
+
+.tagWrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tagWrap :global(.ant-tag) {
+  margin-inline-end: 0;
+  padding: 5px 10px;
+  border-radius: 999px;
+  color: #5f74a0;
+  background: rgba(255, 255, 255, 0.92);
+  border-color: rgba(67, 109, 211, 0.08);
+}
+
+.contactHeader,
+.taskHeader,
+.accountHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.contactHeader strong,
+.taskHeader strong,
+.accountHeader strong {
+  color: #183767;
+  font-size: 15px;
+}
+
+.contactHeader span,
+.taskHeader span,
+.accountHeader span {
+  padding: 4px 10px;
+  border-radius: 999px;
+  color: #2f6df3;
+  background: rgba(232, 241, 255, 0.96);
+  font-size: 12px;
+}
+
+.contactMeta,
+.taskMeta,
+.accountMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+}
+
+.accountMeta small,
+.timelineBody small {
+  color: #8b99b3;
+}
+
+.tableLike {
+  overflow: hidden;
+  border-radius: 18px;
+  border: 1px solid rgba(67, 109, 211, 0.08);
+}
+
+.tableHead,
+.tableRow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+}
+
+.tableHead {
+  background: #f7faff;
+  color: #6f82a5;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.tableHead span,
+.tableRow span {
+  padding: 12px 14px;
+}
+
+.tableRow {
+  background: #ffffff;
+  color: #324767;
+  font-size: 13px;
+}
+
+.tableRow:not(:last-child) {
+  border-bottom: 1px solid rgba(67, 109, 211, 0.08);
+}
+
+.timelineItem {
+  display: flex;
+  gap: 10px;
+}
+
+.timelineDot {
+  width: 8px;
+  height: 8px;
+  margin-top: 8px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2f79ff 0%, #66abff 100%);
+  box-shadow: 0 0 0 4px rgba(47, 121, 255, 0.12);
+  flex: 0 0 auto;
+}
+
+.timelineBody {
+  min-width: 0;
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: rgba(245, 248, 255, 0.82);
+  border: 1px solid rgba(67, 109, 211, 0.08);
+}
+
+.timelineBody strong {
+  color: #183767;
+  font-size: 14px;
+}
+
+.timelineBody p {
+  margin: 8px 0 6px;
+  color: #6b7ea0;
+  line-height: 1.7;
+}

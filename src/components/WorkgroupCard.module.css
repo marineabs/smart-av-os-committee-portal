@@ -14,20 +14,20 @@
 .header {
   display: flex;
   align-items: flex-start;
-  justify-content: space-between;
   gap: 12px;
 }
 
 .titleWrap {
   display: flex;
-  gap: 12px;
+  gap: 10px;
   min-width: 0;
 }
 
 .iconWrap {
-  width: 52px;
-  height: 52px;
-  border-radius: 18px;
+  width: 34px;
+  height: 34px;
+  margin-top: 1px;
+  border-radius: 10px;
   display: grid;
   place-items: center;
   color: #ffffff;
@@ -38,7 +38,7 @@
 .titleWrap h3 {
   margin: 0;
   color: #1b335f;
-  font-size: 28px;
+  font-size: 24px;
   line-height: 1.15;
 }
 
@@ -47,37 +47,6 @@
   color: #6f81a4;
   font-size: 14px;
   line-height: 1.7;
-}
-
-.status {
-  height: 28px;
-  padding: 0 12px;
-  border-radius: 10px;
-  display: inline-flex;
-  align-items: center;
-  font-size: 12px;
-  font-weight: 700;
-  white-space: nowrap;
-}
-
-.active {
-  color: #17af68;
-  background: rgba(23, 175, 104, 0.12);
-}
-
-.focus {
-  color: #ff932b;
-  background: rgba(255, 147, 43, 0.12);
-}
-
-.preparing {
-  color: #5f7cff;
-  background: rgba(95, 124, 255, 0.12);
-}
-
-.pending {
-  color: #ff7d45;
-  background: rgba(255, 125, 69, 0.12);
 }
 
 .tagRow {

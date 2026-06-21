@@ -20,19 +20,6 @@ function WorkgroupCard({ group }: WorkgroupCardProps) {
             <p>{group.positioning}</p>
           </div>
         </div>
-        <span
-          className={`${styles.status} ${
-            group.status === '重点推进'
-              ? styles.focus
-              : group.status === '待秘书处审核'
-                ? styles.pending
-              : group.status === '筹备中'
-                ? styles.preparing
-                : styles.active
-          }`}
-        >
-          {group.status}
-        </span>
       </div>
 
       <div className={styles.tagRow}>
