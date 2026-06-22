@@ -1,7 +1,10 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
+const githubPagesBase = '/smart-av-os-committee-portal/'
+const base = process.env.DEPLOY_BASE_PATH || (process.env.VERCEL ? '/' : githubPagesBase)
+
 export default defineConfig({
-  base: process.env.DEPLOY_BASE_PATH || '/',
+  base,
   plugins: [react()],
 })
