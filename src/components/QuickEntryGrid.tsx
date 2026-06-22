@@ -31,10 +31,6 @@ interface QuickEntryGridProps {
 function QuickEntryGrid({ items }: QuickEntryGridProps) {
   return (
     <section className={styles.card}>
-      <div className={styles.header}>
-        <h2>快捷入口</h2>
-      </div>
-
       <div className={styles.grid}>
         {items.map((item) => (
           <Link key={item.path} to={item.path} className={styles.entry}>

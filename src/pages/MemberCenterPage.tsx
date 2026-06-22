@@ -384,7 +384,13 @@ function MemberCenterPage() {
 
         <section className={styles.statsGrid}>
           {stats.map((item) => (
-            <MemberStatCard key={item.title} item={item} />
+            <MemberStatCard
+              key={item.title}
+              className={styles.compactStatCard}
+              iconClassName={styles.compactStatIcon}
+              item={item}
+              showDelta={false}
+            />
           ))}
         </section>
 

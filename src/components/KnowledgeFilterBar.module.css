@@ -1,6 +1,6 @@
 .bar {
-  padding: 16px;
-  border-radius: 18px;
+  padding: var(--card-padding);
+  border-radius: var(--card-radius-lg);
   background: #ffffff;
   border: 1px solid rgba(67, 109, 211, 0.08);
   box-shadow: 0 10px 24px rgba(38, 84, 185, 0.08);
@@ -8,8 +8,8 @@
 
 .controls {
   display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr));
+  gap: 0.75rem;
 }
 
 .control {
@@ -68,12 +68,19 @@
 }
 
 @media (max-width: 1460px) {
-  .controls {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
   .bottomRow {
     align-items: flex-start;
     flex-direction: column;
+  }
+}
+
+@media (max-width: 768px) {
+  .actions,
+  .quickFilters {
+    width: 100%;
+  }
+
+  .actions {
+    flex-wrap: wrap;
   }
 }

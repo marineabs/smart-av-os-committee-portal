@@ -1,7 +1,7 @@
 .card {
-  min-height: 96px;
-  padding: 16px;
-  border-radius: 16px;
+  min-height: 6rem;
+  padding: 1rem;
+  border-radius: var(--radius-card);
   background: var(--card-bg);
   box-shadow: 0 8px 22px rgba(37, 87, 190, 0.07);
   border: 1px solid rgba(78, 120, 218, 0.08);
@@ -32,7 +32,7 @@
 
 .title {
   color: var(--text-secondary);
-  font-size: 13px;
+  font-size: var(--font-sm);
   font-weight: 500;
 }
 
@@ -44,14 +44,14 @@
 
 .valueRow strong {
   color: var(--text-strong);
-  font-size: 28px;
+  font-size: clamp(1.5rem, 2vw, 1.75rem);
   font-weight: 650;
   line-height: 1;
 }
 
 .valueRow span {
   color: var(--text-secondary);
-  font-size: 13px;
+  font-size: var(--font-sm);
 }
 
 .trend {

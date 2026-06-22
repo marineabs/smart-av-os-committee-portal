@@ -1,26 +1,54 @@
-import { App } from 'antd'
+import { App, Tabs } from 'antd'
 import { useMemo, useState } from 'react'
 import KnowledgeStatCard from '../components/KnowledgeStatCard'
 import NewWorkgroupDrawer from '../components/NewWorkgroupDrawer'
 import WorkgroupActiveCard from '../components/WorkgroupActiveCard'
 import WorkgroupCard from '../components/WorkgroupCard'
 import WorkgroupDynamicsCard from '../components/WorkgroupDynamicsCard'
-import WorkgroupFilterPanel from '../components/WorkgroupFilterPanel'
 import WorkgroupHero from '../components/WorkgroupHero'
 import WorkgroupProgressCard from '../components/WorkgroupProgressCard'
 import AppLayout from '../layouts/AppLayout'
 import { currentUser } from '../mock/portal'
 import {
   workgroupActiveList,
-  workgroupCategories,
-  workgroupDirections,
   workgroupDynamics,
   workgroupStats,
   workgroupTaskProgress,
   workgroups,
 } from '../mock/workgroups'
-import type { WorkgroupCardItem } from '../types/portal'
+import type { WorkgroupCardItem, WorkgroupCategory } from '../types/portal'
 import styles from './WorkgroupSpacePage.module.css'
+
+type CommitteeWorkgroupCategory = Exclude<WorkgroupCategory, 'all'>
+
+interface CommitteeTab {
+  key: string
+  label: string
+  categories: CommitteeWorkgroupCategory[]
+}
+
+const committeeTabs: CommitteeTab[] = [
+  {
+    key: 'all',
+    label: '全部工作组',
+    categories: ['architecture', 'media', 'terminal', 'management', 'standards', 'testing', 'ecosystem'],
+  },
+  {
+    key: 'tech-project',
+    label: '技术与项目管理委员会',
+    categories: ['architecture', 'media', 'terminal', 'management'],
+  },
+  {
+    key: 'standard-certification',
+    label: '标准与认证委员会',
+    categories: ['standards', 'testing'],
+  },
+  {
+    key: 'industry-development',
+    label: '产业发展委员',
+    categories: ['ecosystem'],
+  },
+]
 
 function resolveCreationMode(role: string) {
   if (role.includes('秘书处管理员')) {
@@ -36,11 +64,8 @@ function resolveCreationMode(role: string) {
 
 function WorkgroupSpacePage() {
   const { message } = App.useApp()
-  const [activeCategory, setActiveCategory] = useState('all')
-  const [activeDirection, setActiveDirection] = useState<string | null>(null)
-  const [draftKeyword, setDraftKeyword] = useState('')
+  const [activeCommittee, setActiveCommittee] = useState(committeeTabs[0].key)
   const [groupList, setGroupList] = useState(workgroups)
-  const [keyword, setKeyword] = useState('')
   const [showCreateDrawer, setShowCreateDrawer] = useState(false)
 
   const creationMode = resolveCreationMode(currentUser.role)
@@ -55,21 +80,23 @@ function WorkgroupSpacePage() {
   )
 
   const filteredWorkgroups = useMemo(() => {
-    const normalizedKeyword = keyword.trim().toLowerCase()
+    const tab = committeeTabs.find((item) => item.key === activeCommittee) ?? committeeTabs[0]
 
     return groupList.filter((group) => {
-      const matchesCategory = activeCategory === 'all' ? true : group.category === activeCategory
-      const matchesDirection = activeDirection ? group.directionIds.includes(activeDirection) : true
-      const matchesKeyword = normalizedKeyword
-        ? [group.name, group.leaderUnit, group.positioning, group.tags.join(' ')]
-            .join(' ')
-            .toLowerCase()
-            .includes(normalizedKeyword)
-        : true
-
-      return matchesCategory && matchesDirection && matchesKeyword
+      return group.category === 'all' ? false : tab.categories.includes(group.category)
     })
-  }, [activeCategory, activeDirection, groupList, keyword])
+  }, [activeCommittee, groupList])
+
+  const committeeCounts = useMemo(
+    () =>
+      new Map(
+        committeeTabs.map((tab) => [
+          tab.key,
+          groupList.filter((group) => group.category !== 'all' && tab.categories.includes(group.category)).length,
+        ]),
+      ),
+    [groupList],
+  )
 
   return (
     <AppLayout
@@ -83,40 +110,34 @@ function WorkgroupSpacePage() {
         <WorkgroupHero
           canCreateGroup={canCreateGroup}
           createButtonLabel={createButtonLabel}
-          keyword={draftKeyword}
-          onChangeKeyword={setDraftKeyword}
           onCreateGroup={() => setShowCreateDrawer(true)}
           onManageMembers={() => message.info('当前为原型页，可继续扩展工作组管理流程')}
-          onSearch={() => setKeyword(draftKeyword)}
         />
 
         <section className={styles.statsGrid}>
           {statItems.map((item) => (
-            <KnowledgeStatCard key={item.title} item={item} />
+            <KnowledgeStatCard
+              key={item.title}
+              className={styles.compactStatCard}
+              iconClassName={styles.compactStatIcon}
+              item={item}
+              showDelta={false}
+            />
           ))}
         </section>
 
         <section className={styles.contentGrid}>
-          <div className={styles.leftColumn}>
-            <WorkgroupFilterPanel
-              activeCategory={activeCategory}
-              activeDirection={activeDirection}
-              categories={workgroupCategories}
-              directions={workgroupDirections}
-              onCategoryChange={setActiveCategory}
-              onDirectionChange={setActiveDirection}
-            />
-          </div>
-
           <div className={styles.mainColumn}>
             <div className={styles.summaryBar}>
-              <div>
-                <h2>全部工作组</h2>
-                <span>
-                  当前展示 {filteredWorkgroups.length} 个工作组
-                  {keyword ? `，关键词：${keyword}` : ''}
-                </span>
-              </div>
+              <Tabs
+                activeKey={activeCommittee}
+                className={styles.committeeTabs}
+                items={committeeTabs.map((item) => ({
+                  key: item.key,
+                  label: `${item.label}（${committeeCounts.get(item.key) ?? 0}）`,
+                }))}
+                onChange={setActiveCommittee}
+              />
             </div>
 
             <div className={styles.cardGrid}>

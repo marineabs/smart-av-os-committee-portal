@@ -1,9 +1,9 @@
 .hero {
   display: grid;
-  grid-template-columns: minmax(0, 1.08fr) minmax(360px, 0.92fr);
-  gap: 22px;
-  padding: 28px 28px 24px;
-  border-radius: 24px;
+  grid-template-columns: minmax(0, 1.08fr) minmax(min(100%, 22.5rem), 0.92fr);
+  gap: var(--layout-gap);
+  padding: var(--card-padding);
+  border-radius: var(--card-radius-lg);
   background:
     radial-gradient(circle at right top, rgba(102, 166, 255, 0.16), transparent 26%),
     linear-gradient(135deg, rgba(250, 252, 255, 0.98), rgba(239, 246, 255, 0.96));
@@ -28,7 +28,7 @@
 .titleRow h1 {
   margin: 0;
   color: #163d9a;
-  font-size: clamp(32px, 2.2vw, 46px);
+  font-size: var(--font-title);
   line-height: 1.18;
 }
 
@@ -48,7 +48,7 @@
   max-width: 720px;
   margin: 16px 0 0;
   color: #65789c;
-  font-size: 18px;
+  font-size: var(--font-lg);
   line-height: 1.85;
 }
 
@@ -69,8 +69,8 @@
 .illustration {
   position: relative;
   width: 100%;
-  min-height: 210px;
-  border-radius: 24px;
+  min-height: clamp(12rem, 18vw, 13.125rem);
+  border-radius: var(--card-radius-lg);
   overflow: hidden;
   background:
     radial-gradient(circle at 56% 65%, rgba(77, 145, 255, 0.16), transparent 28%),
@@ -210,5 +210,36 @@
 
   .visual {
     align-items: stretch;
+  }
+}
+
+@media (max-width: 768px) {
+  .actionRow {
+    justify-content: flex-start;
+  }
+
+  .illustration {
+    min-height: 11rem;
+  }
+
+  .folderBack,
+  .folderMiddle,
+  .folderFront {
+    right: 34%;
+    top: 1.375rem;
+    width: 7rem;
+    height: 8rem;
+  }
+
+  .signal {
+    right: 1.5rem;
+    bottom: 2rem;
+    width: 4.75rem;
+    height: 4.75rem;
+  }
+
+  .visualTag,
+  .shield {
+    display: none;
   }
 }

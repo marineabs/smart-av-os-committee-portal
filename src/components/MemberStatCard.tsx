@@ -2,13 +2,24 @@ import type { MemberStatItem } from '../types/portal'
 import styles from './MemberStatCard.module.css'
 
 interface MemberStatCardProps {
+  className?: string
+  iconClassName?: string
   item: MemberStatItem
+  showDelta?: boolean
 }
 
-function MemberStatCard({ item }: MemberStatCardProps) {
+function MemberStatCard({
+  className,
+  iconClassName,
+  item,
+  showDelta = true,
+}: MemberStatCardProps) {
   return (
-    <article className={styles.card}>
-      <span className={styles.iconWrap} style={{ background: item.accent }}>
+    <article className={[styles.card, className].filter(Boolean).join(' ')}>
+      <span
+        className={[styles.iconWrap, iconClassName].filter(Boolean).join(' ')}
+        style={{ background: item.accent }}
+      >
         {item.icon}
       </span>
       <div className={styles.body}>
@@ -17,7 +28,7 @@ function MemberStatCard({ item }: MemberStatCardProps) {
           <strong>{item.value}</strong>
           <span>{item.unit}</span>
         </div>
-        <small className={styles.delta}>{item.delta}</small>
+        {showDelta && item.delta ? <small className={styles.delta}>{item.delta}</small> : null}
       </div>
     </article>
   )

@@ -2,13 +2,16 @@ import type { KnowledgeStatItem } from '../types/portal'
 import styles from './KnowledgeStatCard.module.css'
 
 interface KnowledgeStatCardProps {
+  className?: string
+  iconClassName?: string
   item: KnowledgeStatItem
+  showDelta?: boolean
 }
 
-function KnowledgeStatCard({ item }: KnowledgeStatCardProps) {
+function KnowledgeStatCard({ className, iconClassName, item, showDelta = true }: KnowledgeStatCardProps) {
   return (
-    <article className={styles.card}>
-      <span className={styles.iconWrap} style={{ background: item.accent }}>
+    <article className={[styles.card, className].filter(Boolean).join(' ')}>
+      <span className={[styles.iconWrap, iconClassName].filter(Boolean).join(' ')} style={{ background: item.accent }}>
         {item.icon}
       </span>
       <div className={styles.body}>
@@ -17,7 +20,7 @@ function KnowledgeStatCard({ item }: KnowledgeStatCardProps) {
           <strong>{item.value}</strong>
           <span>{item.unit}</span>
         </div>
-        <small className={styles.delta}>{item.delta}</small>
+        {showDelta && item.delta ? <small className={styles.delta}>{item.delta}</small> : null}
       </div>
     </article>
   )

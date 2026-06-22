@@ -25,16 +25,23 @@ const statusColorMap: Record<DemoMeetingRecord['status'], string> = {
 }
 
 const columns: ColumnsType<DemoMeetingRecord> = [
-  { title: '会议名称', dataIndex: 'title', key: 'title' },
-  { title: '工作组', dataIndex: 'workgroup', key: 'workgroup' },
-  { title: '牵头单位', dataIndex: 'ownerUnit', key: 'ownerUnit' },
-  { title: '时间', dataIndex: 'time', key: 'time' },
-  { title: '地点', dataIndex: 'location', key: 'location' },
-  { title: '参会单位', dataIndex: 'attendees', key: 'attendees', render: (value: number) => `${value} 家` },
+  { title: '会议名称', dataIndex: 'title', key: 'title', width: 230 },
+  { title: '工作组', dataIndex: 'workgroup', key: 'workgroup', width: 150 },
+  { title: '牵头单位', dataIndex: 'ownerUnit', key: 'ownerUnit', width: 170 },
+  { title: '时间', dataIndex: 'time', key: 'time', width: 170 },
+  { title: '地点', dataIndex: 'location', key: 'location', width: 150 },
+  {
+    title: '参会单位',
+    dataIndex: 'attendees',
+    key: 'attendees',
+    width: 110,
+    render: (value: number) => `${value} 家`,
+  },
   {
     title: '状态',
     dataIndex: 'status',
     key: 'status',
+    width: 110,
     render: (value: DemoMeetingRecord['status']) => <Tag color={statusColorMap[value]}>{value}</Tag>,
   },
 ]
@@ -70,6 +77,8 @@ function MeetingsPage() {
         <section className={styles.statsGrid}>
           {meetingStats.map((item) => (
             <KnowledgeStatCard
+              className={styles.compactStatCard}
+              iconClassName={styles.compactStatIcon}
               key={item.id}
               item={{
                 title: item.title,
@@ -79,6 +88,7 @@ function MeetingsPage() {
                 icon: iconMap[item.icon],
                 accent: item.accent,
               }}
+              showDelta={false}
             />
           ))}
         </section>
@@ -96,6 +106,7 @@ function MeetingsPage() {
               dataSource={demoMeetings}
               pagination={false}
               rowKey="id"
+              scroll={{ x: 1090 }}
               expandable={{
                 expandedRowRender: (record) => <p className={styles.expanded}>{record.summary}</p>,
               }}

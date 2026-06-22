@@ -1,7 +1,7 @@
 .card {
-  min-height: 96px;
-  padding: 16px;
-  border-radius: 16px;
+  min-height: 6rem;
+  padding: 1rem;
+  border-radius: var(--radius-card);
   display: flex;
   align-items: center;
   gap: 14px;
@@ -39,7 +39,7 @@
 
 .title {
   color: #62779e;
-  font-size: 13px;
+  font-size: var(--font-sm);
   font-weight: 500;
 }
 
@@ -51,14 +51,14 @@
 
 .valueRow strong {
   color: #142c59;
-  font-size: 28px;
+  font-size: clamp(1.5rem, 2vw, 1.75rem);
   font-weight: 650;
   line-height: 1;
 }
 
 .valueRow span {
   color: #62779e;
-  font-size: 13px;
+  font-size: var(--font-sm);
 }
 
 .delta {

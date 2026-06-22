@@ -7,17 +7,45 @@
 
 .statsGrid {
   display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr));
   gap: var(--layout-gap);
+}
+
+.compactStatCard {
+  min-height: 4.2rem;
+  padding: 0.7rem 0.85rem;
+  gap: 0.65rem;
+}
+
+.compactStatIcon {
+  width: 1.925rem;
+  height: 1.925rem;
+  border-radius: 0.625rem;
+  font-size: 0.925rem;
+}
+
+.compactStatCard :global(strong) {
+  font-size: clamp(1.05rem, 1.4vw, 1.225rem);
 }
 
 .infoGrid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--layout-gap);
+  align-items: stretch;
 }
 
-@media (max-width: 1240px) {
+@media (min-width: 1440px) {
+  .page {
+    gap: clamp(1.25rem, 1.45vw, 1.75rem);
+  }
+
+  .infoGrid {
+    gap: clamp(1.25rem, 1.45vw, 1.75rem);
+  }
+}
+
+@media (max-width: 1200px) {
   .statsGrid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
@@ -27,12 +55,18 @@
   }
 }
 
-@media (max-width: 1180px) {
+@media (max-width: 992px) {
   .statsGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .infoGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .statsGrid {
     grid-template-columns: minmax(0, 1fr);
   }
 }

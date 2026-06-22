@@ -27,13 +27,19 @@
   --text-light: #93a2c3;
   --shadow-soft: 0 18px 42px rgba(25, 76, 178, 0.09);
   --shadow-card: 0 10px 24px rgba(29, 78, 180, 0.08);
-  --radius-card: 16px;
-  --shell-max-width: 1920px;
-  --sidebar-width: clamp(208px, 15.4vw, 248px);
-  --sidebar-collapsed-width: 96px;
-  --layout-gutter: clamp(16px, 1.6vw, 24px);
-  --layout-gap: clamp(14px, 1.25vw, 20px);
-  --card-radius-lg: clamp(18px, 1.25vw, 24px);
+  --radius-card: 1rem;
+  --content-max-width: 1440px;
+  --shell-max-width: calc(var(--content-max-width) + var(--sidebar-width));
+  --sidebar-width: clamp(13rem, 14vw, 15.5rem);
+  --sidebar-collapsed-width: 5.5rem;
+  --layout-gutter: clamp(1rem, 1.6vw, 1.5rem);
+  --layout-gap: clamp(0.875rem, 1.25vw, 1.25rem);
+  --card-radius-lg: clamp(1.125rem, 1.25vw, 1.5rem);
+  --card-padding: clamp(1rem, 1.45vw, 1.5rem);
+  --font-sm: clamp(0.75rem, 0.82vw, 0.8125rem);
+  --font-base: clamp(0.875rem, 0.92vw, 0.9375rem);
+  --font-lg: clamp(1rem, 1.05vw, 1.125rem);
+  --font-title: clamp(1.75rem, 2.4vw, 2.875rem);
 }
 
 *,
@@ -44,11 +50,14 @@
 
 html {
   scroll-behavior: smooth;
+  font-size: 16px;
 }
 
 body {
   margin: 0;
-  min-width: 1200px;
+  min-width: 0;
+  overflow-x: hidden;
+  font-size: var(--font-base);
 }
 
 body::before {
@@ -67,7 +76,9 @@ a {
 }
 
 button,
-input {
+input,
+textarea,
+select {
   font: inherit;
 }
 
@@ -76,22 +87,66 @@ svg {
   display: block;
 }
 
+img {
+  max-width: 100%;
+  height: auto;
+}
+
 #root {
   min-height: 100vh;
+  min-width: 0;
+}
+
+.ant-table-wrapper {
+  min-width: 0;
+}
+
+.ant-table-content,
+.ant-table-body {
+  overflow-x: auto !important;
 }
 
 @media (max-width: 1440px) {
   :root {
-    --sidebar-width: 220px;
-    --layout-gutter: 16px;
-    --layout-gap: 16px;
+    --sidebar-width: 13.25rem;
+    --layout-gutter: 1rem;
+    --layout-gap: 1rem;
   }
 }
 
 @media (max-width: 1280px) {
   :root {
-    --sidebar-width: 196px;
-    --layout-gutter: 14px;
-    --layout-gap: 14px;
+    --sidebar-width: 12rem;
+    --layout-gutter: 0.875rem;
+    --layout-gap: 0.875rem;
+  }
+}
+
+@media (max-width: 1200px) {
+  :root {
+    --sidebar-width: 11.25rem;
+    --content-max-width: 100%;
+  }
+}
+
+@media (max-width: 992px) {
+  :root {
+    --sidebar-width: var(--sidebar-collapsed-width);
+    --sidebar-collapsed-width: 4.75rem;
+    --layout-gutter: 0.75rem;
+    --layout-gap: 0.75rem;
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --sidebar-collapsed-width: 4.25rem;
+    --layout-gutter: 0.625rem;
+    --layout-gap: 0.625rem;
+    --card-padding: 0.875rem;
+  }
+
+  html {
+    font-size: 15px;
   }
 }

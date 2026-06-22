@@ -1,7 +1,8 @@
 .banner {
   position: relative;
   overflow: hidden;
-  border-radius: clamp(22px, 1.8vw, 28px);
+  aspect-ratio: 2128 / 504;
+  border-radius: clamp(18px, 1.6vw, 24px);
   box-shadow: var(--shadow-soft);
   border: 1px solid rgba(68, 117, 223, 0.08);
   background: linear-gradient(135deg, rgba(248, 252, 255, 0.98), rgba(236, 245, 255, 0.98));
@@ -10,5 +11,13 @@
 .image {
   display: block;
   width: 100%;
-  height: auto;
+  height: 111.112%;
+  object-fit: cover;
+  object-position: top center;
+}
+
+@media (max-width: 768px) {
+  .banner {
+    aspect-ratio: 2128 / 520;
+  }
 }

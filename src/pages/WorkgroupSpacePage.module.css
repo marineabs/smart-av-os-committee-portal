@@ -1,23 +1,39 @@
 .page {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: var(--layout-gap);
 }
 
 .statsGrid {
   display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 10.5rem), 1fr));
+  gap: clamp(0.625rem, 0.9vw, 0.875rem);
+}
+
+.compactStatCard {
+  min-height: 4.2rem;
+  padding: 0.7rem 0.85rem;
+  gap: 0.65rem;
+}
+
+.compactStatIcon {
+  width: 1.925rem;
+  height: 1.925rem;
+  border-radius: 0.625rem;
+  font-size: 0.925rem;
+}
+
+.compactStatCard :global(strong) {
+  font-size: clamp(1.05rem, 1.4vw, 1.225rem);
 }
 
 .contentGrid {
   display: grid;
-  grid-template-columns: 220px minmax(0, 1fr) 320px;
-  gap: 16px;
+  grid-template-columns: minmax(0, 1fr) minmax(17rem, 20rem);
+  gap: var(--layout-gap);
   align-items: start;
 }
 
-.leftColumn,
 .mainColumn,
 .rightColumn {
   min-width: 0;
@@ -26,51 +42,41 @@
 .mainColumn {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: var(--layout-gap);
 }
 
 .summaryBar {
-  padding: 18px 20px;
-  border-radius: 18px;
+  padding: var(--card-padding);
+  border-radius: var(--card-radius-lg);
   background: #ffffff;
   border: 1px solid rgba(67, 109, 211, 0.08);
   box-shadow: 0 10px 24px rgba(38, 84, 185, 0.08);
 }
 
-.summaryBar h2 {
+.committeeTabs :global(.ant-tabs-nav) {
   margin: 0;
-  color: #152d58;
-  font-size: 24px;
 }
 
-.summaryBar span {
-  display: block;
-  margin-top: 8px;
-  color: #6d7fa2;
-  font-size: 14px;
+.committeeTabs :global(.ant-tabs-tab) {
+  padding: 0.625rem 0;
+  font-weight: 700;
 }
 
 .cardGrid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+  gap: var(--layout-gap);
 }
 
 .rightColumn {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--layout-gap);
 }
 
 @media (max-width: 1700px) {
-  .statsGrid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 1500px) {
   .contentGrid {
-    grid-template-columns: 220px minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .rightColumn {
@@ -80,11 +86,27 @@
   }
 }
 
-@media (max-width: 1240px) {
+@media (max-width: 1200px) {
+  .statsGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
   .statsGrid,
   .cardGrid,
   .rightColumn,
   .contentGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 992px) {
+  .statsGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .statsGrid {
     grid-template-columns: minmax(0, 1fr);
   }
 }

@@ -2,13 +2,24 @@ import type { StatisticItem } from '../types/portal'
 import styles from './StatisticCard.module.css'
 
 interface StatisticCardProps {
+  className?: string
+  iconClassName?: string
   item: StatisticItem
+  showTrend?: boolean
 }
 
-function StatisticCard({ item }: StatisticCardProps) {
+function StatisticCard({
+  className,
+  iconClassName,
+  item,
+  showTrend = true,
+}: StatisticCardProps) {
   return (
-    <article className={styles.card}>
-      <div className={styles.iconWrap} style={{ background: item.accent }}>
+    <article className={[styles.card, className].filter(Boolean).join(' ')}>
+      <div
+        className={[styles.iconWrap, iconClassName].filter(Boolean).join(' ')}
+        style={{ background: item.accent }}
+      >
         {item.icon}
       </div>
 
@@ -18,17 +29,19 @@ function StatisticCard({ item }: StatisticCardProps) {
           <strong>{item.value}</strong>
           <span>{item.unit}</span>
         </div>
-        <span
-          className={`${styles.trend} ${
-            item.trendDirection === 'up'
-              ? styles.up
-              : item.trendDirection === 'down'
-                ? styles.down
-                : styles.flat
-          }`}
-        >
-          {item.trendText}
-        </span>
+        {showTrend ? (
+          <span
+            className={`${styles.trend} ${
+              item.trendDirection === 'up'
+                ? styles.up
+                : item.trendDirection === 'down'
+                  ? styles.down
+                  : styles.flat
+            }`}
+          >
+            {item.trendText}
+          </span>
+        ) : null}
       </div>
     </article>
   )

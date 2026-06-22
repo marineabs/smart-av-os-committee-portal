@@ -20,6 +20,7 @@ function WorkgroupCard({ group }: WorkgroupCardProps) {
             <p>{group.positioning}</p>
           </div>
         </div>
+        <span className={styles.statusBadge}>{group.status}</span>
       </div>
 
       <div className={styles.tagRow}>

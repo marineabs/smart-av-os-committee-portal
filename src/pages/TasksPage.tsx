@@ -32,26 +32,29 @@ const statusColorMap: Record<DemoTaskRecord['status'], string> = {
 }
 
 const columns: ColumnsType<DemoTaskRecord> = [
-  { title: '任务名称', dataIndex: 'title', key: 'title' },
-  { title: '所属工作组', dataIndex: 'workgroup', key: 'workgroup' },
-  { title: '负责人', dataIndex: 'owner', key: 'owner' },
-  { title: '截止日期', dataIndex: 'deadline', key: 'deadline' },
+  { title: '任务名称', dataIndex: 'title', key: 'title', width: 220 },
+  { title: '所属工作组', dataIndex: 'workgroup', key: 'workgroup', width: 150 },
+  { title: '负责人', dataIndex: 'owner', key: 'owner', width: 120 },
+  { title: '截止日期', dataIndex: 'deadline', key: 'deadline', width: 130 },
   {
     title: '进度',
     dataIndex: 'progress',
     key: 'progress',
+    width: 160,
     render: (value: number) => <Progress percent={value} size="small" />,
   },
   {
     title: '优先级',
     dataIndex: 'priority',
     key: 'priority',
+    width: 100,
     render: (value: DemoTaskRecord['priority']) => <Tag color={priorityColorMap[value]}>{value}</Tag>,
   },
   {
     title: '状态',
     dataIndex: 'status',
     key: 'status',
+    width: 110,
     render: (value: DemoTaskRecord['status']) => <Tag color={statusColorMap[value]}>{value}</Tag>,
   },
 ]
@@ -87,6 +90,8 @@ function TasksPage() {
         <section className={styles.statsGrid}>
           {taskStats.map((item) => (
             <KnowledgeStatCard
+              className={styles.compactStatCard}
+              iconClassName={styles.compactStatIcon}
               key={item.id}
               item={{
                 title: item.title,
@@ -96,6 +101,7 @@ function TasksPage() {
                 icon: iconMap[item.icon],
                 accent: item.accent,
               }}
+              showDelta={false}
             />
           ))}
         </section>
@@ -116,7 +122,13 @@ function TasksPage() {
               <p>通过本地 mock 数据覆盖标准编制、联调验证、场景汇报和资料归档流程。</p>
             </div>
           </div>
-          <Table columns={columns} dataSource={demoTasks} pagination={false} rowKey="id" />
+          <Table
+            columns={columns}
+            dataSource={demoTasks}
+            pagination={false}
+            rowKey="id"
+            scroll={{ x: 990 }}
+          />
         </section>
       </div>
     </AppLayout>

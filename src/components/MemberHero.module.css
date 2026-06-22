@@ -1,9 +1,9 @@
 .hero {
   display: grid;
-  grid-template-columns: minmax(0, 1.04fr) minmax(420px, 0.96fr);
-  gap: 20px;
-  padding: 28px 28px 24px;
-  border-radius: 24px;
+  grid-template-columns: minmax(0, 1.04fr) minmax(min(100%, 26rem), 0.96fr);
+  gap: var(--layout-gap);
+  padding: var(--card-padding);
+  border-radius: var(--card-radius-lg);
   background:
     radial-gradient(circle at right top, rgba(109, 170, 255, 0.16), transparent 26%),
     linear-gradient(135deg, rgba(250, 252, 255, 0.98), rgba(238, 245, 255, 0.96));
@@ -28,7 +28,7 @@
 .titleRow h1 {
   margin: 0;
   color: #163d9a;
-  font-size: clamp(32px, 2.2vw, 46px);
+  font-size: var(--font-title);
   line-height: 1.18;
 }
 
@@ -48,7 +48,7 @@
   max-width: 720px;
   margin: 16px 0 0;
   color: #65789c;
-  font-size: 18px;
+  font-size: var(--font-lg);
   line-height: 1.85;
 }
 
@@ -75,8 +75,8 @@
 
 .illustration {
   position: relative;
-  min-height: 228px;
-  border-radius: 24px;
+  min-height: clamp(12rem, 19vw, 14.25rem);
+  border-radius: var(--card-radius-lg);
   overflow: hidden;
   background:
     radial-gradient(circle at 50% 60%, rgba(77, 145, 255, 0.16), transparent 28%),
@@ -279,5 +279,35 @@
   .actionColumn {
     flex-direction: row;
     flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 768px) {
+  .actionColumn :global(.ant-btn) {
+    min-width: 0;
+    flex: 1 1 9rem;
+  }
+
+  .illustration {
+    min-height: 11rem;
+  }
+
+  .corePlatform {
+    width: 8.5rem;
+    height: 4.75rem;
+    bottom: 2rem;
+  }
+
+  .corePlatform::before {
+    width: 11rem;
+  }
+
+  .corePlatform::after {
+    width: 13rem;
+  }
+
+  .legend,
+  .visualTag {
+    display: none;
   }
 }

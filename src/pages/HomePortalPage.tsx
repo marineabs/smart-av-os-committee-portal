@@ -20,7 +20,13 @@ function HomePortalPage() {
 
         <section className={styles.statsGrid}>
           {statistics.map((item) => (
-            <StatisticCard key={item.title} item={item} />
+            <StatisticCard
+              key={item.title}
+              className={styles.compactStatCard}
+              iconClassName={styles.compactStatIcon}
+              item={item}
+              showTrend={false}
+            />
           ))}
         </section>
 

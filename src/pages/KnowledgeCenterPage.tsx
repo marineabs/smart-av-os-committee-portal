@@ -190,7 +190,13 @@ function KnowledgeCenterPage() {
 
         <section className={styles.statsGrid}>
           {knowledgeStats.map((item) => (
-            <KnowledgeStatCard key={item.title} item={item} />
+            <KnowledgeStatCard
+              key={item.title}
+              className={styles.compactStatCard}
+              iconClassName={styles.compactStatIcon}
+              item={item}
+              showDelta={false}
+            />
           ))}
         </section>
 

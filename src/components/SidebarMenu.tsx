@@ -11,9 +11,11 @@ import {
   UsergroupAddOutlined,
 } from '@ant-design/icons'
 import { NavLink } from 'react-router-dom'
-import type { ReactNode } from 'react'
+import { useState, type ReactNode } from 'react'
 import sidebarFooterIllustration from '../assets/sidebar-footer-illustration.png'
-import { navItems, platformSubtitle, platformTitle } from '../mock/portal'
+import userAvatarFemale from '../assets/user-avatar-female.png'
+import userAvatarMale from '../assets/user-avatar-male.png'
+import { currentUser, navItems } from '../mock/portal'
 import type { NavIconKey } from '../types/portal'
 import styles from './SidebarMenu.module.css'
 
@@ -43,13 +45,28 @@ function SidebarMenu({
   footerTitle = '专委会协同平台',
   versionLabel = 'V 1.0.0',
 }: SidebarMenuProps) {
+  const [avatarMode, setAvatarMode] = useState<'male' | 'female'>('male')
+  const avatarSrc = avatarMode === 'male' ? userAvatarMale : userAvatarFemale
+
   return (
     <aside className={`${styles.sidebar} ${collapsed ? styles.collapsed : ''}`}>
       <div className={styles.brand}>
+        <button
+          aria-label="切换用户头像"
+          className={styles.avatarButton}
+          onClick={() => setAvatarMode((current) => (current === 'male' ? 'female' : 'male'))}
+          title="点击切换头像"
+          type="button"
+        >
+          <img alt={`${currentUser.name}头像`} className={styles.avatar} src={avatarSrc} />
+        </button>
         {!collapsed && (
-          <div className={styles.brandText}>
-            <strong>{platformTitle}</strong>
-            <span>{platformSubtitle}</span>
+          <div className={styles.userInfo}>
+            <div className={styles.userNameRow}>
+              <strong>{currentUser.name}</strong>
+              <span className={styles.userStatus}>在线</span>
+            </div>
+            <span className={styles.userRole}>{currentUser.role}</span>
           </div>
         )}
       </div>
