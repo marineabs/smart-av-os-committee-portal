@@ -28,13 +28,6 @@
   font-size: clamp(1.05rem, 1.4vw, 1.225rem);
 }
 
-.bottomGrid {
-  display: grid;
-  grid-template-columns: minmax(0, 3fr) minmax(18rem, 0.95fr);
-  gap: var(--layout-gap);
-  align-items: end;
-}
-
 .infoGrid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -50,20 +43,11 @@
   .infoGrid {
     gap: clamp(1.25rem, 1.45vw, 1.75rem);
   }
-
-  .bottomGrid {
-    gap: clamp(1.25rem, 1.45vw, 1.75rem);
-  }
 }
 
 @media (max-width: 1200px) {
   .statsGrid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
-  .bottomGrid {
-    grid-template-columns: minmax(0, 1fr);
-    align-items: stretch;
   }
 
   .infoGrid {
