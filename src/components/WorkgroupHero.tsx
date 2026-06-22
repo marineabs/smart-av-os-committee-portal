@@ -22,10 +22,6 @@ function WorkgroupHero({
     <section className={styles.hero}>
       <div className={styles.copy}>
         <h1>工作组空间</h1>
-        <p>集中管理各委员会工作组，快速检索与协同推进。</p>
-      </div>
-
-      <div className={styles.visual}>
         <div className={styles.actionRow}>
           {canCreateGroup ? (
             <Button
