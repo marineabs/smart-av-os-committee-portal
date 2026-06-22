@@ -30,18 +30,20 @@ function HomePortalPage() {
           ))}
         </section>
 
-        <section className={styles.infoGrid}>
-          <InfoListCard title="最新通知" morePath="/notices" variant="notice" items={latestNotices} />
-          <InfoListCard title="最新资料" morePath="/documents" variant="document" items={latestDocuments} />
-          <InfoListCard
-            title="工作组动态"
-            morePath="/activities"
-            variant="activity"
-            items={workgroupActivities}
-          />
-        </section>
+        <section className={styles.bottomGrid}>
+          <section className={styles.infoGrid}>
+            <InfoListCard title="最新通知" morePath="/notices" variant="notice" items={latestNotices} />
+            <InfoListCard title="最新资料" morePath="/documents" variant="document" items={latestDocuments} />
+            <InfoListCard
+              title="工作组动态"
+              morePath="/activities"
+              variant="activity"
+              items={workgroupActivities}
+            />
+          </section>
 
-        <QuickEntryGrid items={quickEntries} />
+          <QuickEntryGrid items={quickEntries} />
+        </section>
       </div>
     </AppLayout>
   )

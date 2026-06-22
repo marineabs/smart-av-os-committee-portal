@@ -7,14 +7,7 @@ interface WorkgroupCardProps {
   group: WorkgroupCardItem
 }
 
-function resolveAccentColor(accent: string) {
-  const matched = accent.match(/#(?:[0-9a-fA-F]{3}){1,2}/)
-  return matched?.[0] ?? '#2f79ff'
-}
-
 function WorkgroupCard({ group }: WorkgroupCardProps) {
-  const metricIconColor = resolveAccentColor(group.accent)
-
   return (
     <article className={styles.card}>
       <div className={styles.header}>
@@ -45,28 +38,28 @@ function WorkgroupCard({ group }: WorkgroupCardProps) {
 
       <div className={styles.metrics}>
         <div>
-          <span className={styles.metricIcon} style={{ color: metricIconColor }}>
+          <span className={styles.metricIcon}>
             <TeamOutlined />
           </span>
           <strong>{group.memberUnitCount}</strong>
           <span>成员单位</span>
         </div>
         <div>
-          <span className={styles.metricIcon} style={{ color: metricIconColor }}>
+          <span className={styles.metricIcon}>
             <FileTextOutlined />
           </span>
           <strong>{group.fileCount}</strong>
           <span>资料数量</span>
         </div>
         <div>
-          <span className={styles.metricIcon} style={{ color: metricIconColor }}>
+          <span className={styles.metricIcon}>
             <ScheduleOutlined />
           </span>
           <strong>{group.taskCount}</strong>
           <span>进行中任务</span>
         </div>
         <div>
-          <span className={styles.metricIcon} style={{ color: metricIconColor }}>
+          <span className={styles.metricIcon}>
             <CalendarOutlined />
           </span>
           <strong>{group.meetingCount}</strong>

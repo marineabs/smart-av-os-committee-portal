@@ -58,7 +58,7 @@
   flex: 0 0 auto;
   min-height: 28px;
   padding: 0 10px;
-  border-radius: 999px;
+  border-radius: 0.625rem;
   display: inline-flex;
   align-items: center;
   color: #168a52;
@@ -77,7 +77,7 @@
 .tag {
   height: 28px;
   padding: 0 10px;
-  border-radius: 999px;
+  border-radius: 0.625rem;
   display: inline-flex;
   align-items: center;
   background: rgba(37, 99, 255, 0.08);
@@ -120,7 +120,12 @@
 .metricIcon {
   display: inline-flex;
   align-items: center;
-  font-size: 16px;
+  color: #f29a23;
+  font-size: 18px;
+  font-weight: 700;
+  transform: scale(1.06);
+  transform-origin: left center;
+  text-shadow: 0 1px 0 rgba(255, 196, 87, 0.28);
 }
 
 .metrics strong {
@@ -148,7 +153,7 @@
 .enterButton {
   height: 34px;
   padding: 0 14px;
-  border-radius: 999px;
+  border-radius: 0.75rem;
   display: inline-flex;
   align-items: center;
   color: #ffffff;

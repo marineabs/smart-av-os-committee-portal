@@ -12,7 +12,6 @@ import {
 } from '@ant-design/icons'
 import { NavLink } from 'react-router-dom'
 import { useState, type ReactNode } from 'react'
-import sidebarFooterIllustration from '../assets/sidebar-footer-illustration.png'
 import userAvatarFemale from '../assets/user-avatar-female.png'
 import userAvatarMale from '../assets/user-avatar-male.png'
 import { currentUser, navItems } from '../mock/portal'
@@ -61,12 +60,14 @@ function SidebarMenu({
           <img alt={`${currentUser.name}头像`} className={styles.avatar} src={avatarSrc} />
         </button>
         {!collapsed && (
-          <div className={styles.userInfo}>
-            <div className={styles.userNameRow}>
-              <strong>{currentUser.name}</strong>
-              <span className={styles.userStatus}>在线</span>
+          <div className={styles.brandContent}>
+            <div className={styles.userInfo}>
+              <div className={styles.userNameRow}>
+                <strong>{currentUser.name}</strong>
+                <span className={styles.userStatus}>在线</span>
+              </div>
+              <span className={styles.userRole}>{currentUser.role}</span>
             </div>
-            <span className={styles.userRole}>{currentUser.role}</span>
           </div>
         )}
       </div>
@@ -85,21 +86,16 @@ function SidebarMenu({
         ))}
       </nav>
 
-      <div className={styles.footerCard}>
-        <div className={styles.footerIllustration}>
-          <img src={sidebarFooterIllustration} alt="" />
+      {!collapsed && (
+        <div className={styles.navMeta}>
+          <strong>{footerCaption}</strong>
+          <span>{footerTitle}</span>
+          <small>{versionLabel}</small>
+          <NavLink to="/login" className={styles.demoLink}>
+            演示登录入口
+          </NavLink>
         </div>
-        {!collapsed && (
-          <>
-            <strong>{footerCaption}</strong>
-            <span>{footerTitle}</span>
-            <small>{versionLabel}</small>
-            <NavLink to="/login" className={styles.demoLink}>
-              演示登录入口
-            </NavLink>
-          </>
-        )}
-      </div>
+      )}
     </aside>
   )
 }
