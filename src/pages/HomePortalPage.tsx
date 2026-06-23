@@ -32,7 +32,12 @@ function HomePortalPage() {
 
         <section className={styles.infoGrid}>
           <InfoListCard title="最新通知" morePath="/notices" variant="notice" items={latestNotices} />
-          <InfoListCard title="最新资料" morePath="/documents" variant="document" items={latestDocuments} />
+          <InfoListCard
+            title="最新资料"
+            morePath="/knowledge-center"
+            variant="document"
+            items={latestDocuments}
+          />
           <InfoListCard
             title="工作组动态"
             morePath="/activities"

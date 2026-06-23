@@ -13,7 +13,15 @@ const TasksPage = lazy(() => import('../pages/TasksPage'))
 const WorkgroupDetailPage = lazy(() => import('../pages/WorkgroupDetailPage'))
 const WorkgroupSpacePage = lazy(() => import('../pages/WorkgroupSpacePage'))
 
-const handledPaths = new Set(['/knowledge-center', '/members', '/meetings', '/system', '/tasks', '/workgroups'])
+const handledPaths = new Set([
+  '/knowledge-center',
+  '/documents',
+  '/members',
+  '/meetings',
+  '/system',
+  '/tasks',
+  '/workgroups',
+])
 
 export function AppRouter() {
   return (
@@ -21,6 +29,7 @@ export function AppRouter() {
       <Routes>
         <Route path="/" element={<HomePortalPage />} />
         <Route path="/knowledge-center" element={<KnowledgeCenterPage />} />
+        <Route path="/documents" element={<KnowledgeCenterPage />} />
         <Route path="/login" element={<LoginDemoPage />} />
         <Route path="/meetings" element={<MeetingsPage />} />
         <Route path="/members" element={<MemberCenterPage />} />

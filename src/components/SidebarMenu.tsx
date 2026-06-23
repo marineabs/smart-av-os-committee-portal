@@ -1,13 +1,22 @@
 import {
+  AppstoreFilled,
   AppstoreOutlined,
   BankOutlined,
+  CalendarFilled,
+  CheckSquareFilled,
+  CompassFilled,
+  ContactsFilled,
   BarChartOutlined,
   CalendarOutlined,
   CheckSquareOutlined,
   ClockCircleOutlined,
   CustomerServiceOutlined,
+  FileTextFilled,
   FileSearchOutlined,
+  FolderFilled,
   FolderOpenOutlined,
+  FundFilled,
+  HomeFilled,
   HomeOutlined,
   InfoCircleOutlined,
   LoginOutlined,
@@ -16,6 +25,7 @@ import {
   PhoneOutlined,
   SafetyCertificateOutlined,
   SearchOutlined,
+  SettingFilled,
   SettingOutlined,
   TeamOutlined,
   UsergroupAddOutlined,
@@ -29,7 +39,7 @@ import { currentUser, navItems } from '../mock/portal'
 import type { NavIconKey } from '../types/portal'
 import styles from './SidebarMenu.module.css'
 
-const iconMap: Record<NavIconKey, ReactNode> = {
+const inactiveIconMap: Record<NavIconKey, ReactNode> = {
   home: <HomeOutlined />,
   groups: <AppstoreOutlined />,
   knowledge: <FolderOpenOutlined />,
@@ -40,6 +50,19 @@ const iconMap: Record<NavIconKey, ReactNode> = {
   search: <SearchOutlined />,
   analytics: <BarChartOutlined />,
   settings: <SettingOutlined />,
+}
+
+const activeIconMap: Record<NavIconKey, ReactNode> = {
+  home: <HomeFilled />,
+  groups: <AppstoreFilled />,
+  knowledge: <FolderFilled />,
+  members: <ContactsFilled />,
+  meetings: <CalendarFilled />,
+  tasks: <CheckSquareFilled />,
+  standards: <FileTextFilled />,
+  search: <CompassFilled />,
+  analytics: <FundFilled />,
+  settings: <SettingFilled />,
 }
 
 interface SidebarMenuProps {
@@ -140,8 +163,12 @@ function SidebarMenu({ collapsed }: SidebarMenuProps) {
               end={item.path === '/'}
               className={({ isActive }) => `${styles.navItem} ${isActive ? styles.navItemActive : ''}`}
             >
-              <span className={styles.navIcon}>{iconMap[item.icon]}</span>
-              {!collapsed && <span className={styles.navLabel}>{item.label}</span>}
+              {({ isActive }) => (
+                <>
+                  <span className={styles.navIcon}>{isActive ? activeIconMap[item.icon] : inactiveIconMap[item.icon]}</span>
+                  {!collapsed && <span className={styles.navLabel}>{item.label}</span>}
+                </>
+              )}
             </NavLink>
           ))}
         </nav>
