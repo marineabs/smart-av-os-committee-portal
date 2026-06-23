@@ -2,18 +2,12 @@ import { App, Tabs } from 'antd'
 import { useMemo, useState } from 'react'
 import KnowledgeStatCard from '../components/KnowledgeStatCard'
 import NewWorkgroupDrawer from '../components/NewWorkgroupDrawer'
-import WorkgroupActiveCard from '../components/WorkgroupActiveCard'
 import WorkgroupCard from '../components/WorkgroupCard'
-import WorkgroupDynamicsCard from '../components/WorkgroupDynamicsCard'
 import WorkgroupHero from '../components/WorkgroupHero'
-import WorkgroupProgressCard from '../components/WorkgroupProgressCard'
 import AppLayout from '../layouts/AppLayout'
 import { currentUser } from '../mock/portal'
 import {
-  workgroupActiveList,
-  workgroupDynamics,
   workgroupStats,
-  workgroupTaskProgress,
   workgroups,
 } from '../mock/workgroups'
 import type { WorkgroupCardItem, WorkgroupCategory } from '../types/portal'
@@ -147,20 +141,6 @@ function WorkgroupSpacePage() {
             </div>
           </div>
 
-          <aside className={styles.rightColumn}>
-            <WorkgroupDynamicsCard
-              items={workgroupDynamics}
-              onMore={() => message.info('可扩展为完整工作组动态页')}
-            />
-            <WorkgroupProgressCard
-              items={workgroupTaskProgress}
-              onMore={() => message.info('可扩展为重点推进任务页')}
-            />
-            <WorkgroupActiveCard
-              items={workgroupActiveList}
-              onMore={() => message.info('可扩展为活跃工作组排行页')}
-            />
-          </aside>
         </section>
       </div>
 

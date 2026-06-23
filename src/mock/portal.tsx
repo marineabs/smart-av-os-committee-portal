@@ -43,13 +43,8 @@ export const navItems: NavItem[] = [
   { key: 'home', label: '首页门户', path: '/', icon: 'home' },
   { key: 'workspace', label: '工作组空间', path: '/workgroups', icon: 'groups' },
   { key: 'knowledge', label: '文件与知识中心', path: '/knowledge-center', icon: 'knowledge' },
-  { key: 'members', label: '会员管理中心', path: '/members', icon: 'members' },
+  { key: 'members', label: '会员信息中心', path: '/members', icon: 'members' },
   { key: 'meetings', label: '会议中心', path: '/meetings', icon: 'meetings' },
-  { key: 'tasks', label: '任务与事项中心', path: '/tasks', icon: 'tasks' },
-  { key: 'standards', label: '标准与规范协同', path: '/standards', icon: 'standards' },
-  { key: 'search', label: '搜索中心', path: '/search-center', icon: 'search' },
-  { key: 'analytics', label: '统计分析中心', path: '/analytics', icon: 'analytics' },
-  { key: 'settings', label: '系统管理中心', path: '/system', icon: 'settings' },
 ]
 
 export const heroActions: HeroAction[] = [
@@ -182,7 +177,7 @@ export const placeholderPages: PlaceholderPageItem[] = [
   },
   {
     path: '/members',
-    title: '会员管理中心',
+    title: '会员信息中心',
     description: '维护成员单位、联系人、参与角色与协同权限信息。',
   },
   {

@@ -13,6 +13,7 @@ import MemberStatusTag from './MemberStatusTag'
 import styles from './MemberUnitTable.module.css'
 
 interface MemberUnitTableProps {
+  columnWidthMembers: MemberUnit[]
   currentPage: number
   members: MemberUnit[]
   onContact: (member: MemberUnit) => void
@@ -25,7 +26,12 @@ interface MemberUnitTableProps {
   total: number
 }
 
+function estimateNameWidth(name: string) {
+  return Array.from(name).reduce((width, char) => width + (/[\u4e00-\u9fff]/u.test(char) ? 14 : 8), 0)
+}
+
 function MemberUnitTable({
+  columnWidthMembers,
   currentPage,
   members,
   onContact,
@@ -38,13 +44,17 @@ function MemberUnitTable({
   total,
 }: MemberUnitTableProps) {
   const { message } = App.useApp()
+  const nameColumnWidth = Math.max(
+    160,
+    ...columnWidthMembers.map((member) => estimateNameWidth(member.name) + 76),
+  )
 
   const columns: TableProps<MemberUnit>['columns'] = [
     {
       title: '单位名称',
       dataIndex: 'name',
       key: 'name',
-      width: 250,
+      width: nameColumnWidth,
       fixed: 'left',
       render: (_, member) => (
         <div className={styles.memberCell}>
@@ -53,11 +63,6 @@ function MemberUnitTable({
           </span>
           <div className={styles.memberBody}>
             <strong>{member.name}</strong>
-            <div className={styles.memberTags}>
-              {member.capabilityTags.slice(0, 2).map((tag) => (
-                <span key={tag}>{tag}</span>
-              ))}
-            </div>
           </div>
         </div>
       ),

@@ -51,7 +51,6 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 7px;
 }
 
 .memberBody strong {
@@ -60,14 +59,12 @@
   font-weight: 700;
 }
 
-.memberTags,
 .workgroupList {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
 }
 
-.memberTags span,
 .workgroupList span {
   padding: 3px 8px;
   border-radius: 999px;

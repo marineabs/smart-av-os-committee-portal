@@ -30,7 +30,7 @@
   --radius-card: 1rem;
   --content-max-width: 1440px;
   --shell-max-width: calc(var(--content-max-width) + var(--sidebar-width));
-  --sidebar-width: clamp(13rem, 14vw, 15.5rem);
+  --sidebar-width: clamp(18.5rem, 20vw, 21rem);
   --sidebar-collapsed-width: 5.5rem;
   --layout-gutter: clamp(1rem, 1.6vw, 1.5rem);
   --layout-gap: clamp(0.875rem, 1.25vw, 1.25rem);
@@ -108,7 +108,7 @@ img {
 
 @media (max-width: 1440px) {
   :root {
-    --sidebar-width: 13.25rem;
+    --sidebar-width: 17rem;
     --layout-gutter: 1rem;
     --layout-gap: 1rem;
   }
@@ -116,7 +116,7 @@ img {
 
 @media (max-width: 1280px) {
   :root {
-    --sidebar-width: 12rem;
+    --sidebar-width: 15.5rem;
     --layout-gutter: 0.875rem;
     --layout-gap: 0.875rem;
   }
@@ -124,7 +124,7 @@ img {
 
 @media (max-width: 1200px) {
   :root {
-    --sidebar-width: 11.25rem;
+    --sidebar-width: 14.25rem;
     --content-max-width: 100%;
   }
 }

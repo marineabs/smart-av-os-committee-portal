@@ -1,36 +1,21 @@
 import { App } from 'antd'
 import { useEffect, useMemo, useState } from 'react'
-import ActiveMemberUnitsCard from '../components/ActiveMemberUnitsCard'
 import AddMemberModal, { type MemberFormValues } from '../components/AddMemberModal'
 import ImportMemberModal from '../components/ImportMemberModal'
 import MemberAccessModal from '../components/MemberAccessModal'
-import MemberCategoryPanel from '../components/MemberCategoryPanel'
 import MemberContactsDrawer from '../components/MemberContactsDrawer'
 import MemberDetailDrawer from '../components/MemberDetailDrawer'
 import MemberFilterBar, { type MemberFilterState } from '../components/MemberFilterBar'
 import MemberHero from '../components/MemberHero'
-import MemberPermissionModal from '../components/MemberPermissionModal'
 import MemberStatCard from '../components/MemberStatCard'
-import MemberStatusGuideCard from '../components/MemberStatusGuideCard'
 import MemberUnitTable from '../components/MemberUnitTable'
-import PendingMemberActionsCard from '../components/PendingMemberActionsCard'
-import RecentMemberChangesCard from '../components/RecentMemberChangesCard'
 import AppLayout from '../layouts/AppLayout'
 import {
-  memberActiveUnits,
-  memberCapabilityDefinitions,
-  memberCategoryDefinitions,
   memberFilterOptions,
-  memberPendingActions,
-  memberPermissionGuides,
-  memberRecentChanges,
   memberStatsBase,
-  memberStatusGuides,
   memberUnits as initialMemberUnits,
 } from '../mock/memberCenter'
 import type {
-  MemberCapabilityDefinition,
-  MemberCategoryDefinition,
   MemberQuickFilter,
   MemberStatItem,
   MemberUnit,
@@ -43,7 +28,6 @@ const initialFilterState: MemberFilterState = {
   committee: '全部',
   workgroup: '全部',
   status: '全部',
-  capability: '全部',
   accountState: '全部',
   completeness: '全部',
 }
@@ -54,21 +38,6 @@ const accentPalette = [
   'linear-gradient(135deg, #18b8c7 0%, #35d49c 100%)',
   'linear-gradient(135deg, #ff8f2f 0%, #ffb84d 100%)',
 ]
-
-function resolveMemberCategoryId(memberCategory: string) {
-  if (memberCategory === '主任委员单位') return 'chair'
-  if (memberCategory === '副主任委员单位') return 'vice-chair'
-  if (memberCategory === '观察员单位') return 'observer'
-  if (memberCategory === '合作单位') return 'partner'
-  return 'member'
-}
-
-function matchesLeftCategory(member: MemberUnit, categoryId: string) {
-  if (categoryId === 'all') return true
-  if (categoryId === 'pending') return member.status === '待审核'
-  if (categoryId === 'paused') return member.status === '暂停' || member.status === '退出'
-  return member.memberCategoryId === categoryId
-}
 
 function buildMemberStats(members: MemberUnit[]): MemberStatItem[] {
   const additions = members.slice(initialMemberUnits.length)
@@ -101,48 +70,8 @@ function buildMemberStats(members: MemberUnit[]): MemberStatItem[] {
   })
 }
 
-function buildCategoryCounts(members: MemberUnit[]): MemberCategoryDefinition[] {
-  const additions = members.slice(initialMemberUnits.length)
-  const countMap = new Map(memberCategoryDefinitions.map((item) => [item.id, item.count]))
-
-  additions.forEach((member) => {
-    countMap.set('all', (countMap.get('all') ?? 0) + 1)
-    countMap.set(member.memberCategoryId, (countMap.get(member.memberCategoryId) ?? 0) + 1)
-    if (member.status === '待审核') {
-      countMap.set('pending', (countMap.get('pending') ?? 0) + 1)
-    }
-    if (member.status === '暂停' || member.status === '退出') {
-      countMap.set('paused', (countMap.get('paused') ?? 0) + 1)
-    }
-  })
-
-  return memberCategoryDefinitions.map((item) => ({
-    ...item,
-    count: countMap.get(item.id) ?? item.count,
-  }))
-}
-
-function buildCapabilityCounts(members: MemberUnit[]): MemberCapabilityDefinition[] {
-  const additions = members.slice(initialMemberUnits.length)
-  const countMap = new Map(memberCapabilityDefinitions.map((item) => [item.id, item.count]))
-
-  additions.forEach((member) => {
-    member.capabilityTags.forEach((tag) => {
-      if (countMap.has(tag)) {
-        countMap.set(tag, (countMap.get(tag) ?? 0) + 1)
-      }
-    })
-  })
-
-  return memberCapabilityDefinitions.map((item) => ({
-    ...item,
-    count: countMap.get(item.id) ?? item.count,
-  }))
-}
-
 function createMemberFromValues(values: MemberFormValues, member?: MemberUnit | null): MemberUnit {
   const timestamp = Date.now()
-  const memberCategoryId = resolveMemberCategoryId(values.memberCategory)
   const baseId = member?.id ?? `member-${timestamp}`
   const shortName = values.name.slice(0, 4)
   const primaryContactRecord = {
@@ -163,7 +92,16 @@ function createMemberFromValues(values: MemberFormValues, member?: MemberUnit | 
     accent: member?.accent ?? accentPalette[timestamp % accentPalette.length],
     organizationType: values.organizationType,
     memberCategory: values.memberCategory,
-    memberCategoryId,
+    memberCategoryId:
+      values.memberCategory === '主任委员单位'
+        ? 'chair'
+        : values.memberCategory === '副主任委员单位'
+          ? 'vice-chair'
+          : values.memberCategory === '观察员单位'
+            ? 'observer'
+            : values.memberCategory === '合作单位'
+              ? 'partner'
+              : 'member',
     committee: values.committee,
     workgroups: values.workgroups,
     primaryContact: values.primaryContact,
@@ -244,8 +182,6 @@ function createMemberFromValues(values: MemberFormValues, member?: MemberUnit | 
 
 function MemberCenterPage() {
   const { message } = App.useApp()
-  const [activeCategory, setActiveCategory] = useState('all')
-  const [activeCapability, setActiveCapability] = useState<string | null>(null)
   const [contactMember, setContactMember] = useState<MemberUnit | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
   const [editingMember, setEditingMember] = useState<MemberUnit | null>(null)
@@ -258,16 +194,13 @@ function MemberCenterPage() {
   const [selectedMember, setSelectedMember] = useState<MemberUnit | null>(null)
   const [showAddModal, setShowAddModal] = useState(false)
   const [showImportModal, setShowImportModal] = useState(false)
-  const [showPermissionGuide, setShowPermissionGuide] = useState(false)
   const [submittedKeyword, setSubmittedKeyword] = useState('')
 
   useEffect(() => {
     setCurrentPage(1)
-  }, [activeCapability, activeCategory, filters, quickFilter, submittedKeyword])
+  }, [filters, quickFilter, submittedKeyword])
 
   const stats = useMemo(() => buildMemberStats(members), [members])
-  const categories = useMemo(() => buildCategoryCounts(members), [members])
-  const capabilities = useMemo(() => buildCapabilityCounts(members), [members])
 
   const filteredMembers = useMemo(() => {
     const keyword = submittedKeyword.trim().toLowerCase()
@@ -287,8 +220,6 @@ function MemberCenterPage() {
             .includes(keyword)
         : true
 
-      const matchesCategory = matchesLeftCategory(member, activeCategory)
-      const matchesCapability = activeCapability ? member.capabilityTags.includes(activeCapability) : true
       const matchesMemberCategory =
         filters.memberCategory === '全部' ? true : member.memberCategory === filters.memberCategory
       const matchesOrganizationType =
@@ -299,8 +230,6 @@ function MemberCenterPage() {
       const matchesWorkgroup =
         filters.workgroup === '全部' ? true : member.workgroups.includes(filters.workgroup)
       const matchesStatus = filters.status === '全部' ? true : member.status === filters.status
-      const matchesFilterCapability =
-        filters.capability === '全部' ? true : member.capabilityTags.includes(filters.capability)
       const matchesAccountState =
         filters.accountState === '全部'
           ? true
@@ -333,20 +262,17 @@ function MemberCenterPage() {
 
       return (
         matchesKeyword &&
-        matchesCategory &&
-        matchesCapability &&
         matchesMemberCategory &&
         matchesOrganizationType &&
         matchesCommittee &&
         matchesWorkgroup &&
         matchesStatus &&
-        matchesFilterCapability &&
         matchesAccountState &&
         matchesCompleteness &&
         matchesQuickFilter
       )
     })
-  }, [activeCapability, activeCategory, filters, members, quickFilter, submittedKeyword])
+  }, [filters, members, quickFilter, submittedKeyword])
 
   const pagedMembers = filteredMembers.slice((currentPage - 1) * pageSize, currentPage * pageSize)
 
@@ -359,7 +285,7 @@ function MemberCenterPage() {
 
   return (
     <AppLayout
-      contextLabel="工作台 / 会员管理中心"
+      contextLabel="工作台 / 会员信息中心"
       footerCaption="智慧视听生态"
       footerTitle="共建操作系统底座能力"
       headerSearchValue={headerKeyword}
@@ -368,7 +294,7 @@ function MemberCenterPage() {
         setSubmittedKeyword(value)
         message.success('已按关键词筛选会员单位')
       }}
-      searchPlaceholder="搜索单位名称、联系人、工作组、能力标签等"
+      searchPlaceholder="搜索单位名称、联系人、工作组等"
       versionLabel="V 1.0.0"
     >
       <div className={styles.page}>
@@ -377,9 +303,7 @@ function MemberCenterPage() {
             setEditingMember(null)
             setShowAddModal(true)
           }}
-          onExport={() => message.success('已模拟导出会员名册')}
           onImport={() => setShowImportModal(true)}
-          onOpenPermissionGuide={() => setShowPermissionGuide(true)}
         />
 
         <section className={styles.statsGrid}>
@@ -395,17 +319,6 @@ function MemberCenterPage() {
         </section>
 
         <section className={styles.contentGrid}>
-          <div className={styles.leftColumn}>
-            <MemberCategoryPanel
-              activeCapability={activeCapability}
-              activeCategory={activeCategory}
-              capabilities={capabilities}
-              categories={categories}
-              onCapabilityChange={setActiveCapability}
-              onCategoryChange={setActiveCategory}
-            />
-          </div>
-
           <div className={styles.mainColumn}>
             <MemberFilterBar
               activeKeyword={submittedKeyword}
@@ -415,8 +328,6 @@ function MemberCenterPage() {
               onChange={(patch) => setFilters((current) => ({ ...current, ...patch }))}
               onQuickFilterChange={setQuickFilter}
               onReset={() => {
-                setActiveCategory('all')
-                setActiveCapability(null)
                 setFilters(initialFilterState)
                 setHeaderKeyword('')
                 setSubmittedKeyword('')
@@ -429,6 +340,7 @@ function MemberCenterPage() {
             />
 
             <MemberUnitTable
+              columnWidthMembers={filteredMembers}
               currentPage={currentPage}
               members={pagedMembers}
               onContact={setContactMember}
@@ -471,23 +383,6 @@ function MemberCenterPage() {
               total={filteredMembers.length}
             />
           </div>
-
-          <aside className={styles.rightColumn}>
-            <PendingMemberActionsCard
-              items={memberPendingActions}
-              onClickItem={(item) => message.info(`${item.label}：${item.count}`)}
-              onMore={() => message.info('可扩展为完整待处理页')}
-            />
-            <RecentMemberChangesCard
-              items={memberRecentChanges}
-              onMore={() => message.info('可扩展为最近变更列表页')}
-            />
-            <ActiveMemberUnitsCard
-              items={memberActiveUnits}
-              onMore={() => message.info('可扩展为活跃成员单位排行页')}
-            />
-            <MemberStatusGuideCard items={memberStatusGuides} />
-          </aside>
         </section>
       </div>
 
@@ -555,12 +450,6 @@ function MemberCenterPage() {
           setShowImportModal(false)
           message.success('已模拟批量导入流程')
         }}
-      />
-
-      <MemberPermissionModal
-        guides={memberPermissionGuides}
-        open={showPermissionGuide}
-        onClose={() => setShowPermissionGuide(false)}
       />
     </AppLayout>
   )

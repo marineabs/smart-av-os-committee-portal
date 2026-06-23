@@ -9,7 +9,6 @@ export interface MemberFilterState {
   committee: string
   workgroup: string
   status: string
-  capability: string
   accountState: '全部' | '已启用' | '未启用'
   completeness: '全部' | '90%以上' | '70% - 89%' | '70%以下'
 }
@@ -100,17 +99,6 @@ function MemberFilterBar({
           <Select value={filters.status} onChange={(value) => onChange({ status: value })}>
             <Select.Option value="全部">全部</Select.Option>
             {options.statuses.map((item) => (
-              <Select.Option key={item} value={item}>
-                {item}
-              </Select.Option>
-            ))}
-          </Select>
-        </div>
-
-        <div className={styles.control}>
-          <label>能力标签</label>
-          <Select value={filters.capability} onChange={(value) => onChange({ capability: value })}>
-            {options.capabilities.map((item) => (
               <Select.Option key={item} value={item}>
                 {item}
               </Select.Option>
