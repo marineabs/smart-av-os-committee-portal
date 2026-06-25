@@ -29,31 +29,10 @@
 }
 
 .memberCell {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.memberLogo {
-  width: 40px;
-  height: 40px;
-  border-radius: 14px;
-  display: grid;
-  place-items: center;
-  color: #ffffff;
-  font-size: 12px;
-  font-weight: 700;
-  flex: 0 0 auto;
-  box-shadow: 0 10px 20px rgba(47, 121, 255, 0.16);
-}
-
-.memberBody {
   min-width: 0;
-  display: flex;
-  flex-direction: column;
 }
 
-.memberBody strong {
+.memberCell strong {
   color: #20365e;
   font-size: 14px;
   font-weight: 700;

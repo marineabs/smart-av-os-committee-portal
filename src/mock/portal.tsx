@@ -37,14 +37,28 @@ export const currentUser: UserProfile = {
   name: '张伟',
   role: '秘书处管理员',
   avatarText: '张',
+  roleKey: 'secretariat_admin',
+  permissions: ['admin:center:view', 'workgroups:manage'],
+  organizationName: '智慧视听操作系统专委会',
+  currentWorkgroup: '秘书处',
+  managementScope: '全部工作组 / 成员单位 / 资料归档',
+  tags: ['秘书处', '管理员权限', '演示环境'],
 }
 
-export const navItems: NavItem[] = [
-  { key: 'home', label: '首页门户', path: '/', icon: 'home' },
+export const businessNavItems: NavItem[] = [
+  { key: 'home', label: '首页门户', path: '/portal', icon: 'home' },
   { key: 'workspace', label: '工作组空间', path: '/workgroups', icon: 'groups' },
-  { key: 'knowledge', label: '文件与知识中心', path: '/knowledge-center', icon: 'knowledge' },
+  { key: 'knowledge', label: '文件与知识中心', path: '/files', icon: 'knowledge' },
   { key: 'members', label: '会员信息中心', path: '/members', icon: 'members' },
   { key: 'meetings', label: '会议中心', path: '/meetings', icon: 'meetings' },
+  { key: 'search-center', label: '搜索中心', path: '/search-center', icon: 'search' },
+  { key: 'analytics', label: '统计分析中心', path: '/analytics', icon: 'analytics' },
+]
+
+export const navItems = businessNavItems
+
+export const adminNavItems: NavItem[] = [
+  { key: 'admin-center', label: '平台管理中心', path: '/admin', icon: 'settings' },
 ]
 
 export const heroActions: HeroAction[] = [
@@ -171,7 +185,7 @@ export const placeholderPages: PlaceholderPageItem[] = [
     description: '按工作组组织协同任务、资料沉淀、通知共享与专题推进。',
   },
   {
-    path: '/knowledge-center',
+    path: '/files',
     title: '文件与知识中心',
     description: '统一管理方案文档、规范草案、测试报告、会议纪要与知识资产。',
   },

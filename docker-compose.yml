@@ -1,0 +1,22 @@
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: smart-av-os-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: smart_av_os
+      MYSQL_USER: smart_av_user
+      MYSQL_PASSWORD: smart_av_password
+      MYSQL_ROOT_PASSWORD: smart_av_root_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - smart-av-os-mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-psmart_av_root_password"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  smart-av-os-mysql-data:

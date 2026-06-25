@@ -6,24 +6,24 @@ import { Button } from 'antd'
 import styles from './WorkgroupHero.module.css'
 
 interface WorkgroupHeroProps {
-  canCreateGroup?: boolean
+  canManageWorkgroups?: boolean
   createButtonLabel?: string
   onCreateGroup: () => void
-  onManageMembers: () => void
+  onManageWorkgroups: () => void
 }
 
 function WorkgroupHero({
-  canCreateGroup = true,
+  canManageWorkgroups = true,
   createButtonLabel = '新建工作组',
   onCreateGroup,
-  onManageMembers,
+  onManageWorkgroups,
 }: WorkgroupHeroProps) {
   return (
     <section className={styles.hero}>
       <div className={styles.copy}>
         <h1>工作组空间</h1>
-        <div className={styles.actionRow}>
-          {canCreateGroup ? (
+        {canManageWorkgroups ? (
+          <div className={styles.actionRow}>
             <Button
               type="primary"
               className={styles.createButton}
@@ -32,11 +32,11 @@ function WorkgroupHero({
             >
               {createButtonLabel}
             </Button>
-          ) : null}
-          <Button className={styles.manageButton} icon={<TeamOutlined />} onClick={onManageMembers}>
-            工作组管理
-          </Button>
-        </div>
+            <Button className={styles.manageButton} icon={<TeamOutlined />} onClick={onManageWorkgroups}>
+              工作组管理
+            </Button>
+          </div>
+        ) : null}
       </div>
     </section>
   )

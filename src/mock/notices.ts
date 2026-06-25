@@ -37,7 +37,7 @@ export const demoNotices: DemoNoticeRecord[] = [
   },
   {
     id: 'notice-5',
-    title: '专委会演示平台本地 mock 数据更新说明',
+    title: '专委会演示平台本地示例数据更新说明',
     date: '06-18',
     category: '公告通知',
     publisher: '系统管理中心',

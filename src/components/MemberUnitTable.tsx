@@ -1,8 +1,6 @@
 import {
-  EditOutlined,
   EyeOutlined,
   MoreOutlined,
-  SafetyCertificateOutlined,
   TeamOutlined,
 } from '@ant-design/icons'
 import { App, Dropdown, InputNumber, Pagination, Select, Table } from 'antd'
@@ -13,14 +11,15 @@ import MemberStatusTag from './MemberStatusTag'
 import styles from './MemberUnitTable.module.css'
 
 interface MemberUnitTableProps {
+  canManageAccounts?: boolean
+  canManageMembers?: boolean
+  canNotifyMembers?: boolean
   columnWidthMembers: MemberUnit[]
   currentPage: number
   members: MemberUnit[]
   onContact: (member: MemberUnit) => void
-  onEdit: (member: MemberUnit) => void
   onMoreAction: (member: MemberUnit, action: string) => void
   onPageChange: (page: number, pageSize: number) => void
-  onPermission: (member: MemberUnit) => void
   onView: (member: MemberUnit) => void
   pageSize: number
   total: number
@@ -31,14 +30,15 @@ function estimateNameWidth(name: string) {
 }
 
 function MemberUnitTable({
+  canManageAccounts = true,
+  canManageMembers = true,
+  canNotifyMembers = true,
   columnWidthMembers,
   currentPage,
   members,
   onContact,
-  onEdit,
   onMoreAction,
   onPageChange,
-  onPermission,
   onView,
   pageSize,
   total,
@@ -46,7 +46,7 @@ function MemberUnitTable({
   const { message } = App.useApp()
   const nameColumnWidth = Math.max(
     160,
-    ...columnWidthMembers.map((member) => estimateNameWidth(member.name) + 76),
+    ...columnWidthMembers.map((member) => estimateNameWidth(member.name) + 24),
   )
 
   const columns: TableProps<MemberUnit>['columns'] = [
@@ -58,12 +58,7 @@ function MemberUnitTable({
       fixed: 'left',
       render: (_, member) => (
         <div className={styles.memberCell}>
-          <span className={styles.memberLogo} style={{ background: member.accent }}>
-            {member.logoText}
-          </span>
-          <div className={styles.memberBody}>
-            <strong>{member.name}</strong>
-          </div>
+          <strong>{member.name}</strong>
         </div>
       ),
     },
@@ -133,16 +128,16 @@ function MemberUnitTable({
     {
       title: '操作',
       key: 'actions',
-      width: 158,
+      width: 112,
       fixed: 'right',
       render: (_, member) => {
         const items: MenuProps['items'] = [
           { key: 'records', label: '参与记录' },
-          { key: 'workgroup', label: '工作组调整' },
-          { key: 'notify', label: '发送通知' },
+          ...(canManageMembers ? [{ key: 'workgroup', label: '工作组调整' }] : []),
+          ...(canNotifyMembers ? [{ key: 'notify', label: '发送通知' }] : []),
           { key: 'export', label: '导出单位档案' },
-          { key: 'freeze', label: '冻结账号' },
-          { key: 'archive', label: '退出归档' },
+          ...(canManageAccounts ? [{ key: 'freeze', label: '冻结账号' }] : []),
+          ...(canManageMembers ? [{ key: 'archive', label: '退出归档' }] : []),
         ]
 
         return (
@@ -150,26 +145,22 @@ function MemberUnitTable({
             <button type="button" onClick={() => onView(member)} aria-label="查看">
               <EyeOutlined />
             </button>
-            <button type="button" onClick={() => onEdit(member)} aria-label="编辑">
-              <EditOutlined />
-            </button>
             <button type="button" onClick={() => onContact(member)} aria-label="联系人">
               <TeamOutlined />
             </button>
-            <button type="button" onClick={() => onPermission(member)} aria-label="权限">
-              <SafetyCertificateOutlined />
-            </button>
-            <Dropdown
-              menu={{
-                items,
-                onClick: ({ key }) => onMoreAction(member, key),
-              }}
-              trigger={['click']}
-            >
-              <button type="button" aria-label="更多">
-                <MoreOutlined />
-              </button>
-            </Dropdown>
+            {items.length ? (
+              <Dropdown
+                menu={{
+                  items,
+                  onClick: ({ key }) => onMoreAction(member, key),
+                }}
+                trigger={['click']}
+              >
+                <button type="button" aria-label="更多">
+                  <MoreOutlined />
+                </button>
+              </Dropdown>
+            ) : null}
           </div>
         )
       },
@@ -185,14 +176,18 @@ function MemberUnitTable({
         pagination={false}
         scroll={{ x: 1420 }}
         size="middle"
-        rowSelection={{
-          columnWidth: 42,
-          onChange: (_, rows) => {
-            if (rows.length) {
-              message.info(`已选择 ${rows.length} 个会员单位`)
-            }
-          },
-        }}
+        rowSelection={
+          canManageMembers
+            ? {
+                columnWidth: 42,
+                onChange: (_, rows) => {
+                  if (rows.length) {
+                    message.info(`已选择 ${rows.length} 个会员单位`)
+                  }
+                },
+              }
+            : undefined
+        }
       />
 
       <div className={styles.footer}>

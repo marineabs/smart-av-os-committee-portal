@@ -1,0 +1,157 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+model Role {
+  id          Int         @id @default(autoincrement())
+  code        String      @unique
+  name        String
+  description String?
+  users       AdminUser[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model AdminUser {
+  id        Int      @id @default(autoincrement())
+  key       String   @unique
+  account   String   @unique
+  passwordHash String
+  name      String
+  roleId    Int?
+  role      Role?    @relation(fields: [roleId], references: [id])
+  roleName  String
+  roleKey   String
+  permissions String @db.Text
+  scope     String
+  unit      String
+  status    String
+  groupName String
+  lastLogin String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Workgroup {
+  id            Int      @id @default(autoincrement())
+  key           String   @unique
+  name          String
+  committee     String
+  leader        String
+  leaderUnit    String
+  deputy        String
+  deputyUnits   String   @db.Text
+  members       Int
+  memberUnits   String   @db.Text
+  status        String
+  sort          Int
+  homepage      String
+  updatedAtText String
+  secretary     String
+  focus         String   @db.Text
+  meetingStatus String   @db.Text
+  taskStatus    String   @db.Text
+  archiveStatus String   @db.Text
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Organization {
+  id            Int      @id @default(autoincrement())
+  key           String   @unique
+  name          String
+  type          String
+  liaison       String
+  phone         String
+  groups        Int
+  status        String
+  participation String   @db.Text
+  joinedAt      String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model ContentItem {
+  id        Int      @id @default(autoincrement())
+  key       String   @unique
+  column    String
+  title     String
+  owner     String
+  updatedAtText String
+  status    String
+  audience  String
+  priority  String
+  summary   String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ArchiveItem {
+  id        Int      @id @default(autoincrement())
+  key       String   @unique
+  category  String
+  item      String
+  groupName String
+  retention String
+  status    String
+  owner     String
+  updatedAtText String
+  notes     String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model SupervisionItem {
+  id        Int      @id @default(autoincrement())
+  key       String   @unique
+  groupName String
+  committee String
+  meetings  String
+  tasks     String
+  result    String
+  risk      String
+  owner     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model OperationLog {
+  id        Int      @id @default(autoincrement())
+  key       String   @unique
+  action    String
+  operator  String
+  target    String
+  time      String
+  result    String
+  detail    String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model CollaborationRecord {
+  id        Int      @id @default(autoincrement())
+  section   String
+  key       String
+  payload   String   @db.LongText
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([section, key])
+}
+
+model SystemSetting {
+  id           Int      @id @default(autoincrement())
+  singletonKey String  @unique @default("default")
+  platformName String
+  supportEmail String
+  supportPhone String
+  supportTeam  String
+  demoTag      String
+  modules      String  @db.Text
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}

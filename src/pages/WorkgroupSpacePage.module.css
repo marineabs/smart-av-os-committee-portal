@@ -62,8 +62,17 @@
 
 .cardGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 21rem), 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--layout-gap);
+}
+
+.cardPlaceholder {
+  min-height: 16.25rem;
+  border-radius: 22px;
+  border: 1px dashed rgba(194, 214, 248, 0.88);
+  background:
+    linear-gradient(180deg, rgba(248, 251, 255, 0.82), rgba(242, 247, 255, 0.92));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
 }
 
 @media (max-width: 1200px) {
@@ -71,9 +80,8 @@
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
-  .statsGrid,
   .cardGrid {
-    grid-template-columns: minmax(0, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
@@ -81,10 +89,18 @@
   .statsGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .cardGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 @media (max-width: 768px) {
   .statsGrid {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .cardPlaceholder {
+    display: none;
   }
 }

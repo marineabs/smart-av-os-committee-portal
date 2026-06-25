@@ -1,16 +1,18 @@
 import { App, Tabs } from 'antd'
 import { useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import KnowledgeStatCard from '../components/KnowledgeStatCard'
 import NewWorkgroupDrawer from '../components/NewWorkgroupDrawer'
 import WorkgroupCard from '../components/WorkgroupCard'
 import WorkgroupHero from '../components/WorkgroupHero'
 import AppLayout from '../layouts/AppLayout'
-import { currentUser } from '../mock/portal'
 import {
   workgroupStats,
   workgroups,
 } from '../mock/workgroups'
+import { getActiveUser } from '../services/auth'
 import type { WorkgroupCardItem, WorkgroupCategory } from '../types/portal'
+import { canManageWorkgroups } from '../utils/permissions'
 import styles from './WorkgroupSpacePage.module.css'
 
 type CommitteeWorkgroupCategory = Exclude<WorkgroupCategory, 'all'>
@@ -44,27 +46,16 @@ const committeeTabs: CommitteeTab[] = [
   },
 ]
 
-function resolveCreationMode(role: string) {
-  if (role.includes('秘书处管理员')) {
-    return 'direct'
-  }
-
-  if (role.includes('分委会负责人')) {
-    return 'application'
-  }
-
-  return 'viewer'
-}
-
 function WorkgroupSpacePage() {
   const { message } = App.useApp()
+  const currentUser = getActiveUser()
+  const navigate = useNavigate()
   const [activeCommittee, setActiveCommittee] = useState(committeeTabs[0].key)
   const [groupList, setGroupList] = useState(workgroups)
   const [showCreateDrawer, setShowCreateDrawer] = useState(false)
 
-  const creationMode = resolveCreationMode(currentUser.role)
-  const canCreateGroup = creationMode !== 'viewer'
-  const createButtonLabel = creationMode === 'application' ? '申请新建工作组' : '新建工作组'
+  const allowWorkgroupManage = canManageWorkgroups(currentUser)
+  const createButtonLabel = '新建工作组'
   const statItems = useMemo(
     () =>
       workgroupStats.map((item, index) =>
@@ -92,6 +83,14 @@ function WorkgroupSpacePage() {
     [groupList],
   )
 
+  const placeholderCount = useMemo(() => {
+    if (filteredWorkgroups.length === 0) {
+      return 3
+    }
+
+    return (3 - (filteredWorkgroups.length % 3)) % 3
+  }, [filteredWorkgroups.length])
+
   return (
     <AppLayout
       contextLabel="工作台"
@@ -102,10 +101,10 @@ function WorkgroupSpacePage() {
     >
       <div className={styles.page}>
         <WorkgroupHero
-          canCreateGroup={canCreateGroup}
+          canManageWorkgroups={allowWorkgroupManage}
           createButtonLabel={createButtonLabel}
           onCreateGroup={() => setShowCreateDrawer(true)}
-          onManageMembers={() => message.info('当前为原型页，可继续扩展工作组管理流程')}
+          onManageWorkgroups={() => navigate('/admin/workgroups')}
         />
 
         <section className={styles.statsGrid}>
@@ -138,24 +137,27 @@ function WorkgroupSpacePage() {
               {filteredWorkgroups.map((group) => (
                 <WorkgroupCard key={group.id} group={group} />
               ))}
+              {Array.from({ length: placeholderCount }).map((_, index) => (
+                <div
+                  key={`workgroup-placeholder-${activeCommittee}-${index}`}
+                  aria-hidden="true"
+                  className={styles.cardPlaceholder}
+                />
+              ))}
             </div>
           </div>
 
         </section>
       </div>
 
-      {canCreateGroup ? (
+      {allowWorkgroupManage ? (
         <NewWorkgroupDrawer
-          creationMode={creationMode === 'application' ? 'application' : 'direct'}
+          creationMode="direct"
           onClose={() => setShowCreateDrawer(false)}
           onCreated={(group: WorkgroupCardItem) => {
             setGroupList((current) => [group, ...current])
             setShowCreateDrawer(false)
-            message.success(
-              creationMode === 'application'
-                ? '工作组申请已提交，已加入列表等待审核'
-                : '工作组已创建并加入列表',
-            )
+            message.success('工作组已创建并加入列表')
           }}
           open={showCreateDrawer}
         />

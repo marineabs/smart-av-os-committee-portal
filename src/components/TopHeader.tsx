@@ -1,6 +1,6 @@
 import {
   BellOutlined,
-  DownOutlined,
+  LogoutOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   MessageOutlined,
@@ -9,7 +9,8 @@ import {
 } from '@ant-design/icons'
 import { Avatar, Badge, Input } from 'antd'
 import type { ChangeEvent } from 'react'
-import { currentUser } from '../mock/portal'
+import { useNavigate } from 'react-router-dom'
+import { clearAuthSession, getActiveUser } from '../services/auth'
 import styles from './TopHeader.module.css'
 
 interface TopHeaderProps {
@@ -31,8 +32,15 @@ function TopHeader({
   onSearchSubmit,
   searchPlaceholder = '全局搜索：请输入关键词',
 }: TopHeaderProps) {
+  const navigate = useNavigate()
+  const currentUser = getActiveUser()
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     onSearchChange?.(event.target.value)
+  }
+
+  const handleLogout = () => {
+    clearAuthSession()
+    navigate('/login')
   }
 
   return (
@@ -71,13 +79,15 @@ function TopHeader({
           <QuestionCircleOutlined />
         </button>
 
-        <button className={styles.userButton} type="button">
+        <button className={styles.userButton} type="button" aria-label="当前用户">
           <Avatar className={styles.avatar}>{currentUser.avatarText}</Avatar>
           <span className={styles.userMeta}>
             <strong>{currentUser.name}</strong>
             <small>{currentUser.role}</small>
           </span>
-          <DownOutlined className={styles.arrow} />
+        </button>
+        <button className={styles.iconButton} type="button" aria-label="退出登录" onClick={handleLogout}>
+          <LogoutOutlined />
         </button>
       </div>
     </header>

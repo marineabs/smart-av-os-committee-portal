@@ -1,5 +1,5 @@
 import { Form, Input, Modal, Select } from 'antd'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import type { MemberUnit } from '../types/portal'
 import { memberFilterOptions } from '../mock/memberCenter'
 
@@ -21,12 +21,13 @@ export interface MemberFormValues {
 interface AddMemberModalProps {
   member?: MemberUnit | null
   onClose: () => void
-  onSubmit: (values: MemberFormValues) => void
+  onSubmit: (values: MemberFormValues) => void | Promise<void>
   open: boolean
 }
 
 function AddMemberModal({ member, onClose, onSubmit, open }: AddMemberModalProps) {
   const [form] = Form.useForm<MemberFormValues>()
+  const [submitting, setSubmitting] = useState(false)
 
   useEffect(() => {
     if (!member) {
@@ -65,8 +66,16 @@ function AddMemberModal({ member, onClose, onSubmit, open }: AddMemberModalProps
       width={760}
       onCancel={onClose}
       onOk={() => {
-        form.validateFields().then(onSubmit)
+        form.validateFields().then(async (values) => {
+          setSubmitting(true)
+          try {
+            await onSubmit(values)
+          } finally {
+            setSubmitting(false)
+          }
+        })
       }}
+      confirmLoading={submitting}
       okText={member ? '保存修改' : '确认新增'}
     >
       <Form form={form} layout="vertical">

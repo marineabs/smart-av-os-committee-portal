@@ -1,0 +1,107 @@
+.page {
+  display: grid;
+  gap: var(--layout-gap);
+}
+
+.hero,
+.panel {
+  padding: var(--card-padding);
+  border-radius: var(--card-radius-lg);
+  background: var(--card-bg);
+  border: 1px solid rgba(67, 109, 211, 0.08);
+  box-shadow: var(--shadow-card);
+}
+
+.hero {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: flex-start;
+}
+
+.eyebrow {
+  color: var(--primary);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.hero h1,
+.panel h2 {
+  margin: 10px 0 0;
+  color: var(--text-strong);
+}
+
+.hero p {
+  max-width: 760px;
+  margin: 12px 0 0;
+  color: var(--text-secondary);
+  line-height: 1.8;
+}
+
+.heroActions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.metricGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px;
+}
+
+.metricCard {
+  padding: 18px;
+  border-radius: 16px;
+  background: #f7faff;
+  border: 1px solid rgba(64, 112, 222, 0.08);
+}
+
+.metricCard span {
+  color: #6d7fa2;
+}
+
+.metricCard strong {
+  display: block;
+  margin-top: 8px;
+  color: #18325d;
+  font-size: 30px;
+}
+
+.gridTwo {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--layout-gap);
+}
+
+.list {
+  display: grid;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.listItem {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: #f8fbff;
+}
+
+.listItem strong {
+  color: #18325d;
+}
+
+.listItem span {
+  color: #6d7fa2;
+}
+
+@media (max-width: 900px) {
+  .hero,
+  .gridTwo {
+    grid-template-columns: 1fr;
+    display: grid;
+  }
+}

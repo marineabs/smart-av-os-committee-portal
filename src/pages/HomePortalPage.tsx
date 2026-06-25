@@ -34,7 +34,7 @@ function HomePortalPage() {
           <InfoListCard title="最新通知" morePath="/notices" variant="notice" items={latestNotices} />
           <InfoListCard
             title="最新资料"
-            morePath="/knowledge-center"
+            morePath="/files"
             variant="document"
             items={latestDocuments}
           />

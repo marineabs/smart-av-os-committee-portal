@@ -35,8 +35,10 @@ import { NavLink } from 'react-router-dom'
 import { useState, type ReactNode } from 'react'
 import userAvatarFemale from '../assets/user-avatar-female.png'
 import userAvatarMale from '../assets/user-avatar-male.png'
-import { currentUser, navItems } from '../mock/portal'
+import { adminNavItems, businessNavItems } from '../mock/portal'
+import { getActiveUser } from '../services/auth'
 import type { NavIconKey } from '../types/portal'
+import { canViewAdminCenter, canViewMemberCenter } from '../utils/permissions'
 import styles from './SidebarMenu.module.css'
 
 const inactiveIconMap: Record<NavIconKey, ReactNode> = {
@@ -73,11 +75,37 @@ interface SidebarMenuProps {
 }
 
 function SidebarMenu({ collapsed }: SidebarMenuProps) {
+  const currentUser = getActiveUser()
   const [avatarMode, setAvatarMode] = useState<'male' | 'female'>('male')
   const [feedbackContact, setFeedbackContact] = useState('')
   const [feedbackOpen, setFeedbackOpen] = useState(false)
   const [feedbackText, setFeedbackText] = useState('')
   const avatarSrc = avatarMode === 'male' ? userAvatarMale : userAvatarFemale
+  const showAdminCenter = canViewAdminCenter(currentUser)
+  const visibleBusinessNavItems = businessNavItems.filter((item) => (
+    item.key === 'members' ? canViewMemberCenter(currentUser) : true
+  ))
+  const userDetails = [
+    {
+      key: 'organization',
+      icon: <BankOutlined />,
+      label: '所属组织：',
+      value: currentUser.organizationName ?? '智慧视听操作系统专委会',
+    },
+    {
+      key: 'workgroup',
+      icon: <TeamOutlined />,
+      label: '当前工作组：',
+      value: currentUser.currentWorkgroup ?? '未加入工作组',
+    },
+    {
+      key: 'scope',
+      icon: <SafetyCertificateOutlined />,
+      label: showAdminCenter ? '管理范围：' : '协同范围：',
+      value: currentUser.managementScope ?? '通知 / 文件 / 会议',
+    },
+  ]
+  const userTags = currentUser.tags ?? []
 
   const handleSubmitFeedback = () => {
     if (!feedbackContact.trim() || !feedbackText.trim()) {
@@ -120,34 +148,22 @@ function SidebarMenu({ collapsed }: SidebarMenuProps) {
         {!collapsed && (
           <>
             <div className={styles.userDetails}>
-              <div className={styles.detailItem}>
-                <span className={styles.detailIcon}>
-                  <BankOutlined />
-                </span>
-                <span className={styles.detailLabel}>所属组织：</span>
-                <span className={styles.detailValue}>智慧视听操作系统专委会</span>
-              </div>
-              <div className={styles.detailItem}>
-                <span className={styles.detailIcon}>
-                  <TeamOutlined />
-                </span>
-                <span className={styles.detailLabel}>当前工作组：</span>
-                <span className={styles.detailValue}>秘书处</span>
-              </div>
-              <div className={styles.detailItem}>
-                <span className={styles.detailIcon}>
-                  <SafetyCertificateOutlined />
-                </span>
-                <span className={styles.detailLabel}>管理范围：</span>
-                <span className={styles.detailValue}>会员 / 会议 / 资料</span>
-              </div>
+              {userDetails.map((item) => (
+                <div key={item.key} className={styles.detailItem}>
+                  <span className={styles.detailIcon}>{item.icon}</span>
+                  <span className={styles.detailLabel}>{item.label}</span>
+                  <span className={styles.detailValue}>{item.value}</span>
+                </div>
+              ))}
             </div>
 
-            <div className={styles.userTags}>
-              <span>秘书处</span>
-              <span>管理员权限</span>
-              <span>演示环境</span>
-            </div>
+            {userTags.length ? (
+              <div className={styles.userTags}>
+                {userTags.map((tag) => (
+                  <span key={tag}>{tag}</span>
+                ))}
+              </div>
+            ) : null}
           </>
         )}
       </div>
@@ -155,23 +171,53 @@ function SidebarMenu({ collapsed }: SidebarMenuProps) {
       {!collapsed && <div className={styles.sectionDivider} />}
 
       <div className={styles.sidebarBodyCard}>
-        <nav className={styles.nav}>
-          {navItems.map((item) => (
-            <NavLink
-              key={item.key}
-              to={item.path}
-              end={item.path === '/'}
-              className={({ isActive }) => `${styles.navItem} ${isActive ? styles.navItemActive : ''}`}
-            >
-              {({ isActive }) => (
-                <>
-                  <span className={styles.navIcon}>{isActive ? activeIconMap[item.icon] : inactiveIconMap[item.icon]}</span>
-                  {!collapsed && <span className={styles.navLabel}>{item.label}</span>}
-                </>
-              )}
-            </NavLink>
-          ))}
-        </nav>
+        <div className={styles.navSection}>
+          {!collapsed ? <div className={styles.navSectionTitle}>业务导航</div> : null}
+          <nav className={styles.nav}>
+            {visibleBusinessNavItems.map((item) => (
+              <NavLink
+                key={item.key}
+                to={item.path}
+                end={item.path === '/portal'}
+                className={({ isActive }) => `${styles.navItem} ${isActive ? styles.navItemActive : ''}`}
+              >
+                {({ isActive }) => (
+                  <>
+                    <span className={styles.navIcon}>{isActive ? activeIconMap[item.icon] : inactiveIconMap[item.icon]}</span>
+                    {!collapsed && <span className={styles.navLabel}>{item.label}</span>}
+                  </>
+                )}
+              </NavLink>
+            ))}
+          </nav>
+        </div>
+
+        {showAdminCenter ? (
+          <div className={styles.navSection}>
+            {!collapsed ? (
+              <>
+                <div className={styles.navSectionDivider} />
+                <div className={styles.navSectionTitle}>管理入口</div>
+              </>
+            ) : null}
+            <nav className={styles.nav}>
+              {adminNavItems.map((item) => (
+                <NavLink
+                  key={item.key}
+                  to={item.path}
+                  className={({ isActive }) => `${styles.navItem} ${isActive ? styles.navItemActive : ''}`}
+                >
+                  {({ isActive }) => (
+                    <>
+                      <span className={styles.navIcon}>{isActive ? activeIconMap[item.icon] : inactiveIconMap[item.icon]}</span>
+                      {!collapsed && <span className={styles.navLabel}>{item.label}</span>}
+                    </>
+                  )}
+                </NavLink>
+              ))}
+            </nav>
+          </div>
+        ) : null}
 
         {!collapsed && (
           <div className={styles.brandPanel}>

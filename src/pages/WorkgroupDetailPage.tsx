@@ -7,7 +7,9 @@ import WorkgroupDetailHero from '../components/WorkgroupDetailHero'
 import AppLayout from '../layouts/AppLayout'
 import { knowledgePermissionGuides } from '../mock/knowledgeCenter'
 import { technicalStandardDetail, workgroups } from '../mock/workgroups'
+import { getActiveUser } from '../services/auth'
 import type { WorkgroupCardItem, WorkgroupDetailData } from '../types/portal'
+import { canManageWorkgroupContent, isAdminUser, isWorkgroupManager } from '../utils/permissions'
 import styles from './WorkgroupDetailPage.module.css'
 
 function createDetailData(group: WorkgroupCardItem): WorkgroupDetailData {
@@ -136,6 +138,7 @@ function createDetailData(group: WorkgroupCardItem): WorkgroupDetailData {
 
 function WorkgroupDetailPage() {
   const { message } = App.useApp()
+  const currentUser = getActiveUser()
   const params = useParams<{ groupId: string }>()
   const group = workgroups.find((item) => item.id === params.groupId)
 
@@ -144,6 +147,20 @@ function WorkgroupDetailPage() {
   if (!group || !detail) {
     return <Navigate to="/workgroups" replace />
   }
+
+  const canManageThisGroup = canManageWorkgroupContent(currentUser, group.name)
+  const canViewInternalTabs = isAdminUser(currentUser) || (isWorkgroupManager(currentUser) && canManageThisGroup)
+  const visibleTabs = detail.tabs.filter((tab) => {
+    if (tab.id === 'logs') {
+      return canViewInternalTabs
+    }
+
+    if (tab.id === 'members') {
+      return canViewInternalTabs
+    }
+
+    return true
+  })
 
   return (
     <AppLayout
@@ -159,6 +176,7 @@ function WorkgroupDetailPage() {
         </div>
 
         <WorkgroupDetailHero
+          canManageContent={canManageThisGroup}
           detail={detail}
           group={group}
           onAction={(label) => message.info(`${label}流程可继续扩展`)}
@@ -174,7 +192,7 @@ function WorkgroupDetailPage() {
           <div className={styles.mainColumn}>
             <div className={styles.tabsWrap}>
               <Tabs
-                items={detail.tabs.map((tab) => ({
+                items={visibleTabs.map((tab) => ({
                   key: tab.id,
                   label: tab.title,
                   children: (

@@ -17,7 +17,7 @@ function PlaceholderPage({ title, description }: PlaceholderPageProps) {
           <span className={styles.eyebrow}>模块占位页</span>
           <h1>{title}</h1>
           <p>{description}</p>
-          <Link to="/" className={styles.backLink}>
+          <Link to="/portal" className={styles.backLink}>
             返回首页 <RightOutlined />
           </Link>
         </section>

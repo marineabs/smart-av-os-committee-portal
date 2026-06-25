@@ -21,6 +21,10 @@ const fileTypeMap: Record<KnowledgeFileType, 'pdf' | 'word' | 'excel' | 'ppt'> =
 }
 
 interface KnowledgeFileTableProps {
+  canManageFiles?: boolean
+  canManageFile?: (file: KnowledgeFile) => boolean
+  canSetPermissions?: boolean
+  canSetFilePermissions?: (file: KnowledgeFile) => boolean
   currentPage: number
   files: KnowledgeFile[]
   onDownload: (file: KnowledgeFile) => void
@@ -33,6 +37,10 @@ interface KnowledgeFileTableProps {
 }
 
 function KnowledgeFileTable({
+  canManageFiles = true,
+  canManageFile,
+  canSetPermissions = true,
+  canSetFilePermissions,
   currentPage,
   files,
   onDownload,
@@ -130,12 +138,14 @@ function KnowledgeFileTable({
       key: 'actions',
       width: 108,
       render: (_, file) => {
+        const allowManageFile = canManageFile ? canManageFile(file) : canManageFiles
+        const allowSetFilePermissions = canSetFilePermissions ? canSetFilePermissions(file) : canSetPermissions
         const items: MenuProps['items'] = [
           { key: 'detail', label: '查看详情' },
           { key: 'history', label: '历史版本' },
-          { key: 'permission', label: '权限设置' },
           { key: 'favorite', label: file.isFavorite ? '取消收藏' : '添加收藏' },
-          { key: 'delete', label: '删除' },
+          ...(allowSetFilePermissions ? [{ key: 'permission', label: '权限设置' }] : []),
+          ...(allowManageFile ? [{ key: 'delete', label: '删除' }] : []),
         ]
 
         return (
@@ -172,14 +182,18 @@ function KnowledgeFileTable({
         pagination={false}
         size="middle"
         scroll={{ x: 1320 }}
-        rowSelection={{
-          columnWidth: 42,
-          onChange: (_, rows) => {
-            if (rows.length) {
-              message.info(`已选择 ${rows.length} 份资料`)
-            }
-          },
-        }}
+        rowSelection={
+          canManageFiles
+            ? {
+                columnWidth: 42,
+                onChange: (_, rows) => {
+                  if (rows.length) {
+                    message.info(`已选择 ${rows.length} 份资料`)
+                  }
+                },
+              }
+            : undefined
+        }
       />
 
       <div className={styles.footer}>

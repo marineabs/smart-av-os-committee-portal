@@ -32,10 +32,27 @@ export interface NavItem {
   icon: NavIconKey
 }
 
+export type UserRoleKey =
+  | 'member'
+  | 'workgroup_member'
+  | 'organization_user'
+  | 'workgroup_leader'
+  | 'workgroup_deputy_leader'
+  | 'workgroup_secretary'
+  | 'committee_admin'
+  | 'secretariat_admin'
+  | 'platform_admin'
+
 export interface UserProfile {
   name: string
   role: string
   avatarText: string
+  roleKey?: UserRoleKey
+  permissions?: string[]
+  organizationName?: string
+  currentWorkgroup?: string
+  managementScope?: string
+  tags?: string[]
 }
 
 export interface HeroAction {
@@ -103,8 +120,8 @@ export type KnowledgePermissionLevel =
   | '公开资料'
   | '分委会资料'
   | '工作组资料'
+  | '指定单位资料'
   | '秘书处资料'
-  | '敏感资料'
 export type KnowledgeQuickFilter =
   | 'all'
   | 'visible'
@@ -154,6 +171,29 @@ export interface KnowledgeFile {
   needsComment: boolean
   needsReview: boolean
   updatedThisMonth: boolean
+  originalFileName?: string
+  mimeType?: string
+  fileSize?: number
+  fileData?: string
+  description?: string
+  comments?: KnowledgeFileComment[]
+  versionHistory?: KnowledgeFileVersion[]
+}
+
+export interface KnowledgeFileComment {
+  id: string
+  author: string
+  organization?: string
+  content: string
+  createdAt: string
+}
+
+export interface KnowledgeFileVersion {
+  id: string
+  version: string
+  updatedAt: string
+  operator: string
+  note: string
 }
 
 export interface KnowledgeFilterOptions {

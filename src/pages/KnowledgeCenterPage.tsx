@@ -1,41 +1,49 @@
 import { App } from 'antd'
 import { useEffect, useState } from 'react'
 import FilePreviewModal from '../components/FilePreviewModal'
-import HotFilesCard from '../components/HotFilesCard'
-import KnowledgeCategoryPanel from '../components/KnowledgeCategoryPanel'
 import KnowledgeFilterBar from '../components/KnowledgeFilterBar'
 import type { KnowledgeFilterState } from '../components/KnowledgeFilterBar'
 import KnowledgeFileTable from '../components/KnowledgeFileTable'
 import KnowledgeHero from '../components/KnowledgeHero'
 import KnowledgeStatCard from '../components/KnowledgeStatCard'
-import PendingActionsCard from '../components/PendingActionsCard'
-import PermissionGuideCard from '../components/PermissionGuideCard'
 import PermissionInfoModal from '../components/PermissionInfoModal'
-import RecentUpdatesCard from '../components/RecentUpdatesCard'
 import UploadFileModal from '../components/UploadFileModal'
 import AppLayout from '../layouts/AppLayout'
 import {
   knowledgeCategories,
   knowledgeFilterOptions,
   knowledgeFiles as initialKnowledgeFiles,
-  knowledgeHotFiles,
-  knowledgePendingItems,
   knowledgePermissionGuides,
-  knowledgeRecentUpdates,
   knowledgeStats,
-  knowledgeTopics,
 } from '../mock/knowledgeCenter'
-import type {
-  KnowledgeFile,
-  KnowledgePendingItem,
-  KnowledgeQuickFilter,
-} from '../types/portal'
+import { getActiveUser } from '../services/auth'
+import type { KnowledgeFile, KnowledgeQuickFilter } from '../types/portal'
+import {
+  auditCollaborationRecord,
+  createCollaborationRecord,
+  deleteCollaborationRecord,
+  fetchCollaborationRecords,
+  updateCollaborationRecord,
+} from '../services/collaborationApi'
+import {
+  canCreateFileCategory,
+  canManageWorkgroupContent,
+  canUploadFiles,
+  getRoleScopeLabel,
+  isAdminUser,
+  isRegularUser,
+  isWorkgroupManager,
+} from '../utils/permissions'
 import styles from './KnowledgeCenterPage.module.css'
 
 function KnowledgeCenterPage() {
   const { message } = App.useApp()
-  const [activeCategory, setActiveCategory] = useState('all')
-  const [activeTopic, setActiveTopic] = useState<string | null>(null)
+  const currentUser = getActiveUser()
+  const allowUpload = canUploadFiles(currentUser)
+  const allowCreateCategory = canCreateFileCategory(currentUser)
+  const userIsAdmin = isAdminUser(currentUser)
+  const userIsRegular = isRegularUser(currentUser)
+  const userIsWorkgroupManager = isWorkgroupManager(currentUser)
   const [committedKeyword, setCommittedKeyword] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
   const [files, setFiles] = useState(initialKnowledgeFiles)
@@ -45,6 +53,7 @@ function KnowledgeCenterPage() {
   const [quickFilter, setQuickFilter] = useState<KnowledgeQuickFilter>('all')
   const [showPermissionModal, setShowPermissionModal] = useState(false)
   const [showUploadModal, setShowUploadModal] = useState(false)
+  const [apiOnline, setApiOnline] = useState(false)
   const [filters, setFilters] = useState<KnowledgeFilterState>({
     categoryId: 'all',
     dateRange: null,
@@ -56,15 +65,49 @@ function KnowledgeCenterPage() {
 
   useEffect(() => {
     setCurrentPage(1)
-  }, [activeCategory, activeTopic, committedKeyword, filters, quickFilter])
+  }, [committedKeyword, filters, quickFilter])
 
-  const filteredFiles = files.filter((file) => {
+  useEffect(() => {
+    let active = true
+
+    fetchCollaborationRecords<KnowledgeFile>('knowledge-files', initialKnowledgeFiles)
+      .then((records) => {
+        if (!active) {
+          return
+        }
+
+        setFiles(records)
+        setApiOnline(true)
+      })
+      .catch(() => {
+        if (!active) {
+          return
+        }
+
+        setApiOnline(false)
+        message.warning('文件中心 API 未连接，当前使用本地示例数据')
+      })
+
+    return () => {
+      active = false
+    }
+  }, [message])
+
+  const accessibleFiles = files.filter((file) => {
+    if (userIsAdmin) {
+      return true
+    }
+
+    if (userIsWorkgroupManager) {
+      return file.workgroup === currentUser.currentWorkgroup || file.canView
+    }
+
+    return file.canView && file.permission !== '秘书处资料' && file.permission !== '指定单位资料'
+  })
+
+  const filteredFiles = accessibleFiles.filter((file) => {
     const keyword = committedKeyword.trim().toLowerCase()
-    const matchesCategory =
-      activeCategory === 'all' && filters.categoryId === 'all'
-        ? true
-        : file.categoryId === (filters.categoryId === 'all' ? activeCategory : filters.categoryId)
-    const matchesTopic = activeTopic ? file.topicIds.includes(activeTopic) : true
+    const matchesCategory = filters.categoryId === 'all' ? true : file.categoryId === filters.categoryId
     const matchesKeyword = keyword
       ? [file.title, file.fileCode, file.workgroup, file.uploader]
           .join(' ')
@@ -97,7 +140,6 @@ function KnowledgeCenterPage() {
 
     return (
       matchesCategory &&
-      matchesTopic &&
       matchesKeyword &&
       matchesWorkgroup &&
       matchesStatus &&
@@ -116,8 +158,6 @@ function KnowledgeCenterPage() {
   }
 
   const handleReset = () => {
-    setActiveCategory('all')
-    setActiveTopic(null)
     setCommittedKeyword('')
     setHeaderKeyword('')
     setQuickFilter('all')
@@ -131,7 +171,15 @@ function KnowledgeCenterPage() {
     })
   }
 
-  const handleUploadSubmit = (
+  const persistFile = async (file: KnowledgeFile) => {
+    if (apiOnline) {
+      return updateCollaborationRecord('knowledge-files', file)
+    }
+
+    return file
+  }
+
+  const handleUploadSubmit = async (
     nextFile: Omit<
       KnowledgeFile,
       'id' | 'isFavorite' | 'canView' | 'hasNewVersion' | 'needsComment' | 'needsReview' | 'updatedThisMonth'
@@ -146,28 +194,110 @@ function KnowledgeCenterPage() {
       needsComment: false,
       needsReview: false,
       updatedThisMonth: true,
+      comments: [],
+      versionHistory: [
+        {
+          id: `version-${Date.now()}`,
+          version: nextFile.version,
+          updatedAt: nextFile.updatedAt,
+          operator: currentUser.name,
+          note: '首次上传',
+        },
+      ],
     }
 
-    setFiles((current) => [createdFile, ...current])
+    const savedFile = apiOnline
+      ? await createCollaborationRecord('knowledge-files', createdFile)
+      : createdFile
+    setFiles((current) => [savedFile, ...current])
     setShowUploadModal(false)
-    message.success('资料已加入本地 mock 列表')
+    message.success(apiOnline ? '资料已保存到文件中心' : '资料已加入本地示例列表')
   }
 
   const handleMoreAction = (file: KnowledgeFile, action: string) => {
+    if (['delete', 'permission'].includes(action) && !canManageWorkgroupContent(currentUser, file.workgroup)) {
+      message.warning('当前身份只能管理本组资料')
+      return
+    }
+
     if (action === 'favorite') {
-      setFiles((current) =>
-        current.map((item) =>
-          item.id === file.id ? { ...item, isFavorite: !item.isFavorite } : item,
-        ),
-      )
+      const nextFile = { ...file, isFavorite: !file.isFavorite }
+      setFiles((current) => current.map((item) => (item.id === file.id ? nextFile : item)))
+      void persistFile(nextFile).catch(() => message.warning('收藏状态暂未同步到后台'))
+      return
+    }
+
+    if (action === 'delete') {
+      setFiles((current) => current.filter((item) => item.id !== file.id))
+      if (apiOnline) {
+        void deleteCollaborationRecord<KnowledgeFile>('knowledge-files', file.id)
+          .then(() => message.success(`已删除：${file.title}`))
+          .catch(() => message.warning('后台删除失败，本地列表已移除'))
+      }
+      return
+    }
+
+    if (action === 'detail' || action === 'history') {
+      setPreviewFile(file)
+      if (apiOnline) {
+        void auditCollaborationRecord('knowledge-files', file.id, {
+          action: action === 'history' ? '查看历史版本' : '查看文件详情',
+          target: file.title,
+          detail: `${currentUser.name} 查看文件${action === 'history' ? '历史版本' : '详情'}`,
+        })
+      }
       return
     }
 
     message.info(`${file.title}：${action === 'delete' ? '已模拟删除操作' : `已打开${action}`}`)
   }
 
-  const handlePendingClick = (item: KnowledgePendingItem) => {
-    message.info(`${item.label}：${item.count}`)
+  const handleDownload = (file: KnowledgeFile) => {
+    if (!file.fileData) {
+      message.info(`示例资料暂无原始文件内容：${file.title}`)
+      return
+    }
+
+    const byteCharacters = atob(file.fileData)
+    const byteNumbers = Array.from(byteCharacters, (character) => character.charCodeAt(0))
+    const blob = new Blob([new Uint8Array(byteNumbers)], {
+      type: file.mimeType ?? 'application/octet-stream',
+    })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = file.originalFileName ?? file.title
+    link.click()
+    URL.revokeObjectURL(url)
+    if (apiOnline) {
+      void auditCollaborationRecord('knowledge-files', file.id, {
+        action: '文件下载',
+        target: file.title,
+        detail: `${currentUser.name} 下载文件 ${file.title}`,
+      })
+    }
+  }
+
+  const handleAddComment = async (file: KnowledgeFile, content: string) => {
+    const nextFile: KnowledgeFile = {
+      ...file,
+      comments: [
+        {
+          id: `comment-${Date.now()}`,
+          author: currentUser.name,
+          organization: currentUser.organizationName,
+          content,
+          createdAt: new Date().toISOString().slice(0, 16).replace('T', ' '),
+        },
+        ...(file.comments ?? []),
+      ],
+      needsComment: false,
+    }
+
+    const savedFile = await persistFile(nextFile)
+    setFiles((current) => current.map((item) => (item.id === file.id ? savedFile : item)))
+    setPreviewFile(savedFile)
+    message.success('评论已保存')
   }
 
   return (
@@ -183,9 +313,18 @@ function KnowledgeCenterPage() {
     >
       <div className={styles.page}>
         <KnowledgeHero
+          canCreateCategory={allowCreateCategory}
+          canUpload={allowUpload}
           onCreateCategory={() => message.info('当前为原型页面，可继续扩展分类创建流程')}
           onOpenPermission={() => setShowPermissionModal(true)}
-          onUpload={() => setShowUploadModal(true)}
+          onUpload={() => {
+            if (!allowUpload) {
+              message.warning('普通用户仅支持浏览、下载和留言')
+              return
+            }
+            setShowUploadModal(true)
+          }}
+          scopeLabel={getRoleScopeLabel(currentUser)}
         />
 
         <section className={styles.statsGrid}>
@@ -201,20 +340,6 @@ function KnowledgeCenterPage() {
         </section>
 
         <section className={styles.contentGrid}>
-          <div className={styles.leftColumn}>
-            <KnowledgeCategoryPanel
-              activeCategory={activeCategory}
-              activeTopic={activeTopic}
-              categories={knowledgeCategories}
-              topics={knowledgeTopics}
-              onCategoryChange={(categoryId) => {
-                setActiveCategory(categoryId)
-                setFilters((current) => ({ ...current, categoryId }))
-              }}
-              onTopicChange={setActiveTopic}
-            />
-          </div>
-
           <div className={styles.mainColumn}>
             <KnowledgeFilterBar
               activeKeyword={committedKeyword}
@@ -228,9 +353,13 @@ function KnowledgeCenterPage() {
             />
 
             <KnowledgeFileTable
+              canManageFile={(file) => canManageWorkgroupContent(currentUser, file.workgroup)}
+              canManageFiles={userIsAdmin}
+              canSetFilePermissions={(file) => canManageWorkgroupContent(currentUser, file.workgroup)}
+              canSetPermissions={!userIsRegular}
               currentPage={currentPage}
               files={pagedFiles}
-              onDownload={(file) => message.success(`已模拟下载：${file.title}`)}
+              onDownload={handleDownload}
               onMoreAction={handleMoreAction}
               onPageChange={(page, size) => {
                 setCurrentPage(page)
@@ -239,42 +368,29 @@ function KnowledgeCenterPage() {
               onPreview={setPreviewFile}
               onToggleFavorite={(fileId) =>
                 setFiles((current) =>
-                  current.map((item) =>
-                    item.id === fileId ? { ...item, isFavorite: !item.isFavorite } : item,
-                  ),
+                  current.map((item) => {
+                    if (item.id !== fileId) {
+                      return item
+                    }
+
+                    const nextFile = { ...item, isFavorite: !item.isFavorite }
+                    void persistFile(nextFile).catch(() => message.warning('收藏状态暂未同步到后台'))
+                    return nextFile
+                  }),
                 )
               }
               pageSize={pageSize}
               total={filteredFiles.length}
             />
           </div>
-
-          <aside className={styles.rightColumn}>
-            <RecentUpdatesCard
-              items={knowledgeRecentUpdates}
-              onMore={() => message.info('可扩展为最近更新列表页')}
-            />
-            <PendingActionsCard
-              items={knowledgePendingItems}
-              onClickItem={handlePendingClick}
-              onMore={() => message.info('可扩展为待办处理页')}
-            />
-            <HotFilesCard
-              items={knowledgeHotFiles}
-              onMore={() => message.info('可扩展为热门资料榜单页')}
-            />
-            <PermissionGuideCard
-              items={knowledgePermissionGuides}
-              onMore={() => setShowPermissionModal(true)}
-            />
-          </aside>
         </section>
       </div>
 
       <FilePreviewModal
         file={previewFile}
+        onAddComment={handleAddComment}
         onClose={() => setPreviewFile(null)}
-        onDownload={(file) => message.success(`已模拟下载：${file.title}`)}
+        onDownload={handleDownload}
       />
 
       <UploadFileModal
@@ -282,7 +398,11 @@ function KnowledgeCenterPage() {
         open={showUploadModal}
         onCancel={() => setShowUploadModal(false)}
         onSubmit={handleUploadSubmit}
-        workgroups={knowledgeFilterOptions.workgroups}
+        workgroups={
+          userIsWorkgroupManager && currentUser.currentWorkgroup
+            ? ['全部', currentUser.currentWorkgroup]
+            : knowledgeFilterOptions.workgroups
+        }
       />
 
       <PermissionInfoModal

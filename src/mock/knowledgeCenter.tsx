@@ -106,7 +106,7 @@ export const knowledgeFilterOptions: KnowledgeFilterOptions = {
   ],
   uploaders: ['全部', '星河视研院', '华域视联', '鸿光智联', '智芯微电子', '云帧研究院', '秘书处'],
   statuses: ['草稿版', '征求意见版', '会议讨论版', '定稿版', '发布版', '归档版'],
-  permissions: ['公开资料', '分委会资料', '工作组资料', '秘书处资料', '敏感资料'],
+  permissions: ['公开资料', '分委会资料', '工作组资料', '指定单位资料', '秘书处资料'],
 }
 
 const knowledgeFileSeeds: KnowledgeFile[] = [
@@ -378,8 +378,8 @@ export const knowledgePermissionGuides: KnowledgePermissionGuideItem[] = [
   { level: '公开资料', description: '所有成员可查看' },
   { level: '分委会资料', description: '本分委会成员可查看' },
   { level: '工作组资料', description: '本工作组成员可查看' },
+  { level: '指定单位资料', description: '指定授权单位可查看' },
   { level: '秘书处资料', description: '秘书处及授权人员可查看' },
-  { level: '敏感资料', description: '仅指定人员可查看' },
 ]
 
 export const knowledgeHeroTags = [

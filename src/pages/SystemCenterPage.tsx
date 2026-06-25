@@ -12,22 +12,22 @@ const deploymentCards = [
   {
     title: 'Vercel 部署',
     icon: <CloudUploadOutlined />,
-    points: ['Framework Preset 选择 Vite', 'Build Command 使用 npm run build', 'Output Directory 指向 dist'],
+    points: ['前端 Framework Preset 选择 Vite', 'Build Command 使用 npm run build', 'Output Directory 指向 dist'],
   },
   {
-    title: '本地 mock 策略',
+    title: '后台与数据库',
     icon: <DatabaseOutlined />,
-    points: ['工作组、会员、会议、任务、文件、公告均走本地数据', '不接入真实后端，不依赖远程 API', '演示内容避免真实单位资料和真实文件正文'],
+    points: ['本地开发内置 Express + SQLite 轻量后台', '生产部署使用 Express + Prisma 7 + MySQL', '管理中心新增、编辑、删除、状态推进均调用后台 API'],
   },
   {
     title: '系统配置',
     icon: <SettingOutlined />,
-    points: ['支持首页、工作组、文件中心、会员中心、会议、任务、系统页', '路由刷新通过 rewrites 和 404 fallback 处理', '资源走本地静态打包，不依赖 CDN'],
+    points: ['后台登录使用 JWT 会话', '默认种子账号为 zhangwei / demo-portal-2026', '路由刷新通过 rewrites 和 404 fallback 处理'],
   },
   {
     title: '风险控制',
     icon: <SafetyCertificateOutlined />,
-    points: ['Vercel 无需额外环境变量', 'GitHub Pages 仅在子路径部署时需要设置 base', '当前为 UI 演示版本，不包含真实数据写入'],
+    points: ['生产环境需配置 VITE_API_BASE_URL 指向后台 API', 'DATABASE_URL 和 JWT_SECRET 只放在后台环境变量中', '上线前请更换默认密码和 JWT_SECRET'],
   },
 ]
 
@@ -44,13 +44,13 @@ function SystemCenterPage() {
         <section className={styles.hero}>
           <div>
             <span className={styles.eyebrow}>系统管理中心</span>
-            <h1>面向在线测试部署的演示版本整理</h1>
-            <p>本页聚焦部署配置、演示数据、权限范围和发布注意事项，适合作为内部验收与联调说明入口。</p>
+            <h1>面向在线部署的管理配置总览</h1>
+            <p>本页聚焦前端部署、后台接口、MySQL 数据库和发布注意事项，适合作为内部验收与后续生产加固说明入口。</p>
           </div>
           <div className={styles.tagRow}>
             <Tag color="blue">Vercel Ready</Tag>
-            <Tag color="green">Mock Data Only</Tag>
-            <Tag color="gold">No Backend</Tag>
+            <Tag color="green">Express API</Tag>
+            <Tag color="gold">MySQL / SQLite Ready</Tag>
           </div>
         </section>
 

@@ -263,6 +263,30 @@
   gap: clamp(4px, 0.45vw, 7px);
 }
 
+.navSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.navSection + .navSection {
+  margin-top: 0.55rem;
+}
+
+.navSectionTitle {
+  padding: 0 0.15rem;
+  color: #7a90b6;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.navSectionDivider {
+  height: 1px;
+  margin: 0.1rem 0 0.2rem;
+  background: linear-gradient(90deg, rgba(111, 148, 224, 0.06), rgba(111, 148, 224, 0.34), rgba(111, 148, 224, 0.06));
+}
+
 .navItem {
   position: relative;
   display: flex;

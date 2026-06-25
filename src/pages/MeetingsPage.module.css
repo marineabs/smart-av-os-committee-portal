@@ -112,9 +112,51 @@
   color: var(--text-secondary);
 }
 
+.filterBar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+.keywordInput {
+  width: min(100%, 18rem);
+}
+
+.filterSelect {
+  min-width: 8.5rem;
+}
+
+.meetingTitle {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.meetingTitle strong {
+  color: var(--text-main);
+  font-weight: 600;
+}
+
+.meetingTitle span {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
 .expanded {
   margin: 0;
   color: var(--text-secondary);
+}
+
+.expanded p {
+  margin: 0 0 8px;
+}
+
+.expanded span {
+  color: var(--text-tertiary);
 }
 
 .sideList {
@@ -122,6 +164,101 @@
   padding-left: 18px;
   color: var(--text-secondary);
   line-height: 1.8;
+}
+
+.minutesModal {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.minutesMeta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  color: var(--text-secondary);
+}
+
+.minutesModal section {
+  padding-top: 14px;
+  border-top: 1px solid rgba(41, 96, 212, 0.08);
+}
+
+.minutesModal h3 {
+  margin: 0 0 8px;
+  font-size: 15px;
+  color: var(--text-main);
+}
+
+.minutesModal p {
+  margin: 0;
+  color: var(--text-secondary);
+  line-height: 1.75;
+}
+
+.minutesModal ul {
+  margin: 0;
+  padding-left: 18px;
+  color: var(--text-secondary);
+  line-height: 1.8;
+}
+
+.createForm {
+  padding-top: 4px;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 16px;
+}
+
+.fullWidthControl {
+  width: 100%;
+}
+
+.minutesLedger {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 32rem;
+  overflow-y: auto;
+}
+
+.ledgerItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid rgba(41, 96, 212, 0.1);
+  border-radius: 8px;
+  background: rgba(248, 251, 255, 0.9);
+  text-align: left;
+  cursor: pointer;
+}
+
+.ledgerItem:hover {
+  border-color: rgba(37, 99, 255, 0.28);
+  background: rgba(239, 246, 255, 0.95);
+}
+
+.ledgerItem span {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ledgerItem strong {
+  color: var(--text-main);
+  font-weight: 600;
+}
+
+.ledgerItem small {
+  color: var(--text-secondary);
 }
 
 @media (max-width: 1200px) {
@@ -142,6 +279,16 @@
 
 @media (max-width: 768px) {
   .statsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .filterBar,
+  .keywordInput,
+  .filterSelect {
+    width: 100%;
+  }
+
+  .formGrid {
     grid-template-columns: 1fr;
   }
 }

@@ -7,4 +7,12 @@ const base = process.env.DEPLOY_BASE_PATH || (process.env.VERCEL ? '/' : githubP
 export default defineConfig({
   base,
   plugins: [react()],
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:4174',
+        changeOrigin: true,
+      },
+    },
+  },
 })

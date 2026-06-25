@@ -9,12 +9,13 @@ import type { WorkgroupCardItem, WorkgroupDetailData } from '../types/portal'
 import styles from './WorkgroupDetailHero.module.css'
 
 interface WorkgroupDetailHeroProps {
+  canManageContent?: boolean
   detail: WorkgroupDetailData
   group: WorkgroupCardItem
   onAction: (label: string) => void
 }
 
-function WorkgroupDetailHero({ detail, group, onAction }: WorkgroupDetailHeroProps) {
+function WorkgroupDetailHero({ canManageContent = true, detail, group, onAction }: WorkgroupDetailHeroProps) {
   return (
     <section className={styles.hero}>
       <div className={styles.copy}>
@@ -48,20 +49,22 @@ function WorkgroupDetailHero({ detail, group, onAction }: WorkgroupDetailHeroPro
         </div>
       </div>
 
-      <div className={styles.actions}>
-        <Button icon={<NotificationOutlined />} onClick={() => onAction('发布公告')}>
-          发布公告
-        </Button>
-        <Button icon={<FileAddOutlined />} onClick={() => onAction('上传资料')}>
-          上传资料
-        </Button>
-        <Button icon={<CalendarOutlined />} onClick={() => onAction('发起会议')}>
-          发起会议
-        </Button>
-        <Button type="primary" icon={<PlusSquareOutlined />} onClick={() => onAction('新建任务')}>
-          新建任务
-        </Button>
-      </div>
+      {canManageContent ? (
+        <div className={styles.actions}>
+          <Button icon={<NotificationOutlined />} onClick={() => onAction('发布公告')}>
+            发布公告
+          </Button>
+          <Button icon={<FileAddOutlined />} onClick={() => onAction('上传资料')}>
+            上传资料
+          </Button>
+          <Button icon={<CalendarOutlined />} onClick={() => onAction('发起会议')}>
+            发起会议
+          </Button>
+          <Button type="primary" icon={<PlusSquareOutlined />} onClick={() => onAction('新建任务')}>
+            新建任务
+          </Button>
+        </div>
+      ) : null}
     </section>
   )
 }

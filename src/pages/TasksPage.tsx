@@ -119,7 +119,7 @@ function TasksPage() {
           <div className={styles.sectionHeader}>
             <div>
               <h2>任务列表</h2>
-              <p>通过本地 mock 数据覆盖标准编制、联调验证、场景汇报和资料归档流程。</p>
+              <p>通过本地示例数据覆盖标准编制、联调验证、场景汇报和资料归档流程。</p>
             </div>
           </div>
           <Table
