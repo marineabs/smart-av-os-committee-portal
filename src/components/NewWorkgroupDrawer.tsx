@@ -269,7 +269,7 @@ function NewWorkgroupDrawer({ creationMode, open, onClose, onCreated }: NewWorkg
   return (
     <Drawer
       className={styles.drawer}
-      destroyOnClose
+      destroyOnHidden
       extra={<span className={styles.subtext}>建立专题工作组空间，配置组长单位、成员范围、协同权限和初始资料</span>}
       footer={
         createdGroup ? null : (
@@ -295,12 +295,12 @@ function NewWorkgroupDrawer({ creationMode, open, onClose, onCreated }: NewWorkg
           </div>
         )
       }
-      footerStyle={{ padding: '16px 24px', borderTop: '1px solid rgba(67,109,211,0.08)' }}
+      styles={{ footer: { padding: '16px 24px', borderTop: '1px solid rgba(67,109,211,0.08)' } }}
       onClose={handleClose}
       open={open}
       placement="right"
       title="新建工作组"
-      width={760}
+      size={760}
     >
       {createdGroup ? (
         <Result

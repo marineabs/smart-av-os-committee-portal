@@ -1,16 +1,55 @@
-import { LockOutlined, UserOutlined } from '@ant-design/icons'
-import { App, Button, Card, Input, Space } from 'antd'
-import { useState } from 'react'
+import {
+  ArrowRightOutlined,
+  FileTextOutlined,
+  LockOutlined,
+  SafetyCertificateOutlined,
+  TeamOutlined,
+  UserOutlined,
+} from '@ant-design/icons'
+import { App, Button, Checkbox, Input } from 'antd'
+import { useState, type ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { demoUsers, login } from '../services/auth'
 import { canViewAdminCenter, isWorkgroupManager } from '../utils/permissions'
 import styles from './LoginDemoPage.module.css'
+
+const accountIconMap: Record<string, ReactNode> = {
+  zhangwei: <SafetyCertificateOutlined />,
+  sunhao: <TeamOutlined />,
+  wangmin: <UserOutlined />,
+}
+
+const accountLabelMap: Record<string, string> = {
+  sunhao: '工作组组长',
+}
+
+const featureCards = [
+  {
+    key: 'organization',
+    icon: <TeamOutlined />,
+    title: '组织协同',
+    description: '工作组、成员、任务、会议统一管理，提升组织运行效率',
+  },
+  {
+    key: 'archive',
+    icon: <FileTextOutlined />,
+    title: '资料沉淀',
+    description: '通知、文件、成果、会议纪要集中归档，便于查阅与传承',
+  },
+  {
+    key: 'permission',
+    icon: <SafetyCertificateOutlined />,
+    title: '权限分级',
+    description: '秘书处、组长、成员单位按角色分级访问，安全可控',
+  },
+]
 
 function LoginDemoPage() {
   const { message } = App.useApp()
   const navigate = useNavigate()
   const [account, setAccount] = useState('zhangwei')
   const [password, setPassword] = useState('demo-portal-2026')
+  const [rememberAccount, setRememberAccount] = useState(true)
   const [submitting, setSubmitting] = useState(false)
 
   const handleLogin = async () => {
@@ -35,64 +74,134 @@ function LoginDemoPage() {
     }
   }
 
+  const handleForgotPassword = () => {
+    message.info('请联系专委会平台运维组重置密码')
+  }
+
   return (
     <div className={styles.page}>
-      <div className={styles.backdrop} />
-      <Card className={styles.card}>
-        <div className={styles.header}>
-          <span className={styles.badge}>后台登录入口</span>
-          <h1>智慧视听操作系统专委会协同工作平台</h1>
-          <p>当前已接入后台认证接口。本地开发可直接使用轻量 SQLite 后台，生产部署可切换到 Express + Prisma + MySQL。</p>
-        </div>
-
-        <Space direction="vertical" size={14} className={styles.form}>
-          <Input
-            size="large"
-            prefix={<UserOutlined />}
-            placeholder="账号"
-            value={account}
-            onChange={(event) => setAccount(event.target.value)}
-            onPressEnter={() => void handleLogin()}
-          />
-          <Input.Password
-            size="large"
-            prefix={<LockOutlined />}
-            placeholder="密码"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            onPressEnter={() => void handleLogin()}
-          />
-          <Button type="primary" size="large" block loading={submitting} onClick={() => void handleLogin()}>
-            登录管理平台
-          </Button>
-          <Button size="large" block onClick={() => navigate('/system')}>
-            查看部署说明
-          </Button>
-          <div className={styles.demoAccounts}>
-            {Object.entries(demoUsers).map(([demoAccount, user]) => (
-              <Button
-                key={demoAccount}
-                onClick={() => {
-                  setAccount(demoAccount)
-                  setPassword('demo-portal-2026')
-                }}
-              >
-                {user.role}
-              </Button>
-            ))}
+      <main className={styles.shell}>
+        <section className={styles.heroPanel} aria-label="平台介绍">
+          <div className={styles.heroBadge}>
+            <SafetyCertificateOutlined />
+            <span>专委会协同平台</span>
+            <span className={styles.badgeDivider} />
+            <span>管理端入口</span>
           </div>
-        </Space>
 
-        <div className={styles.footer}>
-          <strong>演示说明</strong>
-          <ul>
-            <li>默认种子账号：zhangwei / demo-portal-2026。</li>
-            <li>管理中心优先连接后台 API，未连接时仅在开发环境兜底本地会话。</li>
-            <li>业务页面使用本地示例数据，不写入真实会员资料、文件正文或会议数据。</li>
-            <li>适合做流程验收、后台联调和生产加固前测试。</li>
-          </ul>
-        </div>
-      </Card>
+          <div className={styles.heroText}>
+            <p>智慧视听操作系统专委会</p>
+            <h1>协同工作平台</h1>
+            <span>支撑智慧视听操作系统标准研制、产业协同、成果推广与组织运行</span>
+          </div>
+
+          <div className={styles.heroOrbit} aria-hidden="true">
+            <span className={`${styles.orbitIcon} ${styles.orbitIconLeft}`}>
+              <TeamOutlined />
+            </span>
+            <span className={`${styles.orbitIcon} ${styles.orbitIconCenter}`}>
+              <FileTextOutlined />
+            </span>
+            <span className={`${styles.orbitIcon} ${styles.orbitIconRight}`}>
+              <SafetyCertificateOutlined />
+            </span>
+          </div>
+        </section>
+
+        <aside className={styles.loginCard} aria-label="登录协同平台">
+          <div className={styles.loginHeader}>
+            <h2>登录协同平台</h2>
+            <p>请输入您的账号信息</p>
+          </div>
+
+          <div className={styles.form}>
+            <Input
+              size="large"
+              prefix={<UserOutlined />}
+              placeholder="请输入账号"
+              value={account}
+              onChange={(event) => setAccount(event.target.value)}
+              onPressEnter={() => void handleLogin()}
+            />
+            <Input.Password
+              size="large"
+              prefix={<LockOutlined />}
+              placeholder="请输入密码"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              onPressEnter={() => void handleLogin()}
+            />
+
+            <div className={styles.formMeta}>
+              <Checkbox checked={rememberAccount} onChange={(event) => setRememberAccount(event.target.checked)}>
+                记住我
+              </Checkbox>
+              <button type="button" onClick={handleForgotPassword}>
+                忘记密码？
+              </button>
+            </div>
+
+            <Button
+              className={styles.loginButton}
+              type="primary"
+              size="large"
+              block
+              loading={submitting}
+              onClick={() => void handleLogin()}
+            >
+              进入协同平台
+              <span className={styles.buttonArrow}>
+                <ArrowRightOutlined />
+              </span>
+            </Button>
+
+            <Button className={styles.guideButton} size="large" block onClick={() => navigate('/system')}>
+              <FileTextOutlined />
+              查看平台说明
+            </Button>
+          </div>
+
+          <div className={styles.demoArea}>
+            <div className={styles.demoTitle}>
+              <span />
+              <strong>演示账号</strong>
+              <span />
+            </div>
+            <div className={styles.demoAccounts}>
+              {Object.entries(demoUsers).map(([demoAccount, user]) => (
+                <Button
+                  key={demoAccount}
+                  onClick={() => {
+                    setAccount(demoAccount)
+                    setPassword('demo-portal-2026')
+                  }}
+                >
+                  {accountIconMap[demoAccount]}
+                  {accountLabelMap[demoAccount] ?? user.role}
+                </Button>
+              ))}
+            </div>
+          </div>
+        </aside>
+      </main>
+
+      <section className={styles.featureGrid} aria-label="平台能力">
+        {featureCards.map((item) => (
+          <article key={item.key} className={styles.featureCard}>
+            <span className={styles.featureIcon}>{item.icon}</span>
+            <div>
+              <h3>{item.title}</h3>
+              <p>{item.description}</p>
+            </div>
+          </article>
+        ))}
+      </section>
+
+      <footer className={styles.pageFooter}>
+        <SafetyCertificateOutlined />
+        <span>智慧视听操作系统专委会</span>
+        <span>© 2026 版权所有</span>
+      </footer>
     </div>
   )
 }

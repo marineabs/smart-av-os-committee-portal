@@ -94,11 +94,19 @@
 .tableCard :global(.ant-table-container) {
   min-width: 0;
   max-width: 100%;
+  background: #ffffff;
 }
 
 .tableCard :global(.ant-table-content) {
   max-width: 100%;
   overflow-x: auto !important;
+  background: #ffffff;
+}
+
+.tableCard :global(.ant-table-thead > tr > th),
+.tableCard :global(.ant-table-tbody > tr > td),
+.tableCard :global(.ant-table-tbody > tr:hover > td) {
+  background: #ffffff !important;
 }
 
 .kanbanCard {

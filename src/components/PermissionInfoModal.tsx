@@ -11,7 +11,7 @@ interface PermissionInfoModalProps {
 
 function PermissionInfoModal({ guides, open, onClose }: PermissionInfoModalProps) {
   return (
-    <Modal open={open} title="权限说明" footer={null} width={720} onCancel={onClose} destroyOnClose>
+    <Modal open={open} title="权限说明" footer={null} width={720} onCancel={onClose} destroyOnHidden>
       <div className={styles.content}>
         {guides.map((guide) => (
           <div key={guide.level} className={styles.item}>

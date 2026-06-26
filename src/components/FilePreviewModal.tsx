@@ -46,7 +46,7 @@ function FilePreviewModal({ file, onAddComment, onClose, onDownload }: FilePrevi
       width={860}
       footer={null}
       onCancel={onClose}
-      destroyOnClose
+      destroyOnHidden
     >
       {file ? (
         <div className={styles.content}>

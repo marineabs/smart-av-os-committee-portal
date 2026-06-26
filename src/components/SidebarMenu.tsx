@@ -19,7 +19,7 @@ import {
   HomeFilled,
   HomeOutlined,
   InfoCircleOutlined,
-  LoginOutlined,
+  LogoutOutlined,
   MailOutlined,
   MessageOutlined,
   PhoneOutlined,
@@ -31,12 +31,12 @@ import {
   UsergroupAddOutlined,
 } from '@ant-design/icons'
 import { Input, Modal, message } from 'antd'
-import { NavLink } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 import { useState, type ReactNode } from 'react'
 import userAvatarFemale from '../assets/user-avatar-female.png'
 import userAvatarMale from '../assets/user-avatar-male.png'
 import { adminNavItems, businessNavItems } from '../mock/portal'
-import { getActiveUser } from '../services/auth'
+import { clearAuthSession, getActiveUser } from '../services/auth'
 import type { NavIconKey } from '../types/portal'
 import { canViewAdminCenter, canViewMemberCenter } from '../utils/permissions'
 import styles from './SidebarMenu.module.css'
@@ -75,6 +75,7 @@ interface SidebarMenuProps {
 }
 
 function SidebarMenu({ collapsed }: SidebarMenuProps) {
+  const navigate = useNavigate()
   const currentUser = getActiveUser()
   const [avatarMode, setAvatarMode] = useState<'male' | 'female'>('male')
   const [feedbackContact, setFeedbackContact] = useState('')
@@ -105,7 +106,7 @@ function SidebarMenu({ collapsed }: SidebarMenuProps) {
       value: currentUser.managementScope ?? '通知 / 文件 / 会议',
     },
   ]
-  const userTags = currentUser.tags ?? []
+  const userTags = (currentUser.tags ?? []).filter((tag) => tag !== '本地开发会话')
 
   const handleSubmitFeedback = () => {
     if (!feedbackContact.trim() || !feedbackText.trim()) {
@@ -116,6 +117,11 @@ function SidebarMenu({ collapsed }: SidebarMenuProps) {
     setFeedbackContact('')
     setFeedbackText('')
     setFeedbackOpen(false)
+  }
+
+  const handleLogout = () => {
+    clearAuthSession()
+    navigate('/login')
   }
 
   return (
@@ -261,10 +267,10 @@ function SidebarMenu({ collapsed }: SidebarMenuProps) {
                 <MessageOutlined />
                 问题反馈
               </button>
-              <NavLink to="/login" className={styles.demoLink}>
-                <LoginOutlined />
-                演示登录入口
-              </NavLink>
+              <button className={styles.demoLink} type="button" onClick={handleLogout}>
+                <LogoutOutlined />
+                退出登录
+              </button>
             </div>
           </div>
         )}
@@ -276,7 +282,7 @@ function SidebarMenu({ collapsed }: SidebarMenuProps) {
         footer={null}
         width={460}
         onCancel={() => setFeedbackOpen(false)}
-        destroyOnClose={false}
+        destroyOnHidden={false}
       >
         <div className={styles.feedbackModalBody}>
           <div className={styles.feedbackModalHint}>

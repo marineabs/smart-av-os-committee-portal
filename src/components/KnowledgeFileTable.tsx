@@ -8,7 +8,6 @@ import {
 import { App, Dropdown, InputNumber, Pagination, Select, Table } from 'antd'
 import type { MenuProps, TableProps } from 'antd'
 import type { KnowledgeFile, KnowledgeFileType } from '../types/portal'
-import FileStatusTag from './FileStatusTag'
 import FileTypeIcon from './FileTypeIcon'
 import PermissionTag from './PermissionTag'
 import styles from './KnowledgeFileTable.module.css'
@@ -108,24 +107,11 @@ function KnowledgeFileTable({
       width: 80,
     },
     {
-      title: '文件状态',
-      dataIndex: 'status',
-      key: 'status',
-      width: 108,
-      render: (_, file) => <FileStatusTag status={file.status} />,
-    },
-    {
       title: '权限级别',
       dataIndex: 'permission',
       key: 'permission',
       width: 108,
       render: (_, file) => <PermissionTag level={file.permission} />,
-    },
-    {
-      title: '上传单位',
-      dataIndex: 'uploader',
-      key: 'uploader',
-      width: 100,
     },
     {
       title: '更新时间',
@@ -181,7 +167,7 @@ function KnowledgeFileTable({
         dataSource={files}
         pagination={false}
         size="middle"
-        scroll={{ x: 1320 }}
+        scroll={{ x: 1120 }}
         rowSelection={
           canManageFiles
             ? {

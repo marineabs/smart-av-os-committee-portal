@@ -1,6 +1,17 @@
-import { DownloadOutlined, ReloadOutlined } from '@ant-design/icons'
+import {
+  ApartmentOutlined,
+  CalendarOutlined,
+  CheckCircleOutlined,
+  ClockCircleOutlined,
+  DownloadOutlined,
+  FileDoneOutlined,
+  FileTextOutlined,
+  ReloadOutlined,
+  TeamOutlined,
+} from '@ant-design/icons'
 import { App, Button } from 'antd'
 import { useEffect, useMemo, useState } from 'react'
+import KnowledgeStatCard from '../components/KnowledgeStatCard'
 import AppLayout from '../layouts/AppLayout'
 import { knowledgeFiles } from '../mock/knowledgeCenter'
 import { demoMeetings, type DemoMeetingRecord } from '../mock/meetings'
@@ -70,6 +81,34 @@ function AnalyticsCenterPage() {
     ]
   }, [files, meetings, members])
 
+  const metricCards = useMemo(() => {
+    const icons = [
+      <FileTextOutlined key="files" />,
+      <DownloadOutlined key="download-ready" />,
+      <CalendarOutlined key="meetings" />,
+      <ClockCircleOutlined key="pending-minutes" />,
+      <FileDoneOutlined key="archived-minutes" />,
+      <TeamOutlined key="members" />,
+      <CheckCircleOutlined key="active-members" />,
+      <ApartmentOutlined key="workgroups" />,
+    ]
+    const accents = [
+      'linear-gradient(135deg, #2d75ff 0%, #5aa1ff 100%)',
+      'linear-gradient(135deg, #18c2c8 0%, #3cd6a4 100%)',
+      'linear-gradient(135deg, #ff982e 0%, #ffc04d 100%)',
+      'linear-gradient(135deg, #6f58ff 0%, #9a82ff 100%)',
+    ]
+
+    return metrics.map((item, index) => ({
+      title: item.label,
+      value: String(item.value),
+      unit: item.unit,
+      delta: '',
+      icon: icons[index],
+      accent: accents[index % accents.length],
+    }))
+  }, [metrics])
+
   const fileCategories = useMemo(() => topCounts(files.map((file) => file.categoryLabel)), [files])
   const workgroupActivity = useMemo(() => topCounts([
     ...files.map((file) => file.workgroup),
@@ -93,7 +132,7 @@ function AnalyticsCenterPage() {
         <section className={styles.hero}>
           <div>
             <span className={styles.eyebrow}>统计分析中心</span>
-            <h1>资料、会议、成员与工作组活跃度</h1>
+            <h1>统计分析中心</h1>
             <p>基于当前后台协同数据生成统计指标，支持导出报表用于阶段验收、秘书处周报和运行巡检。</p>
           </div>
           <div className={styles.heroActions}>
@@ -102,12 +141,15 @@ function AnalyticsCenterPage() {
           </div>
         </section>
 
-        <section className={styles.metricGrid}>
-          {metrics.map((item) => (
-            <article key={item.label} className={styles.metricCard}>
-              <span>{item.label}</span>
-              <strong>{item.value}<small>{item.unit}</small></strong>
-            </article>
+        <section className={styles.statsGrid}>
+          {metricCards.map((item) => (
+            <KnowledgeStatCard
+              key={item.title}
+              className={styles.compactStatCard}
+              iconClassName={styles.compactStatIcon}
+              item={item}
+              showDelta={false}
+            />
           ))}
         </section>
 

@@ -1,6 +1,7 @@
-import { FileSearchOutlined, SearchOutlined } from '@ant-design/icons'
+import { CalendarOutlined, FileSearchOutlined, FileTextOutlined, SearchOutlined, TeamOutlined } from '@ant-design/icons'
 import { App, Button, Empty, Input, Select, Tag } from 'antd'
 import { useEffect, useMemo, useState } from 'react'
+import KnowledgeStatCard from '../components/KnowledgeStatCard'
 import AppLayout from '../layouts/AppLayout'
 import { knowledgeFiles } from '../mock/knowledgeCenter'
 import { demoMeetings, type DemoMeetingRecord } from '../mock/meetings'
@@ -96,12 +97,39 @@ function SearchCenterPage() {
     成员: allResults.filter((item) => item.scope === '成员').length,
   }), [allResults])
 
+  const statItems = useMemo(() => ([
+    {
+      title: '文件索引',
+      value: String(scopeCounts.文件),
+      unit: '份',
+      delta: '',
+      icon: <FileTextOutlined />,
+      accent: 'linear-gradient(135deg, #2d75ff 0%, #5aa1ff 100%)',
+    },
+    {
+      title: '会议索引',
+      value: String(scopeCounts.会议),
+      unit: '场',
+      delta: '',
+      icon: <CalendarOutlined />,
+      accent: 'linear-gradient(135deg, #18c2c8 0%, #3cd6a4 100%)',
+    },
+    {
+      title: '成员索引',
+      value: String(scopeCounts.成员),
+      unit: '家',
+      delta: '',
+      icon: <TeamOutlined />,
+      accent: 'linear-gradient(135deg, #ff982e 0%, #ffc04d 100%)',
+    },
+  ]), [scopeCounts])
+
   return (
     <AppLayout contextLabel="工作台 / 搜索中心" footerCaption="统一检索" footerTitle="文件、会议、成员一站式查找">
       <div className={styles.page}>
         <section className={styles.hero}>
           <span className={styles.eyebrow}>统一搜索入口</span>
-          <h1>跨资料、会议和成员单位检索</h1>
+          <h1>搜索中心</h1>
           <p>输入关键词后，可按文件、会议、成员范围收敛结果，用于快速定位历史资料、会议档案、工作组和成员单位信息。</p>
           <div className={styles.searchRow}>
             <Input
@@ -124,12 +152,15 @@ function SearchCenterPage() {
           </div>
         </section>
 
-        <section className={styles.statGrid}>
-          {Object.entries(scopeCounts).map(([label, count]) => (
-            <article key={label} className={styles.statCard}>
-              <span>{label}索引</span>
-              <strong>{count}</strong>
-            </article>
+        <section className={styles.statsGrid}>
+          {statItems.map((item) => (
+            <KnowledgeStatCard
+              key={item.title}
+              className={styles.compactStatCard}
+              iconClassName={styles.compactStatIcon}
+              item={item}
+              showDelta={false}
+            />
           ))}
         </section>
 
@@ -144,7 +175,7 @@ function SearchCenterPage() {
                 </div>
                 <p>{item.summary}</p>
                 <div className={styles.metaRow}>
-                  {item.meta.filter(Boolean).map((meta) => <span key={meta}>{meta}</span>)}
+                  {item.meta.filter(Boolean).map((meta, index) => <span key={`${item.id}-meta-${index}`}>{meta}</span>)}
                 </div>
               </article>
             )) : <Empty description="暂无匹配结果" />}

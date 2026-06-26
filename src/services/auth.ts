@@ -84,10 +84,7 @@ function createLocalDevSession(): LoginResult {
   return {
     fallback: true,
     token: `local-dev-fallback-${Date.now()}`,
-    user: {
-      ...currentUser,
-      tags: ['本地开发会话', ...(currentUser.tags ?? [])],
-    },
+    user: currentUser,
   }
 }
 

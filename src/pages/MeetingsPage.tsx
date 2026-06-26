@@ -10,7 +10,7 @@ import type { ColumnsType } from 'antd/es/table'
 import { useEffect, useMemo, useState } from 'react'
 import KnowledgeStatCard from '../components/KnowledgeStatCard'
 import AppLayout from '../layouts/AppLayout'
-import { meetingFocusList, demoMeetings, type DemoMeetingRecord, type DemoMeetingStat } from '../mock/meetings'
+import { demoMeetings, type DemoMeetingRecord, type DemoMeetingStat } from '../mock/meetings'
 import { getActiveUser } from '../services/auth'
 import {
   createCollaborationRecord,
@@ -349,25 +349,24 @@ function MeetingsPage() {
     >
       <div className={styles.page}>
         <section className={styles.hero}>
-          <div>
+          <div className={styles.copy}>
             <span className={styles.eyebrow}>{getRoleScopeLabel(currentUser)}</span>
-            <h1>专委会会议组织与纪要归档演示</h1>
+            <h1>会议中心</h1>
+            <div className={styles.heroActions}>
+              <Button
+                type="primary"
+                disabled={!allowCreateMeeting}
+                onClick={openCreateModal}
+              >
+                新建会议
+              </Button>
+              <Button onClick={() => setMinutesLedgerOpen(true)}>
+                纪要台账
+              </Button>
+            </div>
             <p>
               当前账号为 {currentUser.name}（{currentUser.role}），会议列表已按权限、所在工作组和受邀单位自动收敛。
             </p>
-          </div>
-          <div className={styles.heroActions}>
-            <Button
-              type="primary"
-              size="large"
-              disabled={!allowCreateMeeting}
-              onClick={openCreateModal}
-            >
-              新建会议
-            </Button>
-            <Button size="large" onClick={() => setMinutesLedgerOpen(true)}>
-              纪要台账
-            </Button>
           </div>
         </section>
 
@@ -464,15 +463,6 @@ function MeetingsPage() {
               }}
             />
           </div>
-
-          <aside className={styles.sideCard}>
-            <h2>演示重点</h2>
-            <ul className={styles.sideList}>
-              {meetingFocusList.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
-          </aside>
         </section>
       </div>
 

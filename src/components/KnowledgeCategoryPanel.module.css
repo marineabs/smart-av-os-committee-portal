@@ -29,7 +29,7 @@
   height: 28px;
   border: 0;
   border-radius: 10px;
-  background: rgba(240, 245, 255, 0.96);
+  background: #ffffff;
   color: #6b7ea3;
   cursor: pointer;
 }
@@ -39,7 +39,8 @@
   padding: 0 12px;
   border-radius: 12px;
   color: #2d6ef4;
-  background: rgba(239, 245, 255, 0.9);
+  background: #ffffff;
+  border: 1px solid rgba(64, 112, 222, 0.08);
   font-size: 14px;
   font-weight: 700;
 }
@@ -71,12 +72,14 @@
 }
 
 .categoryItem:hover {
-  background: rgba(244, 248, 255, 0.92);
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px rgba(37, 99, 255, 0.1);
 }
 
 .categoryItemActive {
   color: #0b4dff;
-  background: rgba(238, 245, 255, 0.96);
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px rgba(37, 99, 255, 0.16);
 }
 
 .categoryLabel {

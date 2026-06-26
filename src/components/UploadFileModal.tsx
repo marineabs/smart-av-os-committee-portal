@@ -55,11 +55,17 @@ function readUploadFile(file?: UploadFile) {
 function UploadFileModal({ categories, open, onCancel, onSubmit, workgroups }: UploadFileModalProps) {
   const [form] = Form.useForm<UploadFormValues>()
   const [fileList, setFileList] = useState<UploadFile[]>([])
+  const [fileUploadError, setFileUploadError] = useState('')
   const [submitting, setSubmitting] = useState(false)
 
   const handleFinish = async (values: UploadFormValues) => {
+    if (!fileList.length) {
+      setFileUploadError('请上传文件')
+      return
+    }
+
     const category = categories.find((item) => item.id === values.categoryId)
-    const filename = fileList[0]?.name ?? values.title
+    const filename = fileList[0].name
     const extension = filename.split('.').pop()?.toLowerCase()
     const type =
       extension === 'xlsx'
@@ -112,11 +118,12 @@ function UploadFileModal({ categories, open, onCancel, onSubmit, workgroups }: U
       onCancel={() => {
         form.resetFields()
         setFileList([])
+        setFileUploadError('')
         onCancel()
       }}
       onOk={() => form.submit()}
       confirmLoading={submitting}
-      destroyOnClose
+      destroyOnHidden
     >
       <Form form={form} layout="vertical" onFinish={handleFinish}>
         <Form.Item label="文件名称" name="title" rules={[{ required: true, message: '请输入文件名称' }]}>
@@ -124,7 +131,7 @@ function UploadFileModal({ categories, open, onCancel, onSubmit, workgroups }: U
         </Form.Item>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
-          <Form.Item label="所属分类" name="categoryId" rules={[{ required: true }]}>
+          <Form.Item label="所属分类" name="categoryId" rules={[{ required: true, message: '请选择所属分类' }]}>
             <Select placeholder="请选择">
               {categories.filter((item) => item.id !== 'all').map((item) => (
                 <Select.Option key={item.id} value={item.id}>
@@ -133,7 +140,7 @@ function UploadFileModal({ categories, open, onCancel, onSubmit, workgroups }: U
               ))}
             </Select>
           </Form.Item>
-          <Form.Item label="所属工作组" name="workgroup" rules={[{ required: true }]}>
+          <Form.Item label="所属工作组" name="workgroup" rules={[{ required: true, message: '请选择所属工作组' }]}>
             <Select placeholder="请选择">
               {workgroups.filter((item) => item !== '全部').map((item) => (
                 <Select.Option key={item} value={item}>
@@ -142,7 +149,7 @@ function UploadFileModal({ categories, open, onCancel, onSubmit, workgroups }: U
               ))}
             </Select>
           </Form.Item>
-          <Form.Item label="文件状态" name="status" rules={[{ required: true }]}>
+          <Form.Item label="文件状态" name="status" rules={[{ required: true, message: '请选择文件状态' }]}>
             <Select placeholder="请选择">
               <Select.Option value="草稿版">草稿版</Select.Option>
               <Select.Option value="征求意见版">征求意见版</Select.Option>
@@ -155,7 +162,7 @@ function UploadFileModal({ categories, open, onCancel, onSubmit, workgroups }: U
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
-          <Form.Item label="权限级别" name="permission" rules={[{ required: true }]}>
+          <Form.Item label="权限级别" name="permission" rules={[{ required: true, message: '请选择权限级别' }]}>
             <Select placeholder="请选择">
               <Select.Option value="公开资料">公开资料</Select.Option>
               <Select.Option value="分委会资料">分委会资料</Select.Option>
@@ -164,10 +171,10 @@ function UploadFileModal({ categories, open, onCancel, onSubmit, workgroups }: U
               <Select.Option value="秘书处资料">秘书处资料</Select.Option>
             </Select>
           </Form.Item>
-          <Form.Item label="上传单位" name="uploader" rules={[{ required: true }]}>
+          <Form.Item label="上传单位" name="uploader" rules={[{ required: true, message: '请输入上传单位' }]}>
             <Input placeholder="请输入上传单位" />
           </Form.Item>
-          <Form.Item label="版本号" name="version" rules={[{ required: true }]}>
+          <Form.Item label="版本号" name="version" rules={[{ required: true, message: '请输入版本号' }]}>
             <Input placeholder="例如 V1.0" />
           </Form.Item>
         </div>
@@ -176,12 +183,20 @@ function UploadFileModal({ categories, open, onCancel, onSubmit, workgroups }: U
           <Input.TextArea rows={3} placeholder="请输入文件说明" />
         </Form.Item>
 
-        <Form.Item label="文件上传">
+        <Form.Item
+          label="文件上传"
+          required
+          validateStatus={fileUploadError ? 'error' : undefined}
+          help={fileUploadError || undefined}
+        >
           <Upload.Dragger
             multiple={false}
             beforeUpload={() => false}
             fileList={fileList}
-            onChange={({ fileList: nextFileList }) => setFileList(nextFileList.slice(-1))}
+            onChange={({ fileList: nextFileList }) => {
+              setFileList(nextFileList.slice(-1))
+              setFileUploadError('')
+            }}
           >
             <p className="ant-upload-drag-icon">
               <InboxOutlined />

@@ -10,22 +10,26 @@
 
 .wrapper :global(.ant-table) {
   color: #314565;
+  background: #ffffff;
 }
 
 .wrapper :global(.ant-table-wrapper),
-.wrapper :global(.ant-table-container) {
+.wrapper :global(.ant-table-container),
+.wrapper :global(.ant-table-content),
+.wrapper :global(.ant-table-tbody > tr > td) {
   min-width: 0;
+  background: #ffffff;
 }
 
 .wrapper :global(.ant-table-thead > tr > th) {
   color: #6f82a5;
   font-size: 13px;
   font-weight: 700;
-  background: #f7faff;
+  background: #ffffff !important;
 }
 
 .wrapper :global(.ant-table-tbody > tr:hover > td) {
-  background: #f8fbff !important;
+  background: #ffffff !important;
 }
 
 .starButton,
@@ -43,7 +47,8 @@
 
 .starButton:hover,
 .actionCell button:hover {
-  background: rgba(241, 246, 255, 0.9);
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px rgba(37, 99, 255, 0.1);
   color: #2d73ff;
 }
 

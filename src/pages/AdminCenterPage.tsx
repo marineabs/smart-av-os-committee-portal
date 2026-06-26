@@ -42,6 +42,7 @@ import {
 import type { ColumnsType } from 'antd/es/table'
 import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import { Link, Navigate } from 'react-router-dom'
+import KnowledgeStatCard from '../components/KnowledgeStatCard'
 import AppLayout from '../layouts/AppLayout'
 import {
   createAdminRecord,
@@ -151,6 +152,28 @@ const overviewProgress: OverviewProgressItem[] = [
   { label: '会议纪要归档率', percent: 73, hint: '距离本月目标 80% 还差 7%' },
   { label: '成果审核完成率', percent: 61, hint: '重点集中在标准草案和测试报告' },
   { label: '权限申请闭环率', percent: 82, hint: '委员会管理员处理速度较高' },
+]
+
+const overviewStatIcons = [
+  <TeamOutlined key="overview-workgroups" />,
+  <ApartmentOutlined key="overview-organizations" />,
+  <UserSwitchOutlined key="overview-users" />,
+  <BookOutlined key="overview-archive" />,
+  <AuditOutlined key="overview-review" />,
+  <FileProtectOutlined key="overview-permissions" />,
+]
+
+const summaryMetricIcons = [
+  <ControlOutlined key="summary-total" />,
+  <DeploymentUnitOutlined key="summary-progress" />,
+  <NotificationOutlined key="summary-alert" />,
+]
+
+const summaryMetricAccents = [
+  'linear-gradient(135deg, #2d75ff 0%, #5aa1ff 100%)',
+  'linear-gradient(135deg, #18c2c8 0%, #3cd6a4 100%)',
+  'linear-gradient(135deg, #ff982e 0%, #ffc04d 100%)',
+  'linear-gradient(135deg, #6f58ff 0%, #9a82ff 100%)',
 ]
 
 const adminStorageVersion = 1
@@ -906,6 +929,22 @@ function getSectionMetrics(sectionKey: TableSectionKey, rows: AdminRecord[]): Se
   }
 }
 
+function getMetricUnit(label: string) {
+  if (label.includes('单位')) {
+    return '家'
+  }
+
+  if (label.includes('会议')) {
+    return '场'
+  }
+
+  if (label.includes('日志') || label.includes('内容')) {
+    return '条'
+  }
+
+  return '个'
+}
+
 function getNextQuickValue(sectionKey: TableSectionKey, row: AdminRecord) {
   if (sectionKey === 'workgroups') {
     if (row.status === '筹备中') return '运行中'
@@ -976,6 +1015,11 @@ function AdminCenterPage({ sectionKey }: { sectionKey: AdminSectionKey }) {
   const [editorState, setEditorState] = useState<EditorState | null>(null)
   const [settingsState, setSettingsState] = useState(initialSettingsState)
   const [apiOnline, setApiOnline] = useState(false)
+  const [workgroupDrawerPreview, setWorkgroupDrawerPreview] = useState({
+    deputyUnits: [] as string[],
+    leaderUnit: '',
+    memberUnits: [] as string[],
+  })
 
   const applyBootstrapPayload = (payload: { tableRows?: AdminApiTableRows | null; settings?: AdminApiSettings | null }) => {
     setTableRows(normalizeTableRows(payload.tableRows))
@@ -1039,9 +1083,10 @@ function AdminCenterPage({ sectionKey }: { sectionKey: AdminSectionKey }) {
 
   useEffect(() => {
     if (!editorState) {
-      editorForm.resetFields()
       return
     }
+
+    editorForm.resetFields()
 
     if (editorState.mode === 'edit' && editorState.record) {
       if (editorState.sectionKey === 'workgroups') {
@@ -1149,6 +1194,30 @@ function AdminCenterPage({ sectionKey }: { sectionKey: AdminSectionKey }) {
   const sectionMetrics = useMemo(
     () => (activeTableSection ? getSectionMetrics(activeTableSection, currentRows) : []),
     [activeTableSection, currentRows],
+  )
+
+  const overviewStatItems = useMemo(
+    () => overviewStats.map((item, index) => ({
+      title: item.label,
+      value: item.value,
+      unit: getMetricUnit(item.label),
+      delta: item.hint,
+      icon: overviewStatIcons[index] ?? summaryMetricIcons[index % summaryMetricIcons.length],
+      accent: summaryMetricAccents[index % summaryMetricAccents.length],
+    })),
+    [],
+  )
+
+  const sectionMetricItems = useMemo(
+    () => sectionMetrics.map((item, index) => ({
+      title: item.label,
+      value: item.value,
+      unit: getMetricUnit(item.label),
+      delta: item.hint,
+      icon: summaryMetricIcons[index % summaryMetricIcons.length],
+      accent: summaryMetricAccents[index % summaryMetricAccents.length],
+    })),
+    [sectionMetrics],
   )
 
   const handleDeleteRecord = (section: EditableSectionKey, record: AdminRecord, closeDrawer = false) => {
@@ -1321,10 +1390,19 @@ function AdminCenterPage({ sectionKey }: { sectionKey: AdminSectionKey }) {
 
   useEffect(() => {
     if (drawerState?.sectionKey !== 'workgroups' || !activeDrawerRecord) {
-      workgroupDrawerForm.resetFields()
+      setWorkgroupDrawerPreview({
+        deputyUnits: [],
+        leaderUnit: '',
+        memberUnits: [],
+      })
       return
     }
 
+    const leaderUnit = String(activeDrawerRecord.leaderUnit ?? activeDrawerRecord.leader ?? '')
+    const deputyUnits = getStringList(activeDrawerRecord.deputyUnits ?? activeDrawerRecord.deputy)
+    const memberUnits = getStringList(activeDrawerRecord.memberUnits)
+
+    workgroupDrawerForm.resetFields()
     workgroupDrawerForm.setFieldsValue({
       name: activeDrawerRecord.name,
       committee: activeDrawerRecord.committee,
@@ -1332,13 +1410,18 @@ function AdminCenterPage({ sectionKey }: { sectionKey: AdminSectionKey }) {
       homepage: activeDrawerRecord.homepage,
       secretary: activeDrawerRecord.secretary,
       sort: activeDrawerRecord.sort,
-      leaderUnit: String(activeDrawerRecord.leaderUnit ?? activeDrawerRecord.leader ?? ''),
-      deputyUnits: getStringList(activeDrawerRecord.deputyUnits ?? activeDrawerRecord.deputy),
-      memberUnits: getStringList(activeDrawerRecord.memberUnits),
+      leaderUnit,
+      deputyUnits,
+      memberUnits,
       focus: activeDrawerRecord.focus,
       meetingStatus: activeDrawerRecord.meetingStatus,
       taskStatus: activeDrawerRecord.taskStatus,
       archiveStatus: activeDrawerRecord.archiveStatus,
+    })
+    setWorkgroupDrawerPreview({
+      deputyUnits,
+      leaderUnit,
+      memberUnits,
     })
   }, [activeDrawerRecord, drawerState, workgroupDrawerForm])
 
@@ -1489,10 +1572,6 @@ function AdminCenterPage({ sectionKey }: { sectionKey: AdminSectionKey }) {
 
     setEditorState(null)
   }
-
-  const watchedLeaderUnit = String(Form.useWatch('leaderUnit', workgroupDrawerForm) ?? '')
-  const watchedDeputyUnits = (Form.useWatch('deputyUnits', workgroupDrawerForm) as string[] | undefined) ?? []
-  const watchedMemberUnits = (Form.useWatch('memberUnits', workgroupDrawerForm) as string[] | undefined) ?? []
 
   const handleWorkgroupDrawerSubmit = async () => {
     if (!activeDrawerRecord) {
@@ -1646,7 +1725,7 @@ function AdminCenterPage({ sectionKey }: { sectionKey: AdminSectionKey }) {
         <section className={styles.hero}>
           <div>
             <span className={styles.eyebrow}>平台管理中心</span>
-            <h1>{activeSection.label}</h1>
+            <h1>平台管理中心</h1>
             <p>{activeSection.description}</p>
           </div>
           <div className={styles.heroMeta}>
@@ -1672,31 +1751,32 @@ function AdminCenterPage({ sectionKey }: { sectionKey: AdminSectionKey }) {
         {sectionKey === 'overview' ? (
           <>
             <section className={styles.statGrid}>
-              {overviewStats.map((item) => (
-                <Card key={item.label} className={styles.statCard} bordered={false}>
-                  <span className={styles.statLabel}>{item.label}</span>
-                  <strong className={styles.statValue}>{item.value}</strong>
-                  <span className={styles.statHint}>{item.hint}</span>
-                </Card>
+              {overviewStatItems.map((item) => (
+                <KnowledgeStatCard
+                  key={item.title}
+                  className={styles.compactStatCard}
+                  iconClassName={styles.compactStatIcon}
+                  item={item}
+                />
               ))}
             </section>
 
             <section className={styles.panelGrid}>
-              <Card className={styles.panelCard} title="待办提醒" bordered={false}>
+              <Card className={styles.panelCard} title="待办提醒" variant="borderless">
                 <ul className={styles.list}>
                   <li>3 个工作组首页展示顺序待确认。</li>
                   <li>2 份标准草案缺少评审意见归档。</li>
                   <li>7 条权限申请待秘书处或平台管理员处理。</li>
                 </ul>
               </Card>
-              <Card className={styles.panelCard} title="运行关注" bordered={false}>
+              <Card className={styles.panelCard} title="运行关注" variant="borderless">
                 <ul className={styles.list}>
                   <li>产业推广组有 2 项任务逾期未回填。</li>
                   <li>6 月会议纪要归档率当前为 73%。</li>
                   <li>成员单位活跃度前 3：华域视联、星河视研院、未来视界。</li>
                 </ul>
               </Card>
-              <Card className={styles.panelCard} title="权限动态" bordered={false}>
+              <Card className={styles.panelCard} title="权限动态" variant="borderless">
                 <ul className={styles.list}>
                   <li>本周新增委员会管理员 1 人。</li>
                   <li>2 个工作组秘书申请扩大文件查看范围。</li>
@@ -1707,7 +1787,7 @@ function AdminCenterPage({ sectionKey }: { sectionKey: AdminSectionKey }) {
 
             <section className={styles.progressGrid}>
               {overviewProgress.map((item) => (
-                <Card key={item.label} className={styles.progressCard} bordered={false}>
+                <Card key={item.label} className={styles.progressCard} variant="borderless">
                   <div className={styles.progressHeader}>
                     <strong>{item.label}</strong>
                     <span>{item.percent}%</span>
@@ -1721,7 +1801,7 @@ function AdminCenterPage({ sectionKey }: { sectionKey: AdminSectionKey }) {
         ) : sectionKey === 'settings' ? (
           <>
             <section className={styles.panelGrid}>
-              <Card className={styles.panelCard} title="平台基础信息" bordered={false}>
+              <Card className={styles.panelCard} title="平台基础信息" variant="borderless">
                 <div className={styles.settingList}>
                   <label className={styles.settingItem}>
                     <span className={styles.settingLabel}>平台名称</span>
@@ -1739,7 +1819,7 @@ function AdminCenterPage({ sectionKey }: { sectionKey: AdminSectionKey }) {
                   </label>
                 </div>
               </Card>
-              <Card className={styles.panelCard} title="技术支持信息" bordered={false}>
+              <Card className={styles.panelCard} title="技术支持信息" variant="borderless">
                 <div className={styles.settingList}>
                   <label className={styles.settingItem}>
                     <span className={styles.settingLabel}>支持团队</span>
@@ -1764,7 +1844,7 @@ function AdminCenterPage({ sectionKey }: { sectionKey: AdminSectionKey }) {
                   </label>
                 </div>
               </Card>
-              <Card className={styles.panelCard} title="首页模块开关" bordered={false}>
+              <Card className={styles.panelCard} title="首页模块开关" variant="borderless">
                 <div className={styles.moduleList}>
                   {[
                     ['portal', '首页门户'],
@@ -1824,17 +1904,18 @@ function AdminCenterPage({ sectionKey }: { sectionKey: AdminSectionKey }) {
           </>
         ) : (
           <>
-            <section className={styles.metricGrid}>
-              {sectionMetrics.map((item) => (
-                <Card key={item.label} className={styles.metricCard} bordered={false}>
-                  <span className={styles.metricLabel}>{item.label}</span>
-                  <strong className={styles.metricValue}>{item.value}</strong>
-                  <span className={styles.metricHint}>{item.hint}</span>
-                </Card>
+            <section className={styles.statGrid}>
+              {sectionMetricItems.map((item) => (
+                <KnowledgeStatCard
+                  key={item.title}
+                  className={styles.compactStatCard}
+                  iconClassName={styles.compactStatIcon}
+                  item={item}
+                />
               ))}
             </section>
 
-            <Card className={styles.tableCard} bordered={false}>
+            <Card className={styles.tableCard} variant="borderless">
               <div className={styles.tableHeader}>
                 <div>
                   <h2>{activeConfig?.summaryTitle}</h2>
@@ -1931,7 +2012,7 @@ function AdminCenterPage({ sectionKey }: { sectionKey: AdminSectionKey }) {
         <section className={styles.quickLinks}>
           <Row gutter={[16, 16]}>
             <Col xs={24} md={12} xl={8}>
-              <Card className={styles.quickCard} bordered={false}>
+              <Card className={styles.quickCard} variant="borderless">
                 <span className={styles.quickIcon}><TeamOutlined /></span>
                 <div>
                   <h3>工作组快捷治理</h3>
@@ -1940,7 +2021,7 @@ function AdminCenterPage({ sectionKey }: { sectionKey: AdminSectionKey }) {
               </Card>
             </Col>
             <Col xs={24} md={12} xl={8}>
-              <Card className={styles.quickCard} bordered={false}>
+              <Card className={styles.quickCard} variant="borderless">
                 <span className={styles.quickIcon}><DeploymentUnitOutlined /></span>
                 <div>
                   <h3>角色与入口隔离</h3>
@@ -1949,7 +2030,7 @@ function AdminCenterPage({ sectionKey }: { sectionKey: AdminSectionKey }) {
               </Card>
             </Col>
             <Col xs={24} md={12} xl={8}>
-              <Card className={styles.quickCard} bordered={false}>
+              <Card className={styles.quickCard} variant="borderless">
                 <span className={styles.quickIcon}><AuditOutlined /></span>
                 <div>
                   <h3>全局运行监管</h3>
@@ -1970,7 +2051,7 @@ function AdminCenterPage({ sectionKey }: { sectionKey: AdminSectionKey }) {
             : '详情'
         }
         open={Boolean(drawerState)}
-        width={drawerState?.sectionKey === 'workgroups' ? 760 : 520}
+        size={drawerState?.sectionKey === 'workgroups' ? 760 : 520}
         onClose={() => setDrawerState(null)}
         extra={
           drawerEditableSection && activeDrawerRecord ? (
@@ -2003,7 +2084,18 @@ function AdminCenterPage({ sectionKey }: { sectionKey: AdminSectionKey }) {
                 </div>
               </section>
 
-              <Form form={workgroupDrawerForm} layout="vertical" className={styles.workgroupDrawerForm}>
+              <Form
+                form={workgroupDrawerForm}
+                layout="vertical"
+                className={styles.workgroupDrawerForm}
+                onValuesChange={(_, values) =>
+                  setWorkgroupDrawerPreview({
+                    deputyUnits: getStringList(values.deputyUnits as AdminValue),
+                    leaderUnit: String(values.leaderUnit ?? ''),
+                    memberUnits: getStringList(values.memberUnits as AdminValue),
+                  })
+                }
+              >
                 <Tabs
                   items={[
                     {
@@ -2050,15 +2142,15 @@ function AdminCenterPage({ sectionKey }: { sectionKey: AdminSectionKey }) {
                           <div className={styles.unitStats}>
                             <article className={styles.unitStatCard}>
                               <span>组长单位</span>
-                              <strong>{watchedLeaderUnit || '待设置'}</strong>
+                              <strong>{workgroupDrawerPreview.leaderUnit || '待设置'}</strong>
                             </article>
                             <article className={styles.unitStatCard}>
                               <span>副组长单位</span>
-                              <strong>{watchedDeputyUnits.length} 家</strong>
+                              <strong>{workgroupDrawerPreview.deputyUnits.length} 家</strong>
                             </article>
                             <article className={styles.unitStatCard}>
                               <span>成员单位</span>
-                              <strong>{watchedMemberUnits.length} 家</strong>
+                              <strong>{workgroupDrawerPreview.memberUnits.length} 家</strong>
                             </article>
                           </div>
                           <Form.Item label="组长单位" name="leaderUnit" rules={[{ required: true, message: '请选择组长单位' }]}>

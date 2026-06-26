@@ -5,19 +5,27 @@
 }
 
 .hero {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(min(100%, 23.75rem), 0.95fr);
   gap: var(--layout-gap);
   padding: var(--card-padding);
+  min-height: clamp(8.5rem, 12vw, 9.75rem);
   border-radius: var(--card-radius-lg);
-  background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(237, 244, 255, 0.96)),
-    radial-gradient(circle at top right, rgba(53, 127, 255, 0.12), transparent 38%);
+  background: url('../assets/meetings-hero-banner.png') center right / cover no-repeat;
   border: 1px solid rgba(41, 96, 212, 0.1);
+  box-shadow: 0 14px 36px rgba(34, 82, 188, 0.08);
+}
+
+.copy {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: clamp(6.5rem, 10vw, 7.875rem);
 }
 
 .eyebrow {
   display: inline-flex;
+  width: fit-content;
   padding: 6px 12px;
   border-radius: 999px;
   font-size: 12px;
@@ -27,12 +35,13 @@
 
 .hero h1 {
   margin: 14px 0 10px;
-  font-size: clamp(1.75rem, 2.5vw, 2.25rem);
-  color: var(--text-main);
+  color: #163d9a;
+  font-size: var(--font-title);
+  line-height: 1.18;
 }
 
 .hero p {
-  margin: 0;
+  margin: 12px 0 0;
   max-width: 720px;
   color: var(--text-secondary);
   line-height: 1.7;
@@ -40,15 +49,35 @@
 
 .heroActions {
   display: flex;
-  align-items: flex-start;
-  gap: 12px;
+  gap: 10px;
   flex-wrap: wrap;
+  margin-top: 0.75rem;
+}
+
+.heroActions :global(.ant-btn) {
+  height: 32px;
+  padding: 0 13px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  box-shadow: none;
+}
+
+.heroActions :global(.ant-btn-primary) {
+  border-color: #ef8b1e;
+  background: linear-gradient(135deg, #f59a23, #ef7f1a);
+}
+
+.heroActions :global(.ant-btn-primary):hover,
+.heroActions :global(.ant-btn-primary):focus {
+  border-color: #f7a43c;
+  background: linear-gradient(135deg, #f7a43c, #f08a24);
 }
 
 .statsGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
-  gap: var(--layout-gap);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 10.5rem), 1fr));
+  gap: clamp(0.625rem, 0.9vw, 0.875rem);
 }
 
 .compactStatCard {
@@ -70,12 +99,11 @@
 
 .contentGrid {
   display: grid;
-  grid-template-columns: minmax(0, 1.9fr) minmax(17.5rem, 0.9fr);
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--layout-gap);
 }
 
-.mainCard,
-.sideCard {
+.mainCard {
   min-width: 0;
   padding: var(--card-padding);
   border-radius: var(--card-radius-lg);
@@ -94,15 +122,22 @@
 .mainCard :global(.ant-table-container) {
   min-width: 0;
   max-width: 100%;
+  background: #ffffff;
 }
 
 .mainCard :global(.ant-table-content) {
   max-width: 100%;
   overflow-x: auto !important;
+  background: #ffffff;
 }
 
-.sectionHeader h2,
-.sideCard h2 {
+.mainCard :global(.ant-table-thead > tr > th),
+.mainCard :global(.ant-table-tbody > tr > td),
+.mainCard :global(.ant-table-tbody > tr:hover > td) {
+  background: #ffffff !important;
+}
+
+.sectionHeader h2 {
   margin: 0 0 8px;
   color: var(--text-main);
 }
@@ -235,14 +270,14 @@
   padding: 12px 14px;
   border: 1px solid rgba(41, 96, 212, 0.1);
   border-radius: 8px;
-  background: rgba(248, 251, 255, 0.9);
+  background: #ffffff;
   text-align: left;
   cursor: pointer;
 }
 
 .ledgerItem:hover {
   border-color: rgba(37, 99, 255, 0.28);
-  background: rgba(239, 246, 255, 0.95);
+  background: #ffffff;
 }
 
 .ledgerItem span {
@@ -263,7 +298,12 @@
 
 @media (max-width: 1200px) {
   .statsGrid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .hero {
+    grid-template-columns: minmax(0, 1fr);
+    background-position: center;
   }
 
   .contentGrid {
@@ -272,8 +312,16 @@
 }
 
 @media (max-width: 992px) {
+  .statsGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .hero {
-    flex-direction: column;
+    background-position: 68% center;
+  }
+
+  .copy {
+    min-height: auto;
   }
 }
 
@@ -290,5 +338,9 @@
 
   .formGrid {
     grid-template-columns: 1fr;
+  }
+
+  .heroActions :global(.ant-btn) {
+    flex: 1 1 9rem;
   }
 }
