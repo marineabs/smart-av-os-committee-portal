@@ -1,5 +1,5 @@
 import { ReloadOutlined, SearchOutlined } from '@ant-design/icons'
-import { Button, DatePicker, Select } from 'antd'
+import { Button, DatePicker, Input, Select } from 'antd'
 import type { KnowledgeFilterOptions, KnowledgeQuickFilter } from '../types/portal'
 import styles from './KnowledgeFilterBar.module.css'
 
@@ -18,8 +18,10 @@ interface KnowledgeFilterBarProps {
   activeKeyword: string
   activeQuickFilter: KnowledgeQuickFilter
   filters: KnowledgeFilterState
+  keywordValue: string
   options: KnowledgeFilterOptions
   onChange: (patch: Partial<KnowledgeFilterState>) => void
+  onKeywordChange: (value: string) => void
   onQuickFilterChange: (value: KnowledgeQuickFilter) => void
   onReset: () => void
   onSearch: () => void
@@ -39,8 +41,10 @@ function KnowledgeFilterBar({
   activeKeyword,
   activeQuickFilter,
   filters,
+  keywordValue,
   options,
   onChange,
+  onKeywordChange,
   onQuickFilterChange,
   onReset,
   onSearch,
@@ -48,6 +52,17 @@ function KnowledgeFilterBar({
   return (
     <section className={styles.bar}>
       <div className={styles.controls}>
+        <div className={styles.control}>
+          <label>关键词</label>
+          <Input
+            allowClear
+            value={keywordValue}
+            onChange={(event) => onKeywordChange(event.target.value)}
+            onPressEnter={onSearch}
+            placeholder="文件名称、编号、工作组、上传单位"
+          />
+        </div>
+
         <div className={styles.control}>
           <label>所属分类</label>
           <Select value={filters.categoryId} onChange={(value) => onChange({ categoryId: value })}>

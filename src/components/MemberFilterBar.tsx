@@ -1,5 +1,5 @@
 import { ReloadOutlined, SearchOutlined } from '@ant-design/icons'
-import { Button, Select } from 'antd'
+import { Button, Input, Select } from 'antd'
 import type { MemberFilterOptions, MemberQuickFilter } from '../types/portal'
 import styles from './MemberFilterBar.module.css'
 
@@ -17,8 +17,10 @@ interface MemberFilterBarProps {
   activeKeyword: string
   activeQuickFilter: MemberQuickFilter
   filters: MemberFilterState
+  keywordValue: string
   options: MemberFilterOptions
   onChange: (patch: Partial<MemberFilterState>) => void
+  onKeywordChange: (value: string) => void
   onQuickFilterChange: (value: MemberQuickFilter) => void
   onReset: () => void
   onSearch: () => void
@@ -38,8 +40,10 @@ function MemberFilterBar({
   activeKeyword,
   activeQuickFilter,
   filters,
+  keywordValue,
   options,
   onChange,
+  onKeywordChange,
   onQuickFilterChange,
   onReset,
   onSearch,
@@ -47,6 +51,17 @@ function MemberFilterBar({
   return (
     <section className={styles.bar}>
       <div className={styles.controls}>
+        <div className={styles.control}>
+          <label>关键词</label>
+          <Input
+            allowClear
+            value={keywordValue}
+            onChange={(event) => onKeywordChange(event.target.value)}
+            onPressEnter={onSearch}
+            placeholder="单位名称、联系人、工作组"
+          />
+        </div>
+
         <div className={styles.control}>
           <label>会员类别</label>
           <Select value={filters.memberCategory} onChange={(value) => onChange({ memberCategory: value })}>

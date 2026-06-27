@@ -93,10 +93,8 @@ function WorkgroupSpacePage() {
 
   return (
     <AppLayout
-      contextLabel="工作台"
       footerCaption="智慧视听协作网络"
       footerTitle="共建操作系统专题能力"
-      searchPlaceholder="搜索文件、会议、任务、工作组..."
       versionLabel="V 1.0.0"
     >
       <div className={styles.page}>

@@ -2,6 +2,27 @@ import { getAuthToken } from './auth'
 
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL ?? '/api'
 
+export type PortalSearchScope = '工作组' | '文件' | '会议' | '成员'
+
+export interface PortalSearchResult {
+  id: string
+  scope: PortalSearchScope
+  title: string
+  summary: string
+  meta: string[]
+}
+
+export interface PortalSearchResponse {
+  results: PortalSearchResult[]
+  totals: {
+    all: number
+    workgroups: number
+    files: number
+    meetings: number
+    members: number
+  }
+}
+
 async function requestJson<T>(path: string, init?: RequestInit): Promise<T> {
   const token = getAuthToken()
   const response = await fetch(`${apiBaseUrl}${path}`, {
@@ -25,6 +46,13 @@ export function fetchCollaborationRecords<T>(section: string, fallbackRecords: T
   return requestJson<T[]>(`/collab/${section}/bootstrap`, {
     method: 'POST',
     body: JSON.stringify({ records: fallbackRecords }),
+  })
+}
+
+export function searchPortalRecords(payload: { keyword?: string; scope?: '全部' | PortalSearchScope; limit?: number }) {
+  return requestJson<PortalSearchResponse>('/search', {
+    method: 'POST',
+    body: JSON.stringify(payload),
   })
 }
 

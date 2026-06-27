@@ -47,7 +47,7 @@ function KnowledgeCenterPage() {
   const [committedKeyword, setCommittedKeyword] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
   const [files, setFiles] = useState(initialKnowledgeFiles)
-  const [headerKeyword, setHeaderKeyword] = useState('')
+  const [keywordDraft, setKeywordDraft] = useState('')
   const [pageSize, setPageSize] = useState(10)
   const [previewFile, setPreviewFile] = useState<KnowledgeFile | null>(null)
   const [quickFilter, setQuickFilter] = useState<KnowledgeQuickFilter>('all')
@@ -153,13 +153,13 @@ function KnowledgeCenterPage() {
   const pagedFiles = filteredFiles.slice((currentPage - 1) * pageSize, currentPage * pageSize)
 
   const handleSearch = () => {
-    setCommittedKeyword(headerKeyword)
+    setCommittedKeyword(keywordDraft)
     message.success('已按当前条件筛选资料')
   }
 
   const handleReset = () => {
     setCommittedKeyword('')
-    setHeaderKeyword('')
+    setKeywordDraft('')
     setQuickFilter('all')
     setFilters({
       categoryId: 'all',
@@ -302,13 +302,8 @@ function KnowledgeCenterPage() {
 
   return (
     <AppLayout
-      contextLabel="工作台"
       footerCaption="智慧视听生态"
       footerTitle="共建操作系统底座能力"
-      headerSearchValue={headerKeyword}
-      onHeaderSearchChange={setHeaderKeyword}
-      onHeaderSearchSubmit={setCommittedKeyword}
-      searchPlaceholder="搜索文件名称、编号、工作组、上传单位等"
       versionLabel="V 1.0.0"
     >
       <div className={styles.page}>
@@ -345,8 +340,10 @@ function KnowledgeCenterPage() {
               activeKeyword={committedKeyword}
               activeQuickFilter={quickFilter}
               filters={filters}
+              keywordValue={keywordDraft}
               options={knowledgeFilterOptions}
               onChange={(patch) => setFilters((current) => ({ ...current, ...patch }))}
+              onKeywordChange={setKeywordDraft}
               onQuickFilterChange={setQuickFilter}
               onReset={handleReset}
               onSearch={handleSearch}

@@ -64,10 +64,8 @@ function TasksPage() {
 
   return (
     <AppLayout
-      contextLabel="工作台 / 任务管理"
       footerCaption="任务闭环演示"
       footerTitle="节点、反馈、评审可视化"
-      searchPlaceholder="搜索任务名称、工作组、负责人"
       versionLabel="Demo Build"
     >
       <div className={styles.page}>

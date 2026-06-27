@@ -24,6 +24,15 @@
   font-weight: 600;
 }
 
+.control :global(.ant-input-affix-wrapper),
+.control :global(.ant-picker) {
+  height: 40px;
+  border-radius: 12px;
+  border-color: rgba(64, 108, 212, 0.12);
+  background: rgba(248, 251, 255, 0.96);
+  box-shadow: none;
+}
+
 .bottomRow {
   margin-top: 14px;
   display: flex;

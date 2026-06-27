@@ -34,10 +34,8 @@ const deploymentCards = [
 function SystemCenterPage() {
   return (
     <AppLayout
-      contextLabel="工作台 / 系统管理中心"
       footerCaption="部署演示管理"
       footerTitle="配置、资源、路由统一整理"
-      searchPlaceholder="搜索系统模块、配置项、部署说明"
       versionLabel="Demo Build"
     >
       <div className={styles.page}>

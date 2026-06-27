@@ -4,6 +4,7 @@ import bcrypt from 'bcryptjs'
 import cors from 'cors'
 import express from 'express'
 import jwt from 'jsonwebtoken'
+import { buildAnalyticsSummary } from './analyticsSummary.mjs'
 import { createPrismaClient, loadEnvFile } from './prismaClient.mjs'
 
 const execFileAsync = promisify(execFile)
@@ -292,6 +293,13 @@ const collaborationSections = new Map([
   ['members', '成员单位'],
 ])
 
+const searchScopeToSection = new Map([
+  ['工作组', 'workgroups'],
+  ['文件', 'knowledge-files'],
+  ['会议', 'meetings'],
+  ['成员', 'members'],
+])
+
 function parseList(value) {
   try {
     const parsed = JSON.parse(value || '[]')
@@ -339,6 +347,154 @@ function parsePayloadRecord(row) {
     return JSON.parse(row.payload)
   } catch {
     return { id: row.key }
+  }
+}
+
+function normalizeSearchText(value) {
+  return String(value ?? '').trim().toLowerCase()
+}
+
+function tokenizeKeyword(keyword) {
+  const normalized = normalizeSearchText(keyword)
+  return normalized ? normalized.split(/\s+/).filter(Boolean) : []
+}
+
+function toSearchMetaList(values) {
+  return values.flatMap((value) => {
+    if (Array.isArray(value)) {
+      return value.map(String).map((item) => item.trim()).filter(Boolean)
+    }
+
+    const text = String(value ?? '').trim()
+    return text ? [text] : []
+  })
+}
+
+function buildSearchDataset({ workgroups = [], files = [], meetings = [], members = [] }) {
+  const workgroupResults = workgroups.map((record) => ({
+    id: `workgroup-${record.key ?? record.id}`,
+    scope: '工作组',
+    title: String(record.name ?? ''),
+    summary: String(record.focus ?? record.positioning ?? record.latestUpdate ?? record.status ?? ''),
+    meta: toSearchMetaList([
+      record.committee,
+      record.leaderUnit ?? record.leader,
+      record.deputyUnits ?? record.deputy,
+      record.status,
+      record.updatedAt ?? record.latestUpdate,
+      record.secretary,
+      record.meetingStatus,
+      record.taskStatus,
+      record.archiveStatus,
+    ]),
+    sortText: String(record.updatedAt ?? record.latestUpdate ?? ''),
+  }))
+
+  const fileResults = files.map((record) => ({
+    id: `file-${record.id ?? record.key}`,
+    scope: '文件',
+    title: String(record.title ?? ''),
+    summary: [record.categoryLabel, record.status, record.permission].filter(Boolean).join(' / '),
+    meta: toSearchMetaList([record.workgroup, record.uploader, record.version, record.updatedAt, record.description]),
+    sortText: String(record.updatedAt ?? ''),
+  }))
+
+  const meetingResults = meetings.map((record) => ({
+    id: `meeting-${record.id ?? record.key}`,
+    scope: '会议',
+    title: String(record.title ?? ''),
+    summary: String(record.summary ?? ''),
+    meta: toSearchMetaList([record.workgroup, record.ownerUnit, record.time, record.minutesStatus]),
+    sortText: String(record.time ?? ''),
+  }))
+
+  const memberResults = members.map((record) => ({
+    id: `member-${record.id ?? record.key}`,
+    scope: '成员',
+    title: String(record.name ?? ''),
+    summary: String(record.description ?? ''),
+    meta: toSearchMetaList([record.committee, record.workgroups, record.primaryContact, record.status]),
+    sortText: String(record.updatedAt ?? record.joinedAt ?? ''),
+  }))
+
+  return {
+    results: [...workgroupResults, ...fileResults, ...meetingResults, ...memberResults],
+    totals: {
+      all: workgroupResults.length + fileResults.length + meetingResults.length + memberResults.length,
+      workgroups: workgroupResults.length,
+      files: fileResults.length,
+      meetings: meetingResults.length,
+      members: memberResults.length,
+    },
+  }
+}
+
+function buildSearchResponse(dataset, keyword, scope, limit = 120) {
+  const normalizedKeyword = normalizeSearchText(keyword)
+  const keywordTerms = tokenizeKeyword(keyword)
+  const sectionFilter = searchScopeToSection.get(String(scope ?? '').trim())
+
+  const rankedResults = dataset.results
+    .filter((item) => {
+      if (sectionFilter && item.scope !== scope) {
+        return false
+      }
+
+      if (!keywordTerms.length) {
+        return true
+      }
+
+      const haystack = [item.title, item.summary, item.meta.join(' ')].join(' ').toLowerCase()
+      return keywordTerms.every((term) => haystack.includes(term))
+    })
+    .map((item) => {
+      const titleText = normalizeSearchText(item.title)
+      const summaryText = normalizeSearchText(item.summary)
+      const metaText = normalizeSearchText(item.meta.join(' '))
+
+      let score = 0
+      if (normalizedKeyword) {
+        if (titleText === normalizedKeyword) {
+          score += 120
+        }
+        if (titleText.includes(normalizedKeyword)) {
+          score += 72
+        }
+        if (summaryText.includes(normalizedKeyword)) {
+          score += 30
+        }
+        if (metaText.includes(normalizedKeyword)) {
+          score += 12
+        }
+      }
+
+      for (const term of keywordTerms) {
+        if (titleText.includes(term)) {
+          score += 10
+        }
+        if (summaryText.includes(term)) {
+          score += 5
+        }
+        if (metaText.includes(term)) {
+          score += 2
+        }
+      }
+
+      return { ...item, score }
+    })
+    .sort((left, right) => {
+      if (right.score !== left.score) {
+        return right.score - left.score
+      }
+
+      return String(right.sortText).localeCompare(String(left.sortText), 'zh-CN')
+    })
+    .slice(0, Math.max(1, Number(limit) || 120))
+    .map(({ sortText, score, ...item }) => item)
+
+  return {
+    results: rankedResults,
+    totals: dataset.totals,
   }
 }
 
@@ -455,6 +611,76 @@ app.post('/api/auth/login', async (req, res, next) => {
 
 app.get('/api/auth/me', requireAuth, (req, res) => {
   res.json({ user: toUserProfile(req.user) })
+})
+
+app.use('/api/search', requireAuth)
+
+app.post('/api/search', async (req, res, next) => {
+  try {
+    const [workgroups, collabRows] = await Promise.all([
+      findRows('workgroups'),
+      prisma.collaborationRecord.findMany({
+        where: { section: { in: ['knowledge-files', 'meetings', 'members'] } },
+        orderBy: { updatedAt: 'desc' },
+      }),
+    ])
+
+    const collabRecords = collabRows.reduce((bucket, row) => {
+      if (!bucket[row.section]) {
+        bucket[row.section] = []
+      }
+      bucket[row.section].push(parsePayloadRecord(row))
+      return bucket
+    }, {})
+
+    const dataset = buildSearchDataset({
+      workgroups: workgroups ?? [],
+      files: collabRecords['knowledge-files'] ?? [],
+      meetings: collabRecords.meetings ?? [],
+      members: collabRecords.members ?? [],
+    })
+
+    res.json(buildSearchResponse(dataset, req.body?.keyword, req.body?.scope, req.body?.limit))
+  } catch (error) {
+    next(error)
+  }
+})
+
+app.use('/api/analytics', requireAuth)
+
+app.post('/api/analytics/summary', async (req, res, next) => {
+  try {
+    const [workgroups, organizations, supervision, archive, collabRows] = await Promise.all([
+      findRows('workgroups'),
+      findRows('organizations'),
+      findRows('supervision'),
+      findRows('archive'),
+      prisma.collaborationRecord.findMany({
+        where: { section: { in: ['knowledge-files', 'meetings', 'members'] } },
+        orderBy: { updatedAt: 'desc' },
+      }),
+    ])
+    const collabRecords = collabRows.reduce((bucket, row) => {
+      if (!bucket[row.section]) {
+        bucket[row.section] = []
+      }
+      bucket[row.section].push(parsePayloadRecord(row))
+      return bucket
+    }, {})
+
+    res.json(buildAnalyticsSummary({
+      filters: req.body?.filters ?? {},
+      workgroups: workgroups ?? [],
+      organizations: organizations ?? [],
+      supervision: supervision ?? [],
+      archive: archive ?? [],
+      files: collabRecords['knowledge-files'] ?? [],
+      meetings: collabRecords.meetings ?? [],
+      members: collabRecords.members ?? [],
+    }))
+  } catch (error) {
+    next(error)
+  }
 })
 
 app.use('/api/admin', requireAuth, requirePermission('admin:center:view'))

@@ -36,6 +36,14 @@
   align-items: center;
 }
 
+.control :global(.ant-input-affix-wrapper) {
+  height: 40px;
+  border-radius: 12px;
+  border-color: rgba(64, 108, 212, 0.12);
+  background: rgba(248, 251, 255, 0.96);
+  box-shadow: none;
+}
+
 .bottomRow {
   margin-top: 16px;
   display: flex;

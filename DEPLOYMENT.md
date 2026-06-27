@@ -154,6 +154,80 @@ npm run dev:full:mysql
 - `meetings`
 - `members`
 
+## 生产部署需要拷贝哪些文件
+
+如果是在服务器上构建前端、运行 Node 后台，建议拷贝整个项目源码，但排除本地生成物和敏感文件：
+
+需要拷贝：
+
+- `package.json`
+- `package-lock.json`
+- `index.html`
+- `favicon.svg`
+- `vite.config.ts`
+- `tsconfig.json`
+- `tsconfig.app.json`
+- `tsconfig.node.json`
+- `prisma.config.ts`
+- `prisma/schema.prisma`
+- `prisma/seed.mjs`
+- `server/`
+- `src/`
+- `scripts/`
+- `docker-compose.yml`，仅当服务器也用 Docker 启 MySQL 时需要。
+- `vercel.json`，仅当前端部署到 Vercel 时需要。
+- `.github/workflows/deploy.yml`，仅当继续使用 GitHub Pages 自动部署前端时需要。
+
+不要拷贝：
+
+- `node_modules/`
+- `dist/`
+- `.local/`
+- `.env`
+- `.DS_Store`
+- `.git/`，除非服务器上用 Git 拉取代码。
+
+服务器上单独创建生产 `.env`，不要直接复用本机 `.env`：
+
+```bash
+DATABASE_URL="mysql://smart_av_user:strong-password@mysql-host:3306/smart_av_os"
+SERVER_PORT="4174"
+JWT_SECRET="replace-with-a-long-random-production-secret"
+VITE_API_BASE_URL="https://your-api-domain.example.com/api"
+```
+
+如果前端已经在本机或 CI 构建完成，只把静态站点放到 Nginx/静态托管平台，则前端只需要上传 `dist/` 目录；后台服务器仍需要 `package.json`、`package-lock.json`、`prisma.config.ts`、`prisma/`、`server/`，并执行依赖安装和数据库初始化。
+
+## MySQL 生产部署顺序
+
+1. 在生产 MySQL 中创建数据库和账号，确认 `DATABASE_URL` 能连接。
+
+2. 安装依赖：
+
+```bash
+npm ci
+```
+
+3. 初始化表结构和种子账号：
+
+```bash
+npm run server:setup
+```
+
+4. 构建前端：
+
+```bash
+npm run build
+```
+
+5. 启动 MySQL 版后台：
+
+```bash
+npm run start:api:mysql
+```
+
+生产环境建议用 `pm2`、`systemd` 或平台自带进程管理器托管该命令，并把 `/api` 反向代理到 `SERVER_PORT`。
+
 ## Vercel + 独立后台
 
 前端可以继续部署到 Vercel：
@@ -168,7 +242,7 @@ npm run dev:full:mysql
 VITE_API_BASE_URL="https://your-api-domain.example.com/api"
 ```
 
-后台建议部署到支持 Node.js 长驻服务的平台，例如服务器、Docker、Railway、Render、Fly.io、阿里云 ECS、腾讯云 Lighthouse 等，并连接云 MySQL。生产环境请使用 `npm run dev:api:mysql` 对应的 Express + Prisma + MySQL 服务入口。
+后台建议部署到支持 Node.js 长驻服务的平台，例如服务器、Docker、Railway、Render、Fly.io、阿里云 ECS、腾讯云 Lighthouse 等，并连接云 MySQL。生产环境请使用 `npm run start:api:mysql` 启动 Express + Prisma + MySQL 服务入口。
 
 ## Nginx 前端静态部署
 

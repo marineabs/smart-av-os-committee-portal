@@ -215,7 +215,7 @@ function MemberCenterPage() {
   const [currentPage, setCurrentPage] = useState(1)
   const [editingMember, setEditingMember] = useState<MemberUnit | null>(null)
   const [filters, setFilters] = useState<MemberFilterState>(initialFilterState)
-  const [headerKeyword, setHeaderKeyword] = useState('')
+  const [keywordDraft, setKeywordDraft] = useState('')
   const [members, setMembers] = useState(initialMemberUnits)
   const [pageSize, setPageSize] = useState(10)
   const [quickFilter, setQuickFilter] = useState<MemberQuickFilter>('all')
@@ -382,16 +382,8 @@ function MemberCenterPage() {
 
   return (
     <AppLayout
-      contextLabel="工作台 / 会员信息中心"
       footerCaption="智慧视听生态"
       footerTitle="共建操作系统底座能力"
-      headerSearchValue={headerKeyword}
-      onHeaderSearchChange={setHeaderKeyword}
-      onHeaderSearchSubmit={(value) => {
-        setSubmittedKeyword(value)
-        message.success('已按关键词筛选会员单位')
-      }}
-      searchPlaceholder="搜索单位名称、联系人、工作组等"
       versionLabel="V 1.0.0"
     >
       <div className={styles.page}>
@@ -424,17 +416,19 @@ function MemberCenterPage() {
               activeKeyword={submittedKeyword}
               activeQuickFilter={quickFilter}
               filters={filters}
+              keywordValue={keywordDraft}
               options={memberFilterOptions}
               onChange={(patch) => setFilters((current) => ({ ...current, ...patch }))}
+              onKeywordChange={setKeywordDraft}
               onQuickFilterChange={setQuickFilter}
               onReset={() => {
                 setFilters(initialFilterState)
-                setHeaderKeyword('')
+                setKeywordDraft('')
                 setSubmittedKeyword('')
                 setQuickFilter('all')
               }}
               onSearch={() => {
-                setSubmittedKeyword(headerKeyword)
+                setSubmittedKeyword(keywordDraft)
                 message.success('已按当前条件筛选会员单位')
               }}
             />

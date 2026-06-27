@@ -341,10 +341,8 @@ function MeetingsPage() {
 
   return (
     <AppLayout
-      contextLabel="工作台 / 会议管理"
       footerCaption="会议协同演示"
       footerTitle="通知、议程、纪要一体化"
-      searchPlaceholder="搜索会议名称、工作组、牵头单位"
       versionLabel="Demo Build"
     >
       <div className={styles.page}>
@@ -364,9 +362,6 @@ function MeetingsPage() {
                 纪要台账
               </Button>
             </div>
-            <p>
-              当前账号为 {currentUser.name}（{currentUser.role}），会议列表已按权限、所在工作组和受邀单位自动收敛。
-            </p>
           </div>
         </section>
 
