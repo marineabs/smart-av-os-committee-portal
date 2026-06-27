@@ -394,8 +394,24 @@ async function buildBootstrapPayload() {
   }
 }
 
-app.get('/api/health', (_req, res) => {
-  res.json({ ok: true, service: 'smart-av-os-admin-api', time: new Date().toISOString() })
+app.get('/api/health', async (_req, res) => {
+  try {
+    await prisma.$queryRaw`SELECT 1`
+    res.json({
+      database: 'ok',
+      ok: true,
+      service: 'smart-av-os-admin-api',
+      time: new Date().toISOString(),
+    })
+  } catch (error) {
+    res.status(503).json({
+      database: 'unavailable',
+      error: error instanceof Error ? error.message : 'database unavailable',
+      ok: false,
+      service: 'smart-av-os-admin-api',
+      time: new Date().toISOString(),
+    })
+  }
 })
 
 app.post('/api/auth/login', async (req, res, next) => {

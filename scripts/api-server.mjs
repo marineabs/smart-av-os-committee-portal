@@ -6,7 +6,9 @@ const rootDir = process.cwd()
 const runtimeDir = path.join(rootDir, '.local')
 const pidFile = path.join(runtimeDir, 'api-server.pid')
 const logFile = path.join(runtimeDir, 'api-server.log')
-const serverEntry = path.join(rootDir, 'server', 'index.mjs')
+const serverEntry = process.env.USE_MYSQL_API === '1'
+  ? path.join(rootDir, 'server', 'index.mjs')
+  : path.join(rootDir, 'server', 'local-sqlite.mjs')
 const port = process.env.SERVER_PORT ?? '4174'
 
 function ensureRuntimeDir() {

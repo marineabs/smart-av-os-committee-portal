@@ -1002,8 +1002,12 @@ function getActionNotice(sectionKey: TableSectionKey, row: AdminRecord, nextValu
   }
 }
 
+function isFormValidationError(error: unknown) {
+  return typeof error === 'object' && error !== null && 'errorFields' in error
+}
+
 function AdminCenterPage({ sectionKey }: { sectionKey: AdminSectionKey }) {
-  const { message } = App.useApp()
+  const { message, modal } = App.useApp()
   const currentUser = getActiveUser()
   const authToken = getAuthToken()
   const [editorForm] = Form.useForm()
@@ -1030,6 +1034,25 @@ function AdminCenterPage({ sectionKey }: { sectionKey: AdminSectionKey }) {
     const payload = await fetchAdminBootstrap()
     applyBootstrapPayload(payload)
     setApiOnline(true)
+  }
+
+  const runAdminApiMutation = async (mutation: () => Promise<void>) => {
+    if (!apiOnline && !getAuthToken()) {
+      return false
+    }
+
+    try {
+      await mutation()
+      setApiOnline(true)
+      return true
+    } catch (error) {
+      if (apiOnline) {
+        throw error
+      }
+
+      setApiOnline(false)
+      return false
+    }
   }
 
   useEffect(() => {
@@ -1224,16 +1247,19 @@ function AdminCenterPage({ sectionKey }: { sectionKey: AdminSectionKey }) {
     const sectionLabel = getEditableSectionLabel(section)
     const targetName = getRecordDisplayName(record)
 
-    Modal.confirm({
+    modal.confirm({
       title: `删除${sectionLabel}`,
       content: `确认删除「${targetName}」吗？删除后将从当前管理列表移除，并写入操作日志。`,
       okText: '确认删除',
       cancelText: '取消',
       okButtonProps: { danger: true },
       onOk: async () => {
-        if (apiOnline) {
+        const savedToApi = await runAdminApiMutation(async () => {
           await deleteAdminRecord(section, String(record.key))
           await refreshAdminData()
+        })
+
+        if (savedToApi) {
           if (closeDrawer) {
             setDrawerState(null)
           }
@@ -1339,9 +1365,12 @@ function AdminCenterPage({ sectionKey }: { sectionKey: AdminSectionKey }) {
                       ? { result: nextValue }
                       : { status: nextValue }
 
-                if (apiOnline) {
+                const savedToApi = await runAdminApiMutation(async () => {
                   await patchAdminRecord(activeTableSection, String(record.key), patchValues)
                   await refreshAdminData()
+                })
+
+                if (savedToApi) {
                   message.success(getActionNotice(activeTableSection, record, nextValue))
                   return
                 }
@@ -1367,7 +1396,7 @@ function AdminCenterPage({ sectionKey }: { sectionKey: AdminSectionKey }) {
         ),
       },
     ]
-  }, [activeConfig, activeTableSection, message])
+  }, [activeConfig, activeTableSection, apiOnline, message])
 
   const drawerItems = useMemo(() => {
     if (!drawerState || !activeDrawerRecord) {
@@ -1447,7 +1476,15 @@ function AdminCenterPage({ sectionKey }: { sectionKey: AdminSectionKey }) {
       return
     }
 
-    const values = (await editorForm.validateFields()) as Record<string, string>
+    let values: Record<string, string>
+    try {
+      values = (await editorForm.validateFields()) as Record<string, string>
+    } catch (error) {
+      if (isFormValidationError(error)) {
+        return
+      }
+      throw error
+    }
     const section = editorState.sectionKey
 
     let normalizedValues: Record<string, AdminValue> = {
@@ -1503,9 +1540,12 @@ function AdminCenterPage({ sectionKey }: { sectionKey: AdminSectionKey }) {
         ...normalizedValues,
       }
 
-      if (apiOnline) {
+      const savedToApi = await runAdminApiMutation(async () => {
         await createAdminRecord(section, nextRecord)
         await refreshAdminData()
+      })
+
+      if (savedToApi) {
         message.success(`${sectionConfigs[section].primaryActionLabel}已保存到后台数据库`)
         setEditorState(null)
         return
@@ -1530,14 +1570,18 @@ function AdminCenterPage({ sectionKey }: { sectionKey: AdminSectionKey }) {
       )
       message.success(`${sectionConfigs[section].primaryActionLabel}已保存到本地数据`)
     } else if (editorState.record) {
-      const targetName = getRecordDisplayName(editorState.record)
+      const editingRecord = editorState.record
+      const targetName = getRecordDisplayName(editingRecord)
 
-      if (apiOnline) {
-        await updateAdminRecord(section, String(editorState.record.key), {
-          ...editorState.record,
+      const savedToApi = await runAdminApiMutation(async () => {
+        await updateAdminRecord(section, String(editingRecord.key), {
+          ...editingRecord,
           ...normalizedValues,
         })
         await refreshAdminData()
+      })
+
+      if (savedToApi) {
         message.success(`${targetName} 已更新`)
         setEditorState(null)
         return
@@ -1546,7 +1590,7 @@ function AdminCenterPage({ sectionKey }: { sectionKey: AdminSectionKey }) {
       setTableRows((current) => ({
         ...current,
         [section]: current[section].map((item) =>
-          item.key === editorState.record?.key
+          item.key === editingRecord.key
             ? {
                 ...item,
                 ...normalizedValues,
@@ -1578,7 +1622,15 @@ function AdminCenterPage({ sectionKey }: { sectionKey: AdminSectionKey }) {
       return
     }
 
-    const values = (await workgroupDrawerForm.validateFields()) as Record<string, string | string[]>
+    let values: Record<string, string | string[]>
+    try {
+      values = (await workgroupDrawerForm.validateFields()) as Record<string, string | string[]>
+    } catch (error) {
+      if (isFormValidationError(error)) {
+        return
+      }
+      throw error
+    }
     const deputyUnits = getStringList(values.deputyUnits as AdminValue)
     const memberUnits = getStringList(values.memberUnits as AdminValue)
     const targetName = String(values.name ?? activeDrawerRecord.name ?? activeDrawerRecord.key)
@@ -1603,9 +1655,12 @@ function AdminCenterPage({ sectionKey }: { sectionKey: AdminSectionKey }) {
       updatedAt: '2026-06-25 10:30',
     }
 
-    if (apiOnline) {
+    const savedToApi = await runAdminApiMutation(async () => {
       await updateAdminRecord('workgroups', String(activeDrawerRecord.key), nextRecord)
       await refreshAdminData()
+    })
+
+    if (savedToApi) {
       message.success(`${targetName} 的详情信息已更新`)
       return
     }
@@ -1663,7 +1718,7 @@ function AdminCenterPage({ sectionKey }: { sectionKey: AdminSectionKey }) {
       reader.onload = () => {
         try {
           const payload = JSON.parse(String(reader.result ?? '{}'))
-          Modal.confirm({
+          modal.confirm({
             title: '恢复平台备份',
             content: '这会覆盖当前协同业务数据和系统设置，请确认备份文件来源可靠。',
             okText: '确认恢复',
@@ -1685,10 +1740,13 @@ function AdminCenterPage({ sectionKey }: { sectionKey: AdminSectionKey }) {
   }
 
   const handleSaveSettings = async () => {
-    if (apiOnline) {
+    const savedToApi = await runAdminApiMutation(async () => {
       const savedSettings = await saveAdminSettings(settingsState)
       setSettingsState(normalizeSettings(savedSettings))
       await refreshAdminData()
+    })
+
+    if (savedToApi) {
       message.success('系统设置已保存到后台数据库')
       return
     }
@@ -1697,16 +1755,19 @@ function AdminCenterPage({ sectionKey }: { sectionKey: AdminSectionKey }) {
   }
 
   const handleResetAdminData = () => {
-    Modal.confirm({
+    modal.confirm({
       title: '恢复管理中心初始数据',
       content: '这会清除当前浏览器中保存的管理中心变更，并恢复到内置初始数据。',
       okText: '恢复初始数据',
       cancelText: '取消',
       okButtonProps: { danger: true },
       onOk: async () => {
-        if (apiOnline) {
+        const resetOnApi = await runAdminApiMutation(async () => {
           const payload = await resetAdminData()
           applyBootstrapPayload(payload)
+        })
+
+        if (resetOnApi) {
           message.success('后台数据已恢复到初始状态')
           return
         }

@@ -222,7 +222,7 @@ function MemberDetailDrawer({ member, onClose, open }: MemberDetailDrawerProps) 
     <Drawer
       open={open}
       title={member ? `${member.name} · 会员单位详情` : '会员单位详情'}
-      width={860}
+      size={860}
       onClose={onClose}
       className={styles.drawer}
     >

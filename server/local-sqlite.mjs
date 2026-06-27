@@ -510,7 +510,23 @@ function requirePermission(permission) {
 initializeDatabase()
 
 app.get('/api/health', (_req, res) => {
-  res.json({ ok: true, service: 'smart-av-os-local-sqlite-api', time: new Date().toISOString() })
+  try {
+    db.prepare('SELECT 1').get()
+    res.json({
+      database: 'ok',
+      ok: true,
+      service: 'smart-av-os-local-sqlite-api',
+      time: new Date().toISOString(),
+    })
+  } catch (error) {
+    res.status(503).json({
+      database: 'unavailable',
+      error: error instanceof Error ? error.message : 'database unavailable',
+      ok: false,
+      service: 'smart-av-os-local-sqlite-api',
+      time: new Date().toISOString(),
+    })
+  }
 })
 
 app.post('/api/auth/login', (req, res) => {

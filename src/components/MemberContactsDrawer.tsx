@@ -13,7 +13,7 @@ function MemberContactsDrawer({ member, onClose, open }: MemberContactsDrawerPro
     <Drawer
       open={open}
       title={member ? `${member.name} · 联系人管理` : '联系人管理'}
-      width={520}
+      size={520}
       onClose={onClose}
     >
       <div className={styles.list}>

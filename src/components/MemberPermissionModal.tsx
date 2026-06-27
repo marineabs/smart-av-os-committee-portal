@@ -18,6 +18,7 @@ function MemberPermissionModal({ guides, onClose, open }: MemberPermissionModalP
       onOk={onClose}
       okText="我知道了"
       cancelButtonProps={{ style: { display: 'none' } }}
+      destroyOnHidden
     >
       <div className={styles.list}>
         {guides.map((item) => (
