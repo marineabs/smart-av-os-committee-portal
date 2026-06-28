@@ -2,11 +2,11 @@ import { App } from 'antd'
 import { useEffect, useMemo, useState } from 'react'
 import AddMemberModal, { type MemberFormValues } from '../components/AddMemberModal'
 import ImportMemberModal from '../components/ImportMemberModal'
+import KnowledgeStatCard from '../components/KnowledgeStatCard'
 import MemberContactsDrawer from '../components/MemberContactsDrawer'
 import MemberDetailDrawer from '../components/MemberDetailDrawer'
 import MemberFilterBar, { type MemberFilterState } from '../components/MemberFilterBar'
 import MemberHero from '../components/MemberHero'
-import MemberStatCard from '../components/MemberStatCard'
 import MemberUnitTable from '../components/MemberUnitTable'
 import AppLayout from '../layouts/AppLayout'
 import {
@@ -400,7 +400,7 @@ function MemberCenterPage() {
 
         <section className={styles.statsGrid}>
           {stats.map((item) => (
-            <MemberStatCard
+            <KnowledgeStatCard
               key={item.title}
               className={styles.compactStatCard}
               iconClassName={styles.compactStatIcon}
@@ -437,7 +437,7 @@ function MemberCenterPage() {
               canManageAccounts={allowManageAccounts}
               canManageMembers={allowManageAllMembers}
               canNotifyMembers={!userIsRegular}
-              columnWidthMembers={filteredMembers}
+              allMembers={filteredMembers}
               currentPage={currentPage}
               members={pagedMembers}
               onContact={setContactMember}

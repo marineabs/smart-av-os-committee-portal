@@ -47,7 +47,7 @@ export const memberStatsBase: MemberStatItem[] = [
     accent: 'linear-gradient(135deg, #18c2c8 0%, #34d8a0 100%)',
   },
   {
-    title: '标准项目参与单位',
+    title: '标准参与单位',
     value: '46',
     unit: '家',
     delta: '较上月 ↑ 6',

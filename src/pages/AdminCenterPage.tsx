@@ -1829,6 +1829,7 @@ function AdminCenterPage({ sectionKey }: { sectionKey: AdminSectionKey }) {
                   className={styles.compactStatCard}
                   iconClassName={styles.compactStatIcon}
                   item={item}
+                  showDelta={false}
                 />
               ))}
             </section>
@@ -1983,6 +1984,7 @@ function AdminCenterPage({ sectionKey }: { sectionKey: AdminSectionKey }) {
                   className={styles.compactStatCard}
                   iconClassName={styles.compactStatIcon}
                   item={item}
+                  showDelta={false}
                 />
               ))}
             </section>

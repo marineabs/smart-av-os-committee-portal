@@ -6,6 +6,7 @@ interface MemberStatusTagProps {
 }
 
 function MemberStatusTag({ status }: MemberStatusTagProps) {
+  const label = status === '信息变更中' ? '信息处理中' : status
   const className =
     status === '正常'
       ? styles.normal
@@ -17,7 +18,7 @@ function MemberStatusTag({ status }: MemberStatusTagProps) {
             ? styles.exited
             : styles.changing
 
-  return <span className={`${styles.tag} ${className}`}>{status}</span>
+  return <span className={`${styles.tag} ${className}`}>{label}</span>
 }
 
 export default MemberStatusTag

@@ -9,6 +9,7 @@ import {
   TrophyOutlined,
 } from '@ant-design/icons'
 import type { ReactNode } from 'react'
+import KnowledgeStatCard from '../KnowledgeStatCard'
 import type { OverviewMetric } from '../../types/statistics'
 import styles from './StatisticsCenter.module.css'
 
@@ -23,22 +24,32 @@ const metricIconMap: Record<string, ReactNode> = {
   activeMembers: <TrophyOutlined />,
 }
 
+const metricAccentMap: Record<OverviewMetric['accent'], string> = {
+  blue: 'linear-gradient(135deg, #2d74ff 0%, #5fa2ff 100%)',
+  cyan: 'linear-gradient(135deg, #18be98 0%, #43d3a9 100%)',
+  purple: 'linear-gradient(135deg, #7a5dff 0%, #9b7cff 100%)',
+  orange: 'linear-gradient(135deg, #ff9b2f 0%, #ffc453 100%)',
+}
+
 interface OverviewMetricCardProps {
   metric: OverviewMetric
 }
 
 function OverviewMetricCard({ metric }: OverviewMetricCardProps) {
   return (
-    <article className={styles.metricCard}>
-      <div className={`${styles.metricIcon} ${styles[metric.accent]}`}>{metricIconMap[metric.id]}</div>
-      <div className={styles.metricBody}>
-        <span>{metric.title}</span>
-        <strong>
-          {metric.value}
-          {metric.unit ? <small>{metric.unit}</small> : null}
-        </strong>
-      </div>
-    </article>
+    <KnowledgeStatCard
+      className={styles.compactStatCard}
+      iconClassName={styles.compactStatIcon}
+      item={{
+        title: metric.title,
+        value: metric.value,
+        unit: metric.unit ?? '',
+        delta: metric.note,
+        icon: metricIconMap[metric.id],
+        accent: metricAccentMap[metric.accent],
+      }}
+      showDelta={false}
+    />
   )
 }
 

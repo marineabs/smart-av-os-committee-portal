@@ -7,7 +7,7 @@
 .statsGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 10.5rem), 1fr));
-  gap: var(--layout-gap);
+  gap: clamp(0.625rem, 0.9vw, 0.875rem);
 }
 
 .compactStatCard {
