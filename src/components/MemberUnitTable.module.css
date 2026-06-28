@@ -78,6 +78,9 @@
 .actionCell {
   display: flex;
   align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 32px;
   gap: 2px;
 }
 
@@ -97,6 +100,13 @@
   background: #ffffff;
   box-shadow: inset 0 0 0 1px rgba(37, 99, 255, 0.1);
   color: #2d73ff;
+}
+
+.actionCell button :global(.anticon) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
 }
 
 .footer {

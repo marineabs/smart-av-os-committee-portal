@@ -76,7 +76,17 @@
 .actionCell {
   display: flex;
   align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 32px;
   gap: 2px;
+}
+
+.actionCell button :global(.anticon) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
 }
 
 .footer {

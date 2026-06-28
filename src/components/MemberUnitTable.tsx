@@ -1,8 +1,4 @@
-import {
-  EyeOutlined,
-  MoreOutlined,
-  TeamOutlined,
-} from '@ant-design/icons'
+import { MoreOutlined } from '@ant-design/icons'
 import { App, Dropdown, InputNumber, Pagination, Select, Table } from 'antd'
 import type { MenuProps, TableProps } from 'antd'
 import type { MemberUnit } from '../types/portal'
@@ -128,10 +124,13 @@ function MemberUnitTable({
     {
       title: '操作',
       key: 'actions',
-      width: 112,
+      width: 84,
       fixed: 'right',
+      align: 'center',
       render: (_, member) => {
         const items: MenuProps['items'] = [
+          { key: 'view', label: '查看详情' },
+          { key: 'contact', label: '联系人' },
           { key: 'records', label: '参与记录' },
           ...(canManageMembers ? [{ key: 'workgroup', label: '工作组调整' }] : []),
           ...(canNotifyMembers ? [{ key: 'notify', label: '发送通知' }] : []),
@@ -142,17 +141,23 @@ function MemberUnitTable({
 
         return (
           <div className={styles.actionCell}>
-            <button type="button" onClick={() => onView(member)} aria-label="查看">
-              <EyeOutlined />
-            </button>
-            <button type="button" onClick={() => onContact(member)} aria-label="联系人">
-              <TeamOutlined />
-            </button>
             {items.length ? (
               <Dropdown
                 menu={{
                   items,
-                  onClick: ({ key }) => onMoreAction(member, key),
+                  onClick: ({ key }) => {
+                    if (key === 'view') {
+                      onView(member)
+                      return
+                    }
+
+                    if (key === 'contact') {
+                      onContact(member)
+                      return
+                    }
+
+                    onMoreAction(member, key)
+                  },
                 }}
                 trigger={['click']}
               >

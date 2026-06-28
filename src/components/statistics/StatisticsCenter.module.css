@@ -161,7 +161,7 @@
   display: grid;
   grid-template-columns: 48px minmax(0, 1fr);
   gap: 12px;
-  min-height: 132px;
+  min-height: 108px;
   padding: 16px;
   border-radius: 16px;
   transition:
@@ -207,7 +207,8 @@
 
 .metricBody {
   display: grid;
-  gap: 5px;
+  align-content: center;
+  gap: 8px;
   min-width: 0;
 }
 
@@ -229,12 +230,6 @@
   color: #7183a4;
   font-size: 13px;
   font-weight: 700;
-}
-
-.metricBody em {
-  color: #8190ad;
-  font-size: 12px;
-  font-style: normal;
 }
 
 .chartGrid {

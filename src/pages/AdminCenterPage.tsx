@@ -6,10 +6,10 @@ import {
   DeleteOutlined,
   DeploymentUnitOutlined,
   DownloadOutlined,
-  EyeOutlined,
   FileProtectOutlined,
   FileTextOutlined,
   FilterOutlined,
+  MoreOutlined,
   NotificationOutlined,
   ReloadOutlined,
   RestOutlined,
@@ -26,6 +26,7 @@ import {
   Col,
   Descriptions,
   Drawer,
+  Dropdown,
   Empty,
   Form,
   Input,
@@ -39,6 +40,7 @@ import {
   Tag,
   Tabs,
 } from 'antd'
+import type { MenuProps } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import { Link, Navigate } from 'react-router-dom'
@@ -1315,85 +1317,94 @@ function AdminCenterPage({ sectionKey }: { sectionKey: AdminSectionKey }) {
         title: '操作',
         key: 'actions',
         fixed: 'right' as const,
-        width: isEditableSection(activeTableSection) ? 236 : 176,
-        render: (_: unknown, record: AdminRecord) => (
-          <Space size="small">
-            <Button
-              type="link"
-              className={styles.inlineButton}
-              icon={<EyeOutlined />}
-              onClick={() => setDrawerState({ sectionKey: activeTableSection, record })}
-            >
-              详情
-            </Button>
-            {isEditableSection(activeTableSection) ? (
-              <Button
-                type="link"
-                className={styles.inlineButton}
-                onClick={() =>
-                  setEditorState({
-                    mode: 'edit',
-                    sectionKey: activeTableSection,
-                    record,
-                  })
-                }
+        width: 84,
+        align: 'center' as const,
+        render: (_: unknown, record: AdminRecord) => {
+          const editableSection = isEditableSection(activeTableSection) ? activeTableSection : null
+          const items: MenuProps['items'] = [
+            { key: 'detail', label: '详情' },
+            ...(editableSection ? [{ key: 'edit', label: '编辑' }] : []),
+            ...(editableSection ? [{ key: 'delete', label: '删除', danger: true }] : []),
+            { key: 'quick', label: activeConfig.quickActionLabel },
+          ]
+
+          return (
+            <div className={styles.actionCell}>
+              <Dropdown
+                menu={{
+                  items,
+                  onClick: async ({ key }) => {
+                    if (key === 'detail') {
+                      setDrawerState({ sectionKey: activeTableSection, record })
+                      return
+                    }
+
+                    if (key === 'edit') {
+                      if (!editableSection) {
+                        return
+                      }
+
+                      setEditorState({
+                        mode: 'edit',
+                        sectionKey: editableSection,
+                        record,
+                      })
+                      return
+                    }
+
+                    if (key === 'delete') {
+                      if (!editableSection) {
+                        return
+                      }
+
+                      handleDeleteRecord(editableSection, record)
+                      return
+                    }
+
+                    if (key === 'quick') {
+                      const nextValue = getNextQuickValue(activeTableSection, record)
+                      const patchValues =
+                        activeTableSection === 'supervision'
+                          ? { risk: nextValue }
+                          : activeTableSection === 'logs'
+                            ? { result: nextValue }
+                            : { status: nextValue }
+
+                      const savedToApi = await runAdminApiMutation(async () => {
+                        await patchAdminRecord(activeTableSection, String(record.key), patchValues)
+                        await refreshAdminData()
+                      })
+
+                      if (savedToApi) {
+                        message.success(getActionNotice(activeTableSection, record, nextValue))
+                        return
+                      }
+
+                      setTableRows((current) => ({
+                        ...current,
+                        [activeTableSection]: current[activeTableSection].map((item) =>
+                          item.key !== record.key
+                            ? item
+                            : activeTableSection === 'supervision'
+                              ? { ...item, risk: nextValue }
+                              : activeTableSection === 'logs'
+                                ? { ...item, result: nextValue }
+                                : { ...item, status: nextValue },
+                        ),
+                      }))
+                      message.success(getActionNotice(activeTableSection, record, nextValue))
+                    }
+                  },
+                }}
+                trigger={['click']}
               >
-                编辑
-              </Button>
-            ) : null}
-            {isEditableSection(activeTableSection) ? (
-              <Button
-                danger
-                type="link"
-                className={styles.inlineButton}
-                icon={<DeleteOutlined />}
-                onClick={() => handleDeleteRecord(activeTableSection, record)}
-              >
-                删除
-              </Button>
-            ) : null}
-            <Button
-              type="link"
-              className={styles.inlineButton}
-              icon={<ReloadOutlined />}
-              onClick={async () => {
-                const nextValue = getNextQuickValue(activeTableSection, record)
-                const patchValues =
-                  activeTableSection === 'supervision'
-                    ? { risk: nextValue }
-                    : activeTableSection === 'logs'
-                      ? { result: nextValue }
-                      : { status: nextValue }
-
-                const savedToApi = await runAdminApiMutation(async () => {
-                  await patchAdminRecord(activeTableSection, String(record.key), patchValues)
-                  await refreshAdminData()
-                })
-
-                if (savedToApi) {
-                  message.success(getActionNotice(activeTableSection, record, nextValue))
-                  return
-                }
-
-                setTableRows((current) => ({
-                  ...current,
-                  [activeTableSection]: current[activeTableSection].map((item) =>
-                    item.key !== record.key
-                      ? item
-                      : activeTableSection === 'supervision'
-                        ? { ...item, risk: nextValue }
-                        : activeTableSection === 'logs'
-                          ? { ...item, result: nextValue }
-                          : { ...item, status: nextValue },
-                  ),
-                }))
-                message.success(getActionNotice(activeTableSection, record, nextValue))
-              }}
-            >
-              {activeConfig.quickActionLabel}
-            </Button>
-          </Space>
-        ),
+                <button type="button" aria-label="更多">
+                  <MoreOutlined />
+                </button>
+              </Dropdown>
+            </div>
+          )
+        },
       },
     ]
   }, [activeConfig, activeTableSection, apiOnline, message])

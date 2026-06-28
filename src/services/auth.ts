@@ -5,6 +5,7 @@ const authTokenKey = 'smart-av-os-auth-token'
 const authUserKey = 'smart-av-os-auth-user'
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL ?? '/api'
 const demoPassword = 'demo-portal-2026'
+const committeeOrganizationName = '智慧视听操作系统专委会'
 
 export const demoUsers: Record<string, UserProfile> = {
   zhangwei: {
@@ -13,7 +14,7 @@ export const demoUsers: Record<string, UserProfile> = {
     avatarText: '张',
     roleKey: 'secretariat_admin',
     permissions: ['admin:center:view', 'workgroups:manage', 'admin:data:write', 'admin:settings:write'],
-    organizationName: '专委会秘书处',
+    organizationName: committeeOrganizationName,
     currentWorkgroup: '秘书处',
     managementScope: '全平台',
     tags: ['演示账号', '管理员'],
@@ -53,6 +54,17 @@ export interface LoginResult {
   user: UserProfile
 }
 
+function normalizeUserProfile(user: UserProfile): UserProfile {
+  if (user.name === '张伟' && user.organizationName === '专委会秘书处') {
+    return {
+      ...user,
+      organizationName: committeeOrganizationName,
+    }
+  }
+
+  return user
+}
+
 export function getAuthToken() {
   return window.localStorage.getItem(authTokenKey)
 }
@@ -60,19 +72,19 @@ export function getAuthToken() {
 export function getActiveUser(): UserProfile {
   const rawUser = window.localStorage.getItem(authUserKey)
   if (!rawUser) {
-    return currentUser
+    return normalizeUserProfile(currentUser)
   }
 
   try {
-    return JSON.parse(rawUser) as UserProfile
+    return normalizeUserProfile(JSON.parse(rawUser) as UserProfile)
   } catch {
-    return currentUser
+    return normalizeUserProfile(currentUser)
   }
 }
 
 export function setAuthSession(session: LoginResult) {
   window.localStorage.setItem(authTokenKey, session.token)
-  window.localStorage.setItem(authUserKey, JSON.stringify(session.user))
+  window.localStorage.setItem(authUserKey, JSON.stringify(normalizeUserProfile(session.user)))
 }
 
 export function clearAuthSession() {

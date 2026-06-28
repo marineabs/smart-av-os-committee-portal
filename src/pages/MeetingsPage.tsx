@@ -3,11 +3,13 @@ import {
   ClockCircleOutlined,
   DeleteOutlined,
   FileDoneOutlined,
+  MoreOutlined,
   PlusOutlined,
   SearchOutlined,
   TeamOutlined,
 } from '@ant-design/icons'
-import { App, Button, Empty, Form, Input, InputNumber, Modal, Select, Space, Table, Tag } from 'antd'
+import { App, Button, Dropdown, Empty, Form, Input, InputNumber, Modal, Select, Table, Tag } from 'antd'
+import type { MenuProps } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { useEffect, useMemo, useState } from 'react'
 import KnowledgeStatCard from '../components/KnowledgeStatCard'
@@ -423,35 +425,47 @@ function MeetingsPage() {
       title: '操作',
       key: 'actions',
       fixed: 'right',
-      width: 150,
+      width: 84,
+      align: 'center',
       render: (_, record) => {
         const canManage = canManageWorkgroupContent(currentUser, record.workgroup)
+        const items: MenuProps['items'] = [
+          { key: 'view', label: '查看' },
+          { key: 'minutes', label: '纪要' },
+          { key: 'attendance', label: '记录' },
+        ]
 
         return (
-          <Space size={8}>
-            <Button type="link" size="small" onClick={() => message.info(`已打开会议详情：${record.title}`)}>
-              查看
-            </Button>
-            <Button
-              type="link"
-              size="small"
-              onClick={() => {
-                setMinutesMeeting(record)
-                if (record.minutesStatus === '待整理' && !canManage) {
-                  message.info('纪要正在整理中，可先查看会议摘要和已确认事项')
-                }
+          <div className={styles.actionCell}>
+            <Dropdown
+              menu={{
+                items,
+                onClick: ({ key }) => {
+                  if (key === 'view') {
+                    message.info(`已打开会议详情：${record.title}`)
+                    return
+                  }
+
+                  if (key === 'minutes') {
+                    setMinutesMeeting(record)
+                    if (record.minutesStatus === '待整理' && !canManage) {
+                      message.info('纪要正在整理中，可先查看会议摘要和已确认事项')
+                    }
+                    return
+                  }
+
+                  if (key === 'attendance') {
+                    openAttendanceModal(record)
+                  }
+                },
               }}
+              trigger={['click']}
             >
-              纪要
-            </Button>
-            <Button
-              type="link"
-              size="small"
-              onClick={() => openAttendanceModal(record)}
-            >
-              记录
-            </Button>
-          </Space>
+              <button type="button" aria-label="更多">
+                <MoreOutlined />
+              </button>
+            </Dropdown>
+          </div>
         )
       },
     },

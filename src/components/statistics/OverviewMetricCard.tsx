@@ -8,7 +8,6 @@ import {
   TeamOutlined,
   TrophyOutlined,
 } from '@ant-design/icons'
-import { Progress } from 'antd'
 import type { ReactNode } from 'react'
 import type { OverviewMetric } from '../../types/statistics'
 import styles from './StatisticsCenter.module.css'
@@ -38,10 +37,6 @@ function OverviewMetricCard({ metric }: OverviewMetricCardProps) {
           {metric.value}
           {metric.unit ? <small>{metric.unit}</small> : null}
         </strong>
-        <em>{metric.note}</em>
-        {typeof metric.progress === 'number' ? (
-          <Progress percent={metric.progress} showInfo={false} strokeColor="#0b4dff" trailColor="#eef3fb" size="small" />
-        ) : null}
       </div>
     </article>
   )

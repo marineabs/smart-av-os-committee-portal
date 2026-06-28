@@ -1,10 +1,4 @@
-import {
-  DownloadOutlined,
-  EyeOutlined,
-  MoreOutlined,
-  StarFilled,
-  StarOutlined,
-} from '@ant-design/icons'
+import { MoreOutlined, StarFilled, StarOutlined } from '@ant-design/icons'
 import { App, Dropdown, InputNumber, Pagination, Select, Table } from 'antd'
 import type { MenuProps, TableProps } from 'antd'
 import type { KnowledgeFile, KnowledgeFileType } from '../types/portal'
@@ -122,11 +116,14 @@ function KnowledgeFileTable({
     {
       title: '操作',
       key: 'actions',
-      width: 108,
+      width: 84,
+      align: 'center',
       render: (_, file) => {
         const allowManageFile = canManageFile ? canManageFile(file) : canManageFiles
         const allowSetFilePermissions = canSetFilePermissions ? canSetFilePermissions(file) : canSetPermissions
         const items: MenuProps['items'] = [
+          { key: 'preview', label: '预览' },
+          { key: 'download', label: '下载' },
           { key: 'detail', label: '查看详情' },
           { key: 'history', label: '历史版本' },
           { key: 'favorite', label: file.isFavorite ? '取消收藏' : '添加收藏' },
@@ -136,16 +133,22 @@ function KnowledgeFileTable({
 
         return (
           <div className={styles.actionCell}>
-            <button type="button" onClick={() => onPreview(file)} aria-label="预览">
-              <EyeOutlined />
-            </button>
-            <button type="button" onClick={() => onDownload(file)} aria-label="下载">
-              <DownloadOutlined />
-            </button>
             <Dropdown
               menu={{
                 items,
-                onClick: ({ key }) => onMoreAction(file, key),
+                onClick: ({ key }) => {
+                  if (key === 'preview') {
+                    onPreview(file)
+                    return
+                  }
+
+                  if (key === 'download') {
+                    onDownload(file)
+                    return
+                  }
+
+                  onMoreAction(file, key)
+                },
               }}
               trigger={['click']}
             >

@@ -352,7 +352,7 @@ function initializeDatabase() {
         avatarText: '张',
         roleKey: 'secretariat_admin',
         permissions: ['admin:center:view', 'workgroups:manage', 'admin:data:write', 'admin:settings:write'],
-        organizationName: '专委会秘书处',
+        organizationName: '智慧视听操作系统专委会',
         currentWorkgroup: '秘书处',
         managementScope: '全平台',
         tags: ['后台认证', '秘书处管理员'],
