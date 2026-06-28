@@ -183,6 +183,18 @@
   gap: 4px;
 }
 
+.attendanceSummaryCell {
+  display: grid;
+  gap: 2px;
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+.attendanceSummaryCell strong {
+  color: #163d9a;
+  font-size: 15px;
+}
+
 .expanded {
   margin: 0;
   color: var(--text-secondary);
@@ -241,6 +253,28 @@
   line-height: 1.8;
 }
 
+.participantSummaryList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.participantSummaryList span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  padding: 0 10px;
+  border-radius: 8px;
+  color: #526887;
+  background: #f6f9ff;
+  border: 1px solid rgba(41, 96, 212, 0.08);
+}
+
+.participantSummaryList strong {
+  margin-right: 4px;
+  color: #163d9a;
+}
+
 .createForm {
   padding-top: 4px;
 }
@@ -253,6 +287,71 @@
 
 .fullWidthControl {
   width: 100%;
+}
+
+.attendanceModal {
+  display: grid;
+  gap: 14px;
+}
+
+.attendanceMetrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.attendanceMetrics span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  padding: 0 10px;
+  border-radius: 8px;
+  color: #245fcf;
+  background: rgba(37, 99, 255, 0.08);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.attendanceList {
+  display: grid;
+  gap: 12px;
+  max-height: 32rem;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.attendanceRow {
+  display: grid;
+  grid-template-columns:
+    minmax(8rem, 1.1fr)
+    minmax(6rem, 0.85fr)
+    minmax(5rem, 0.65fr)
+    minmax(5rem, 0.65fr)
+    repeat(4, minmax(4.5rem, 0.55fr))
+    minmax(9rem, 1.1fr)
+    2.25rem;
+  gap: 10px;
+  align-items: end;
+  padding: 12px;
+  border: 1px solid rgba(41, 96, 212, 0.1);
+  border-radius: 8px;
+  background: #fbfdff;
+}
+
+.attendanceRow :global(.ant-form-item) {
+  margin-bottom: 0;
+}
+
+.removeAttendanceButton {
+  width: 2.25rem;
+  height: 2rem;
+  border-radius: 8px;
+  color: #d64545;
+}
+
+.addAttendanceButton {
+  justify-self: start;
+  border-radius: 8px;
 }
 
 .minutesLedger {
@@ -340,6 +439,14 @@
 
   .formGrid {
     grid-template-columns: 1fr;
+  }
+
+  .attendanceRow {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .removeAttendanceButton {
+    width: 100%;
   }
 
   .heroActions :global(.ant-btn) {

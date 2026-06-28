@@ -31,6 +31,8 @@ export interface MemberParticipationRank {
   rank: number
   unit: string
   meetings: number
+  meetingContribution?: number
+  attendanceRate?: number
   files: number
   feedback: number
   tasks: number

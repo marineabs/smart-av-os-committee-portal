@@ -1,7 +1,9 @@
 import {
   CalendarOutlined,
   ClockCircleOutlined,
+  DeleteOutlined,
   FileDoneOutlined,
+  PlusOutlined,
   SearchOutlined,
   TeamOutlined,
 } from '@ant-design/icons'
@@ -10,7 +12,7 @@ import type { ColumnsType } from 'antd/es/table'
 import { useEffect, useMemo, useState } from 'react'
 import KnowledgeStatCard from '../components/KnowledgeStatCard'
 import AppLayout from '../layouts/AppLayout'
-import { demoMeetings, type DemoMeetingRecord, type DemoMeetingStat } from '../mock/meetings'
+import { demoMeetings, type DemoMeetingParticipant, type DemoMeetingRecord, type DemoMeetingStat } from '../mock/meetings'
 import { getActiveUser } from '../services/auth'
 import {
   createCollaborationRecord,
@@ -68,6 +70,46 @@ interface MeetingFormValues {
   summary: string
 }
 
+interface MeetingAttendanceFormValues {
+  participants: DemoMeetingParticipant[]
+}
+
+const participantRoleOptions: DemoMeetingParticipant['role'][] = ['主持', '汇报', '参会', '列席']
+
+function buildDefaultParticipants(meeting: DemoMeetingRecord): DemoMeetingParticipant[] {
+  if (meeting.participants?.length) {
+    return meeting.participants
+  }
+
+  const units = Array.from(new Set([meeting.ownerUnit, ...meeting.invitedOrganizations].filter(Boolean)))
+  return units.map((unit, index) => ({
+    id: `${meeting.id}-participant-${index + 1}`,
+    unit,
+    representative: '',
+    role: index === 0 ? '主持' : '参会',
+    attended: meeting.status === '已结束',
+    speakCount: 0,
+    materials: 0,
+    actionItems: 0,
+    contributionScore: 0,
+    notes: '',
+  }))
+}
+
+function summarizeParticipants(meeting: DemoMeetingRecord) {
+  const participants = buildDefaultParticipants(meeting)
+  const attendedCount = participants.filter((item) => item.attended).length
+  const averageContribution = participants.length
+    ? Math.round(participants.reduce((total, item) => total + item.contributionScore, 0) / participants.length)
+    : 0
+  const topParticipants = [...participants]
+    .filter((item) => item.attended)
+    .sort((a, b) => b.contributionScore - a.contributionScore)
+    .slice(0, 3)
+
+  return { participants, attendedCount, averageContribution, topParticipants }
+}
+
 function canViewMeeting(user: UserProfile, meeting: DemoMeetingRecord) {
   if (isAdminUser(user)) {
     return true
@@ -95,14 +137,15 @@ function canViewMeeting(user: UserProfile, meeting: DemoMeetingRecord) {
 
 function buildScopedStats(meetings: DemoMeetingRecord[], user: UserProfile): DemoMeetingStat[] {
   const upcomingCount = meetings.filter((item) => item.status !== '已结束').length
-  const attendeeCount = meetings.reduce((total, item) => total + item.attendees, 0)
+  const attendeeCount = meetings.reduce((total, item) => total + summarizeParticipants(item).attendedCount, 0)
+  const contributionCount = meetings.reduce((total, item) => total + buildDefaultParticipants(item).length, 0)
   const pendingMinutesCount = meetings.filter((item) => item.minutesStatus === '待整理').length
   const archivedMinutesCount = meetings.filter((item) => item.minutesStatus === '已归档').length
   const delta = isAdminUser(user) ? '全平台范围' : '授权可见'
 
   return [
     { id: 'ms-1', title: '可见会议', value: String(meetings.length), unit: '场', delta, accent: 'linear-gradient(135deg, #2d75ff 0%, #5aa1ff 100%)', icon: 'calendar' },
-    { id: 'ms-2', title: '参会单位', value: String(attendeeCount), unit: '家次', delta, accent: 'linear-gradient(135deg, #18c2c8 0%, #3cd6a4 100%)', icon: 'team' },
+    { id: 'ms-2', title: '出勤单位', value: String(attendeeCount), unit: '家次', delta: `贡献记录 ${contributionCount} 条`, accent: 'linear-gradient(135deg, #18c2c8 0%, #3cd6a4 100%)', icon: 'team' },
     { id: 'ms-3', title: '待纪要整理', value: String(pendingMinutesCount), unit: '份', delta: `${upcomingCount} 场未结束`, accent: 'linear-gradient(135deg, #ff982e 0%, #ffc04d 100%)', icon: 'clock' },
     { id: 'ms-4', title: '已归档纪要', value: String(archivedMinutesCount), unit: '份', delta, accent: 'linear-gradient(135deg, #6f58ff 0%, #9a82ff 100%)', icon: 'file' },
   ]
@@ -111,6 +154,7 @@ function buildScopedStats(meetings: DemoMeetingRecord[], user: UserProfile): Dem
 function MeetingsPage() {
   const { message } = App.useApp()
   const [createForm] = Form.useForm<MeetingFormValues>()
+  const [attendanceForm] = Form.useForm<MeetingAttendanceFormValues>()
   const currentUser = getActiveUser()
   const [meetings, setMeetings] = useState(demoMeetings)
   const [keyword, setKeyword] = useState('')
@@ -119,6 +163,7 @@ function MeetingsPage() {
   const [workgroupFilter, setWorkgroupFilter] = useState('全部')
   const [createModalOpen, setCreateModalOpen] = useState(false)
   const [minutesMeeting, setMinutesMeeting] = useState<DemoMeetingRecord | null>(null)
+  const [attendanceMeeting, setAttendanceMeeting] = useState<DemoMeetingRecord | null>(null)
   const [minutesLedgerOpen, setMinutesLedgerOpen] = useState(false)
   const [apiOnline, setApiOnline] = useState(false)
   const allowCreateMeeting = isAdminUser(currentUser) || isWorkgroupManager(currentUser)
@@ -216,6 +261,10 @@ function MeetingsPage() {
 
   const handleCreateMeeting = async () => {
     const values = await createForm.validateFields()
+    const participantUnits = Array.from(new Set([
+      values.ownerUnit,
+      ...(values.invitedOrganizations?.length ? values.invitedOrganizations : []),
+    ].filter(Boolean)))
     const createdMeeting: DemoMeetingRecord = {
       id: `meeting-created-${Date.now()}`,
       title: values.title,
@@ -235,6 +284,18 @@ function MeetingsPage() {
       decisions: ['会议议题待召开后确认'],
       actionItems: ['会议负责人会后补充纪要和待办事项'],
       summary: values.summary,
+      participants: participantUnits.map((unit, index) => ({
+        id: `meeting-created-${Date.now()}-participant-${index + 1}`,
+        unit,
+        representative: '',
+        role: index === 0 ? '主持' : '参会',
+        attended: values.status === '已结束',
+        speakCount: 0,
+        materials: 0,
+        actionItems: 0,
+        contributionScore: 0,
+        notes: '',
+      })),
     }
 
     const savedMeeting = apiOnline
@@ -244,6 +305,47 @@ function MeetingsPage() {
     setCreateModalOpen(false)
     createForm.resetFields()
     message.success(apiOnline ? '会议已保存到会议中心' : '会议已加入当前会议列表')
+  }
+
+  const openAttendanceModal = (meeting: DemoMeetingRecord) => {
+    setAttendanceMeeting(meeting)
+    attendanceForm.setFieldsValue({
+      participants: buildDefaultParticipants(meeting),
+    })
+  }
+
+  const handleSaveAttendance = async () => {
+    if (!attendanceMeeting) {
+      return
+    }
+
+    const values = await attendanceForm.validateFields()
+    const participants = values.participants.map((item, index) => ({
+      ...item,
+      id: item.id || `${attendanceMeeting.id}-participant-${Date.now()}-${index + 1}`,
+      representative: item.representative ?? '',
+      attended: Boolean(item.attended),
+      speakCount: Number(item.speakCount ?? 0),
+      materials: Number(item.materials ?? 0),
+      actionItems: Number(item.actionItems ?? 0),
+      contributionScore: Number(item.contributionScore ?? 0),
+      notes: item.notes ?? '',
+    }))
+    const savedRecord: DemoMeetingRecord = {
+      ...attendanceMeeting,
+      attendees: participants.filter((item) => item.attended).length,
+      participants,
+    }
+
+    const savedMeeting = apiOnline
+      ? await updateCollaborationRecord('meetings', savedRecord)
+      : savedRecord
+    setMeetings((current) => current.map((meeting) => (
+      meeting.id === savedMeeting.id ? savedMeeting : meeting
+    )))
+    setAttendanceMeeting(savedMeeting)
+    setMinutesMeeting((current) => (current?.id === savedMeeting.id ? savedMeeting : current))
+    message.success(`已更新参会记录：${savedMeeting.title}`)
   }
 
   const handleArchiveMinutes = async () => {
@@ -295,11 +397,20 @@ function MeetingsPage() {
       render: (value: number) => `${value} 项`,
     },
     {
-      title: '参会单位',
+      title: '参会记录',
       dataIndex: 'attendees',
       key: 'attendees',
-      width: 100,
-      render: (value: number) => `${value} 家`,
+      width: 130,
+      render: (_, record) => {
+        const summary = summarizeParticipants(record)
+
+        return (
+          <div className={styles.attendanceSummaryCell}>
+            <strong>{summary.attendedCount}/{summary.participants.length}</strong>
+            <span>均分 {summary.averageContribution}</span>
+          </div>
+        )
+      },
     },
     {
       title: '状态',
@@ -332,6 +443,13 @@ function MeetingsPage() {
               }}
             >
               纪要
+            </Button>
+            <Button
+              type="link"
+              size="small"
+              onClick={() => openAttendanceModal(record)}
+            >
+              记录
             </Button>
           </Space>
         )
@@ -453,6 +571,10 @@ function MeetingsPage() {
                   <div className={styles.expanded}>
                     <p>{record.summary}</p>
                     <span>受邀单位：{record.invitedOrganizations.join('、')}</span>
+                    <span>
+                      贡献较高：
+                      {summarizeParticipants(record).topParticipants.map((item) => `${item.unit} ${item.contributionScore}分`).join('、') || '暂无记录'}
+                    </span>
                   </div>
                 ),
               }}
@@ -505,6 +627,18 @@ function MeetingsPage() {
             </section>
 
             <section>
+              <h3>参会与贡献</h3>
+              <div className={styles.participantSummaryList}>
+                {summarizeParticipants(minutesMeeting).topParticipants.map((item) => (
+                  <span key={item.id}>
+                    <strong>{item.unit}</strong>
+                    {item.representative ? ` / ${item.representative}` : ''} · {item.contributionScore} 分
+                  </span>
+                ))}
+              </div>
+            </section>
+
+            <section>
               <h3>后续待办</h3>
               <ul>
                 {minutesMeeting.actionItems.map((item) => (
@@ -512,6 +646,121 @@ function MeetingsPage() {
                 ))}
               </ul>
             </section>
+          </div>
+        ) : null}
+      </Modal>
+
+      <Modal
+        open={Boolean(attendanceMeeting)}
+        title={attendanceMeeting ? `${attendanceMeeting.title}参会记录` : '参会记录'}
+        width={980}
+        onCancel={() => setAttendanceMeeting(null)}
+        footer={[
+          <Button key="close" onClick={() => setAttendanceMeeting(null)}>
+            关闭
+          </Button>,
+          attendanceMeeting && canManageWorkgroupContent(currentUser, attendanceMeeting.workgroup) ? (
+            <Button key="save" type="primary" onClick={() => void handleSaveAttendance()}>
+              保存记录
+            </Button>
+          ) : null,
+        ]}
+        destroyOnHidden
+      >
+        {attendanceMeeting ? (
+          <div className={styles.attendanceModal}>
+            <div className={styles.attendanceMetrics}>
+              <span>出勤 {summarizeParticipants(attendanceMeeting).attendedCount} 家</span>
+              <span>记录 {summarizeParticipants(attendanceMeeting).participants.length} 条</span>
+              <span>平均贡献 {summarizeParticipants(attendanceMeeting).averageContribution} 分</span>
+            </div>
+            <Form
+              form={attendanceForm}
+              layout="vertical"
+              disabled={!canManageWorkgroupContent(currentUser, attendanceMeeting.workgroup)}
+            >
+              <Form.List name="participants">
+                {(fields, { add, remove }) => (
+                  <div className={styles.attendanceList}>
+                    {fields.map((field) => (
+                      <div key={field.key} className={styles.attendanceRow}>
+                        <Form.Item {...field} name={[field.name, 'id']} hidden>
+                          <Input />
+                        </Form.Item>
+                        <Form.Item
+                          label="单位"
+                          name={[field.name, 'unit']}
+                          rules={[{ required: true, message: '请输入单位' }]}
+                        >
+                          <Input placeholder="单位名称" />
+                        </Form.Item>
+                        <Form.Item label="联系人" name={[field.name, 'representative']}>
+                          <Input placeholder="姓名" />
+                        </Form.Item>
+                        <Form.Item label="角色" name={[field.name, 'role']}>
+                          <Select>
+                            {participantRoleOptions.map((item) => (
+                              <Select.Option key={item} value={item}>
+                                {item}
+                              </Select.Option>
+                            ))}
+                          </Select>
+                        </Form.Item>
+                        <Form.Item label="出勤" name={[field.name, 'attended']}>
+                          <Select>
+                            <Select.Option value={true}>已到</Select.Option>
+                            <Select.Option value={false}>未到</Select.Option>
+                          </Select>
+                        </Form.Item>
+                        <Form.Item label="发言" name={[field.name, 'speakCount']}>
+                          <InputNumber min={0} max={99} className={styles.fullWidthControl} />
+                        </Form.Item>
+                        <Form.Item label="材料" name={[field.name, 'materials']}>
+                          <InputNumber min={0} max={99} className={styles.fullWidthControl} />
+                        </Form.Item>
+                        <Form.Item label="待办" name={[field.name, 'actionItems']}>
+                          <InputNumber min={0} max={99} className={styles.fullWidthControl} />
+                        </Form.Item>
+                        <Form.Item label="贡献分" name={[field.name, 'contributionScore']}>
+                          <InputNumber min={0} max={100} className={styles.fullWidthControl} />
+                        </Form.Item>
+                        <Form.Item label="备注" name={[field.name, 'notes']}>
+                          <Input placeholder="关键贡献或缺席说明" />
+                        </Form.Item>
+                        {canManageWorkgroupContent(currentUser, attendanceMeeting.workgroup) ? (
+                          <Button
+                            aria-label="删除参会记录"
+                            className={styles.removeAttendanceButton}
+                            icon={<DeleteOutlined />}
+                            onClick={() => remove(field.name)}
+                          />
+                        ) : null}
+                      </div>
+                    ))}
+                    {canManageWorkgroupContent(currentUser, attendanceMeeting.workgroup) ? (
+                      <Button
+                        className={styles.addAttendanceButton}
+                        icon={<PlusOutlined />}
+                        onClick={() => add({
+                          id: '',
+                          unit: '',
+                          representative: '',
+                          role: '参会',
+                          attended: true,
+                          speakCount: 0,
+                          materials: 0,
+                          actionItems: 0,
+                          contributionScore: 0,
+                          notes: '',
+                        })}
+                      >
+                        新增参会单位
+                      </Button>
+                    ) : null}
+                  </div>
+                )}
+              </Form.List>
+            </Form>
           </div>
         ) : null}
       </Modal>

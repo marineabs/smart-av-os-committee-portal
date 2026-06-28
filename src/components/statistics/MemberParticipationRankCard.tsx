@@ -11,7 +11,7 @@ function MemberParticipationRankCard({ data }: MemberParticipationRankCardProps)
       <div className={styles.cardHeader}>
         <div>
           <h2>成员单位参与度排行</h2>
-          <p>综合参会、资料、意见反馈和任务承担情况。</p>
+          <p>综合参会出勤、会议贡献、资料、意见反馈和任务承担情况。</p>
         </div>
       </div>
       <div className={styles.memberRankList}>
@@ -25,6 +25,8 @@ function MemberParticipationRankCard({ data }: MemberParticipationRankCardProps)
               </div>
               <div className={styles.rankStats}>
                 <span>参会 {item.meetings}</span>
+                <span>会议贡献 {item.meetingContribution ?? item.score}</span>
+                <span>出勤率 {item.attendanceRate ?? 0}%</span>
                 <span>资料 {item.files}</span>
                 <span>反馈 {item.feedback}</span>
                 <span>任务 {item.tasks}</span>

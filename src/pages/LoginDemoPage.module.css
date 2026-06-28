@@ -1,61 +1,47 @@
 .page {
   min-height: 100vh;
-  padding: clamp(20px, 2.4vw, 36px);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
   background:
-    radial-gradient(circle at 18% 10%, rgba(116, 179, 255, 0.26), transparent 32%),
-    radial-gradient(circle at 88% 12%, rgba(130, 183, 255, 0.2), transparent 28%),
-    linear-gradient(180deg, #edf5ff 0%, #f8fbff 54%, #ffffff 100%);
+    radial-gradient(circle at 18% 12%, rgba(107, 174, 255, 0.22), transparent 34%),
+    radial-gradient(circle at 86% 14%, rgba(129, 187, 255, 0.18), transparent 30%),
+    linear-gradient(180deg, #edf5ff 0%, #f8fbff 55%, #ffffff 100%);
   color: #0c2d68;
 }
 
+.shellViewport {
+  position: relative;
+  flex: 0 0 auto;
+}
+
 .shell {
-  --login-panel-height: clamp(620px, 74vh, 760px);
-
-  width: min(100%, 1380px);
-  min-height: calc(100vh - clamp(40px, 4.8vw, 72px));
-  margin: 0 auto;
+  --login-panel-height: 878px;
+  position: absolute;
+  inset: 0 auto auto 0;
+  box-sizing: border-box;
+  width: 1920px;
+  height: 1080px;
+  padding: 92px 72px 56px 72px;
   display: grid;
-  grid-template-columns: minmax(460px, 1fr) minmax(460px, 1fr);
-  gap: clamp(28px, 3vw, 52px);
-  align-content: center;
+  grid-template-columns: minmax(0, 1168px) 560px;
+  gap: 48px;
   align-items: start;
+  transform-origin: top left;
 }
 
-.heroPanel {
+.loginPane {
   min-width: 0;
-}
-
-.sideVisual {
-  width: 100%;
-  height: var(--login-panel-height);
-  display: block;
-  object-fit: cover;
-  object-position: center;
-  border: 1px solid rgba(214, 229, 255, 0.92);
-  border-radius: 22px;
-  box-shadow: 0 22px 56px rgba(56, 107, 188, 0.16);
-}
-
-.pageFooter {
-  width: 100%;
-  margin-top: 18px;
   display: flex;
-  align-items: center;
-  gap: 18px;
-  color: #61769b;
-  font-size: 0.96rem;
-  font-weight: 600;
-}
-
-.pageFooter :global(.anticon) {
-  color: #5374a5;
+  align-items: flex-start;
+  justify-content: flex-start;
+  height: 100%;
 }
 
 .loginCard {
-  align-self: start;
-  min-width: 0;
+  flex: 0 0 auto;
   width: 100%;
-  height: var(--login-panel-height);
+  min-height: var(--login-panel-height);
   padding: clamp(36px, 4vw, 58px);
   border: 1px solid rgba(224, 237, 255, 0.92);
   border-radius: 22px;
@@ -73,7 +59,7 @@
 .loginHeader h2 {
   margin: 0 0 12px;
   color: #082b73;
-  font-size: clamp(1.8rem, 2.4vw, 2.35rem);
+  font-size: 2.35rem;
   line-height: 1.18;
   letter-spacing: 0;
 }
@@ -197,44 +183,52 @@
   white-space: nowrap;
 }
 
-@media (max-width: 1180px) {
-  .shell {
-    --login-panel-height: auto;
-
-    grid-template-columns: 1fr;
-    align-content: start;
-  }
-
-  .sideVisual {
-    height: auto;
-    aspect-ratio: 4 / 3;
-  }
-
-  .loginCard {
-    height: auto;
-  }
+.pageFooter {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  color: #61769b;
+  font-size: 0.96rem;
+  font-weight: 600;
 }
 
-@media (max-width: 820px) {
-  .page {
-    padding: 14px;
-  }
+.pageFooter :global(.anticon) {
+  color: #5374a5;
+}
 
-  .shell {
-    gap: 22px;
-  }
+.visualPane {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  height: 100%;
+}
 
-  .loginCard {
-    padding: 26px 18px;
-  }
+.visualCard {
+  width: 100%;
+  height: var(--login-panel-height);
+  padding: 14px;
+  border: 1px solid rgba(224, 237, 255, 0.92);
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.82);
+  box-shadow:
+    0 22px 58px rgba(35, 93, 179, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(12px);
+}
 
-  .demoAccounts {
-    grid-template-columns: 1fr;
-  }
+.sideVisual {
+  width: 100%;
+  height: 100%;
+  display: block;
+  border-radius: 16px;
+  object-fit: contain;
+  object-position: center;
+}
 
-  .pageFooter {
-    flex-wrap: wrap;
-    gap: 10px 16px;
-    font-size: 0.9rem;
-  }
+.visualPane,
+.loginPane {
+  align-self: start;
 }

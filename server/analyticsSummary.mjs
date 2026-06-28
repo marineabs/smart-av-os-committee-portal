@@ -14,6 +14,29 @@ function getList(value) {
     .filter(Boolean)
 }
 
+function getMeetingParticipants(record) {
+  if (Array.isArray(record?.participants) && record.participants.length) {
+    return record.participants
+      .map((item) => ({
+        unit: String(item?.unit ?? '').trim(),
+        attended: Boolean(item?.attended),
+        contributionScore: Number(item?.contributionScore ?? 0),
+      }))
+      .filter((item) => item.unit)
+  }
+
+  return [
+    record?.ownerUnit,
+    ...getList(record?.invitedOrganizations),
+  ]
+    .filter(Boolean)
+    .map((unit) => ({ unit: String(unit), attended: true, contributionScore: 0 }))
+}
+
+function getMeetingParticipantUnits(record) {
+  return getMeetingParticipants(record).map((item) => item.unit)
+}
+
 function parseNumber(value) {
   const match = String(value ?? '').match(/\d+/)
   return match ? Number(match[0]) : 0
@@ -136,6 +159,7 @@ function hasSelectedMember(record, selectedMember) {
     record?.leaderUnit,
     ...getList(record?.memberUnits),
     ...getList(record?.invitedOrganizations),
+    ...getMeetingParticipantUnits(record),
   ].filter(Boolean).includes(selectedMember)
 }
 
@@ -161,6 +185,7 @@ function buildFilterOptions({ workgroups, organizations, files, meetings, member
     ...files.map((item) => item.uploader),
     ...meetings.map((item) => item.ownerUnit),
     ...meetings.flatMap((item) => getList(item.invitedOrganizations)),
+    ...meetings.flatMap((item) => getMeetingParticipantUnits(item)),
     ...workgroups.flatMap((item) => getList(item.memberUnits)),
   ])
 
@@ -178,6 +203,7 @@ function buildOverviewMetrics({ workgroups, organizations, files, meetings, supe
     ...files.map((item) => item.uploader),
     ...meetings.map((item) => item.ownerUnit),
     ...meetings.flatMap((item) => getList(item.invitedOrganizations)),
+    ...meetings.flatMap((item) => getMeetingParticipantUnits(item)),
   ])
   const uniqueWorkgroups = uniqueValues([
     ...workgroups.map((item) => item.name),
@@ -194,6 +220,7 @@ function buildOverviewMetrics({ workgroups, organizations, files, meetings, supe
     ...files.map((item) => item.uploader),
     ...meetings.map((item) => item.ownerUnit),
     ...meetings.flatMap((item) => getList(item.invitedOrganizations)),
+    ...meetings.flatMap((item) => getMeetingParticipantUnits(item)),
   ]).length
   const activeRate = uniqueMembers.length ? Math.round((activeMembers / uniqueMembers.length) * 100) : 0
 
@@ -266,16 +293,28 @@ function buildMemberRanks({ organizations, members, files, meetings, supervision
     ...files.map((item) => item.uploader),
     ...meetings.map((item) => item.ownerUnit),
     ...meetings.flatMap((item) => getList(item.invitedOrganizations)),
+    ...meetings.flatMap((item) => getMeetingParticipantUnits(item)),
   ])
 
   return units.map((unit) => {
-    const meetingCount = meetings.filter((item) => item.ownerUnit === unit || getList(item.invitedOrganizations).includes(unit)).length
+    const relevantMeetingParticipants = meetings
+      .flatMap((meeting) => getMeetingParticipants(meeting))
+      .filter((participant) => participant.unit === unit)
+    const attendedMeetings = relevantMeetingParticipants.filter((participant) => participant.attended)
+    const fallbackMeetingCount = meetings.filter((item) => item.ownerUnit === unit || getList(item.invitedOrganizations).includes(unit)).length
+    const meetingCount = relevantMeetingParticipants.length ? attendedMeetings.length : fallbackMeetingCount
+    const attendanceRate = relevantMeetingParticipants.length
+      ? Math.round((attendedMeetings.length / relevantMeetingParticipants.length) * 100)
+      : (fallbackMeetingCount ? 100 : 0)
+    const meetingContribution = relevantMeetingParticipants.length
+      ? Math.round(relevantMeetingParticipants.reduce((total, item) => total + item.contributionScore, 0) / relevantMeetingParticipants.length)
+      : 0
     const fileCount = files.filter((item) => item.uploader === unit).length
     const feedbackCount = files.reduce((total, item) => total + (Array.isArray(item.comments) && item.uploader === unit ? item.comments.length : 0), 0)
     const taskCount = supervision.filter((item) => item.owner === unit || item.leader === unit).reduce((total, item) => total + parseNumber(item.tasks), 0)
-    const score = Math.min(100, meetingCount * 8 + fileCount * 4 + feedbackCount * 2 + taskCount * 5)
+    const score = Math.min(100, Math.round(meetingCount * 6 + meetingContribution * 0.35 + fileCount * 4 + feedbackCount * 2 + taskCount * 5))
 
-    return { unit, meetings: meetingCount, files: fileCount, feedback: feedbackCount, tasks: taskCount, score }
+    return { unit, meetings: meetingCount, meetingContribution, attendanceRate, files: fileCount, feedback: feedbackCount, tasks: taskCount, score }
   })
     .filter((item) => item.meetings || item.files || item.feedback || item.tasks || item.score)
     .sort((a, b) => b.score - a.score)
@@ -358,6 +397,7 @@ export function buildAnalyticsSummary({
     ...scopedFiles.map((item) => item.uploader),
     ...scopedMeetings.map((item) => item.ownerUnit),
     ...scopedMeetings.flatMap((item) => getList(item.invitedOrganizations)),
+    ...scopedMeetings.flatMap((item) => getMeetingParticipantUnits(item)),
   ]).length
 
   return {
