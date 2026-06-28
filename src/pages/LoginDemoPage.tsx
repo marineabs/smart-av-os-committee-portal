@@ -9,6 +9,7 @@ import {
 import { App, Button, Checkbox, Input } from 'antd'
 import { useState, type ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
+import sideVisual from '../assets/login-side-visual.png'
 import { demoUsers, login } from '../services/auth'
 import { canViewAdminCenter, isWorkgroupManager } from '../utils/permissions'
 import styles from './LoginDemoPage.module.css'
@@ -22,27 +23,6 @@ const accountIconMap: Record<string, ReactNode> = {
 const accountLabelMap: Record<string, string> = {
   sunhao: '工作组组长',
 }
-
-const featureCards = [
-  {
-    key: 'organization',
-    icon: <TeamOutlined />,
-    title: '组织协同',
-    description: '工作组、成员、任务、会议统一管理，提升组织运行效率',
-  },
-  {
-    key: 'archive',
-    icon: <FileTextOutlined />,
-    title: '资料沉淀',
-    description: '通知、文件、成果、会议纪要集中归档，便于查阅与传承',
-  },
-  {
-    key: 'permission',
-    icon: <SafetyCertificateOutlined />,
-    title: '权限分级',
-    description: '秘书处、组长、成员单位按角色分级访问，安全可控',
-  },
-]
 
 function LoginDemoPage() {
   const { message } = App.useApp()
@@ -82,30 +62,12 @@ function LoginDemoPage() {
     <div className={styles.page}>
       <main className={styles.shell}>
         <section className={styles.heroPanel} aria-label="平台介绍">
-          <div className={styles.heroBadge}>
+          <img className={styles.sideVisual} src={sideVisual} alt="智慧视听操作系统建设愿景" />
+          <footer className={styles.pageFooter}>
             <SafetyCertificateOutlined />
-            <span>专委会协同平台</span>
-            <span className={styles.badgeDivider} />
-            <span>管理端入口</span>
-          </div>
-
-          <div className={styles.heroText}>
-            <p>智慧视听操作系统专委会</p>
-            <h1>协同工作平台</h1>
-            <span>支撑智慧视听操作系统标准研制、产业协同、成果推广与组织运行</span>
-          </div>
-
-          <div className={styles.heroOrbit} aria-hidden="true">
-            <span className={`${styles.orbitIcon} ${styles.orbitIconLeft}`}>
-              <TeamOutlined />
-            </span>
-            <span className={`${styles.orbitIcon} ${styles.orbitIconCenter}`}>
-              <FileTextOutlined />
-            </span>
-            <span className={`${styles.orbitIcon} ${styles.orbitIconRight}`}>
-              <SafetyCertificateOutlined />
-            </span>
-          </div>
+            <span>智慧视听操作系统专委会</span>
+            <span>© 2026 版权所有</span>
+          </footer>
         </section>
 
         <aside className={styles.loginCard} aria-label="登录协同平台">
@@ -184,24 +146,6 @@ function LoginDemoPage() {
           </div>
         </aside>
       </main>
-
-      <section className={styles.featureGrid} aria-label="平台能力">
-        {featureCards.map((item) => (
-          <article key={item.key} className={styles.featureCard}>
-            <span className={styles.featureIcon}>{item.icon}</span>
-            <div>
-              <h3>{item.title}</h3>
-              <p>{item.description}</p>
-            </div>
-          </article>
-        ))}
-      </section>
-
-      <footer className={styles.pageFooter}>
-        <SafetyCertificateOutlined />
-        <span>智慧视听操作系统专委会</span>
-        <span>© 2026 版权所有</span>
-      </footer>
     </div>
   )
 }

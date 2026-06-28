@@ -1,0 +1,47 @@
+<svg width="96" height="96" viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="10" y="10" width="76" height="76" rx="24" fill="url(#bgGlow)"/>
+  <path d="M48 14L74 29V59L48 74L22 59V29L48 14Z" fill="url(#shell)"/>
+  <path d="M48 14L61 21.6L35.6 37L22 29L48 14Z" fill="url(#topFacet)"/>
+  <path d="M74 29V59L61 66.5V36.8L74 29Z" fill="url(#rightFacet)"/>
+  <path d="M22 29L35.6 37V66.6L22 59V29Z" fill="url(#leftFacet)"/>
+  <path d="M35.6 37L48 29.8L61 36.8V51.6L48 59.2L35.6 52.2V37Z" fill="url(#innerFacet)"/>
+  <path d="M35.6 52.2L48 59.2V74L35.6 66.6V52.2Z" fill="url(#bottomLeftFacet)"/>
+  <path d="M48 59.2L61 51.6V66.5L48 74V59.2Z" fill="url(#bottomRightFacet)"/>
+  <path d="M48 29.8V59.2" stroke="#FFFFFF" stroke-opacity="0.72" stroke-width="2.2" stroke-linecap="round"/>
+  <path d="M35.6 37L48 44.2L61 36.8" stroke="#FFFFFF" stroke-opacity="0.72" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <defs>
+    <linearGradient id="bgGlow" x1="20" y1="16" x2="75" y2="80" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#EAF4FF"/>
+      <stop offset="1" stop-color="#D8E9FF"/>
+    </linearGradient>
+    <linearGradient id="shell" x1="26" y1="18" x2="71" y2="71" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#34B3FF"/>
+      <stop offset="0.55" stop-color="#2A7BFF"/>
+      <stop offset="1" stop-color="#745DFF"/>
+    </linearGradient>
+    <linearGradient id="topFacet" x1="28" y1="20" x2="57" y2="42" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#8BE6FF"/>
+      <stop offset="1" stop-color="#D7EEFF"/>
+    </linearGradient>
+    <linearGradient id="rightFacet" x1="73" y1="31" x2="53" y2="64" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#5F7DFF"/>
+      <stop offset="1" stop-color="#784CFF"/>
+    </linearGradient>
+    <linearGradient id="leftFacet" x1="22" y1="28" x2="38" y2="63" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#36C5FF"/>
+      <stop offset="1" stop-color="#2D83FF"/>
+    </linearGradient>
+    <linearGradient id="innerFacet" x1="38" y1="33" x2="58" y2="56" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#D9E8FF"/>
+    </linearGradient>
+    <linearGradient id="bottomLeftFacet" x1="35.6" y1="53" x2="50" y2="71" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#B6D8FF"/>
+      <stop offset="1" stop-color="#FFFFFF"/>
+    </linearGradient>
+    <linearGradient id="bottomRightFacet" x1="48" y1="53" x2="62" y2="72" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#E0D9FF"/>
+      <stop offset="1" stop-color="#FFFFFF"/>
+    </linearGradient>
+  </defs>
+</svg>
